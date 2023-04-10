@@ -1,24 +1,36 @@
 {
   "name": "vscode-vue-files",
-  "displayName": "vscode-vue-files",
-  "description": "",
-  "version": "0.0.1",
+  "displayName": "Vue Files",
+  "description": "Quickly create Vue files with different templates",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.77.0"
   },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [],
-  "main": "./out/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "vscode-vue-files.helloWorld",
-        "title": "Hello World"
-      }
-    ]
+  "publisher": "K-eL",
+  "license": "MIT",
+  "author": {
+    "name": "Claudio Thorschmidt"
   },
+  "icon": "assets/vue-files-icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/K-eL/vscode-vue-files"
+  },
+  "bugs": {
+    "url": "https://github.com/K-eL/vscode-vue-files/issues"
+  },
+  "keywords": [
+    "vue",
+    "typescript",
+    "files",
+    "javascript",
+    "templates"
+  ],
+  "categories": [
+    "Other",
+    "Snippets",
+    "Programming Languages"
+  ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
@@ -26,6 +38,153 @@
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
+  },
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Vue Files",
+      "properties": {
+        "vscode-vue-files.menu.show-setup-ts-scss": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Vue Setup API (TS + SCSS) option in the context menu"
+        },
+        "vscode-vue-files.menu.show-setup-ts-css": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Vue Setup API (TS + CSS) option in the context menu"
+        },
+        "vscode-vue-files.menu.show-setup-js-scss": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Vue Setup API (JS + SCSS) option in the context menu"
+        },
+        "vscode-vue-files.menu.show-setup-js-css": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Vue Setup API (JS + CSS) option in the context menu"
+        },
+        "vscode-vue-files.menu.show-options-ts-scss": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Vue Options API (TS + SCSS) option in the context menu"
+        },
+        "vscode-vue-files.menu.show-options-ts-css": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Vue Options API (TS + CSS) option in the context menu"
+        },
+        "vscode-vue-files.menu.show-options-js-scss": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Vue Options API (JS + SCSS) option in the context menu"
+        },
+        "vscode-vue-files.menu.show-options-js-css": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Vue Options API (JS + CSS) option in the context menu"
+        },
+        "vscode-vue-files.template.script-comes-first": {
+          "type": "boolean",
+          "default": false,
+          "description": "Script tag should come first in the template, otherwise Template comes first"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "vscode-vue-files.vue-options-js-css",
+        "title": "Create New Options API (JS + CSS)"
+      },
+      {
+        "command": "vscode-vue-files.vue-options-js-scss",
+        "title": "Create New Options API (JS + SCSS)"
+      },
+      {
+        "command": "vscode-vue-files.vue-options-ts-css",
+        "title": "Create New Options API (TS + CSS)"
+      },
+      {
+        "command": "vscode-vue-files.vue-options-ts-scss",
+        "title": "Create New Options API (TS + SCSS)"
+      },
+      {
+        "command": "vscode-vue-files.vue-setup-ts-scss",
+        "title": "Create New Composition API (Setup + TS + SCSS)"
+      },
+      {
+        "command": "vscode-vue-files.vue-setup-ts-css",
+        "title": "Create New Composition API (Setup + TS + CSS)"
+      },
+      {
+        "command": "vscode-vue-files.vue-setup-js-scss",
+        "title": "Create New Composition API (Setup + JS + SCSS)"
+      },
+      {
+        "command": "vscode-vue-files.vue-setup-js-css",
+        "title": "Create New Composition API (Setup + JS + CSS)"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "vuefiles",
+        "label": "Vue Files"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "submenu": "vuefiles",
+          "group": "1_vuefiles"
+        }
+      ],
+      "vuefiles": [
+        {
+          "when": "config.vscode-vue-files.menu.show-setup-ts-scss",
+          "group": "1_setup",
+          "command": "vscode-vue-files.vue-setup-ts-scss"
+        },
+        {
+          "when": "config.vscode-vue-files.menu.show-setup-ts-css",
+          "group": "1_setup",
+          "command": "vscode-vue-files.vue-setup-ts-css"
+        },
+        {
+          "when": "config.vscode-vue-files.menu.show-setup-js-scss",
+          "group": "1_setup",
+          "command": "vscode-vue-files.vue-setup-js-scss"
+        },
+        {
+          "when": "config.vscode-vue-files.menu.show-setup-js-css",
+          "group": "1_setup",
+          "command": "vscode-vue-files.vue-setup-js-css"
+        },
+        {
+          "when": "config.vscode-vue-files.menu.show-options-ts-scss",
+          "group": "2_options",
+          "command": "vscode-vue-files.vue-options-ts-scss"
+        },
+        {
+          "when": "config.vscode-vue-files.menu.show-options-ts-css",
+          "group": "2_options",
+          "command": "vscode-vue-files.vue-options-ts-css"
+        },
+        {
+          "when": "config.vscode-vue-files.menu.show-options-js-scss",
+          "group": "2_options",
+          "command": "vscode-vue-files.vue-options-js-scss"
+        },
+        {
+          "when": "config.vscode-vue-files.menu.show-options-js-css",
+          "group": "2_options",
+          "command": "vscode-vue-files.vue-options-js-css"
+        }
+      ]
+    }
   },
   "devDependencies": {
     "@types/vscode": "^1.77.0",

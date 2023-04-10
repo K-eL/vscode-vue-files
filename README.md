@@ -1,71 +1,75 @@
-# vscode-vue-files README
+# VSCode Vue Files
 
-This is the README for your extension "vscode-vue-files". After writing up a brief description, we recommend including the following sections.
+This extension allows you to quickly create new Vue files filled with some boilerplate content depending on your choice.
+
+> Inspired by Angular Files (https://github.com/ivalexa/vscode-angular2-files)
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+Right-click inside your explorer panel or over a folder to open "Vue Files" menu option. 
 
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+You will find many options to choose how you want to create your new file.
 
 ---
 
-## Following extension guidelines
+> 1- Right-click on a folder and choose the template you want
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+![features](./assets/demo_001.png)
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+---
 
-## Working with Markdown
+> 2- Choose the name of your file (extension not needed)
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+![features](./assets/demo_002.png)
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+---
 
-## For more information
+> 3- Enjoy your easily created Vue Component file
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+![features](./assets/demo_003.png)
+
+## Extension Settings
+
+You can add these options to your VS Code Settings to have a better experience:
+
+**File config**
+
+If true, places the `script` tag at the top of the new files, otherwise, the `template` tag comes at the top. It's **false** by default (`template` first).
+```
+"vscode-vue-files.template.script-comes-first": false
+```
+
+**Menu config**
+
+These configs enables/disables the respective menu options, all enabled by default:
+```
+"vscode-vue-files.menu.show-setup-ts-scss": true,
+"vscode-vue-files.menu.show-setup-ts-css": true,
+"vscode-vue-files.menu.show-setup-js-scss": true,
+"vscode-vue-files.menu.show-setup-js-css": true,
+"vscode-vue-files.menu.show-options-ts-scss": true,
+"vscode-vue-files.menu.show-options-ts-css": true,
+"vscode-vue-files.menu.show-options-js-scss": true,
+"vscode-vue-files.menu.show-options-js-css": true
+```
+
+## Release Notes
+### 1.0.0
+
+* Initial release.
+* Users can choose between Options API and Composition API.
+* Users can choose Javascript or Typescript as script language.
+* Users can choose Css or Scss as style language.
+
+## Disclaimer
+
+>**Important:** This extension due to the nature of it's purpose will create
+files on your hard drive and if necessary create the respective folder structure.
+While it should not override any files during this process, I'm not giving any guarantees
+or take any responsibility in case of lost data. 
+
+## License
+
+MIT
 
 **Enjoy!**
