@@ -1,15 +1,21 @@
 
 import * as vscode from 'vscode';
 import { requestStringDialog } from '../helpers/editor-helper';
-import { createFile, handleVueFileName, getVueFileContent, isFileNameValid } from '../helpers/file-helper';
+import { createFile, handleVueFileName, isFileNameValid, openFile } from '../helpers/file-helper';
 import { VueApiType } from '../enums/vue-api-type.enum';
 import { FileSettings } from '../interfaces/file-settings';
 import { VueStyleLang } from '../enums/vue-style-lang.enum';
+import { VueScriptLang } from '../enums/vue-script-lang.enum';
+import { generateContent } from '../generators/content.generator';
+import { isScriptFirst, loadWorkspaceConfig } from '../helpers/config.helper';
 
-const templateCursorPosition = new vscode.Position(2, 5);
-const scriptCursorPosition = new vscode.Position(14, 5);
+const templateCursorPosition = new vscode.Position(2, 2);
+const scriptCursorPosition = new vscode.Position(2, 0);
 
 export const createNewVueFileCommand = async (uri: any, apiType: VueApiType, scriptLang: VueScriptLang, styleLang: VueStyleLang) => {
+	// loads/updates workspace config
+	loadWorkspaceConfig();
+
 	// get file name from user input
 	let stringInput = await requestStringDialog(
 		'Enter the name of the new component file',
@@ -22,22 +28,20 @@ export const createNewVueFileCommand = async (uri: any, apiType: VueApiType, scr
 
 	// handle file name
 	const fileName = handleVueFileName(stringInput);
-	const componentName = fileName.replace('.vue', '');
-
-	// get config for script first
-	const config = vscode.workspace.getConfiguration('vscode-vue-files');
-	const isScriptFirst = config.get('template.script-comes-first') as boolean;
+	// handle component name
+	const componentName = fileName.replace('.vue', '').split('-').map((word) => {
+		return word.charAt(0).toUpperCase() + word.slice(1);
+	}).join('');
 
 	const newFileSettings: FileSettings = {
 		isSetupApi: apiType === VueApiType.setup,
-		isScriptFirst,
 		scriptLang,
 		styleLang,
 		componentName
 	};
 
 	// define the file content
-	const fileContent = getVueFileContent(newFileSettings);
+	const fileContent = generateContent(newFileSettings);
 
 	// if uri contains a file, use the parent folder
 	if (uri.fsPath.includes('.')) {
@@ -50,11 +54,6 @@ export const createNewVueFileCommand = async (uri: any, apiType: VueApiType, scr
 	await createFile(newFileUri, fileContent);
 
 	// open the new file
-	const document = await vscode.workspace.openTextDocument(newFileUri);
-	const editor = await vscode.window.showTextDocument(document, 1, false);
-
-	// position the cursor at the correct position
-	isScriptFirst ?
-		editor.selection = new vscode.Selection(scriptCursorPosition, scriptCursorPosition) :
-		editor.selection = new vscode.Selection(templateCursorPosition, templateCursorPosition);
+	const cursorPosition = isScriptFirst() ? scriptCursorPosition : templateCursorPosition;
+	await openFile(newFileUri, cursorPosition);
 };

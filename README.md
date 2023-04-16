@@ -30,30 +30,86 @@ You will find many options to choose how you want to create your new file.
 
 ## Extension Settings
 
-You can add these options to your VS Code Settings to have a better experience:
+You can add these options to your VS Code Settings to have a better experience (check the current default value on the right side):
 
-**File config**
+**Menu Options**
+
+These configs enable/disable the corresponding menu options, all enabled by default:
+```
+"vscode-vue-files.menu.showCompositionApi": true,
+"vscode-vue-files.menu.showOptionsApi": true,
+"vscode-vue-files.menu.showTypescript": true,
+"vscode-vue-files.menu.showJavascript": true,
+"vscode-vue-files.menu.showCss": true,
+"vscode-vue-files.menu.showScss": true
+```
+
+**File Structure**
 
 If true, places the `script` tag at the top of the new files, otherwise, the `template` tag comes at the top. It's **false** by default (`template` first).
 ```
-"vscode-vue-files.template.script-comes-first": false
+"vscode-vue-files.fileStructure.scriptTagComesFirst": false
 ```
 
-**Menu config**
+**File Template**
 
-These configs enables/disables the respective menu options, all enabled by default:
+If true, generates a functional V-Model template inside the newly generated file (Props, Emits, and Computed options must be enabled to be functional).
+
 ```
-"vscode-vue-files.menu.show-setup-ts-scss": true,
-"vscode-vue-files.menu.show-setup-ts-css": true,
-"vscode-vue-files.menu.show-setup-js-scss": true,
-"vscode-vue-files.menu.show-setup-js-css": true,
-"vscode-vue-files.menu.show-options-ts-scss": true,
-"vscode-vue-files.menu.show-options-ts-css": true,
-"vscode-vue-files.menu.show-options-js-scss": true,
-"vscode-vue-files.menu.show-options-js-css": true
+"vscode-vue-files.template.showV-ModelTemplate": true
+```
+
+**File Options**
+
+These settings show/hide the corresponding options in the newly generated files:
+
+```
+"vscode-vue-files.option.showNameScriptOption": true,
+"vscode-vue-files.option.showComponentsScriptOption": true,
+"vscode-vue-files.option.showDirectivesScriptOption": false,
+"vscode-vue-files.option.showExtendsScriptOption": false,
+"vscode-vue-files.option.showMixinsScriptOption": false,
+"vscode-vue-files.option.showProvideInjectScriptOption": false,
+"vscode-vue-files.option.showInheritAttributesScriptOption": false,
+"vscode-vue-files.option.showPropsScriptOption": true,
+"vscode-vue-files.option.showEmitsScriptOption": true,
+"vscode-vue-files.option.showSetupScriptOption": false,
+"vscode-vue-files.option.showDataScriptOption": true,
+"vscode-vue-files.option.showComputedScriptOption": true,
+"vscode-vue-files.option.showWatchScriptOption": true,
+"vscode-vue-files.option.showMethodsScriptOption": true
+```
+
+**Life Cycle Hooks**
+
+These settings show/hide the corresponding life-cycle hooks in the newly generated files.
+
+```
+"vscode-vue-files.lifecycle.showLifecycleHooksScriptOptions": true,
+"vscode-vue-files.lifecycle.showBeforeCreateScriptOption": false,
+"vscode-vue-files.lifecycle.showCreatedScriptOption": false,
+"vscode-vue-files.lifecycle.showBeforeMountScriptOption": false,
+"vscode-vue-files.lifecycle.showMountedScriptOption": true,
+"vscode-vue-files.lifecycle.showBeforeUpdateScriptOption": false,
+"vscode-vue-files.lifecycle.showUpdatedScriptOption": true,
+"vscode-vue-files.lifecycle.showActivatedScriptOption": false,
+"vscode-vue-files.lifecycle.showDeactivatedScriptOption": false,
+"vscode-vue-files.lifecycle.showBeforeUnmountScriptOption": true,
+"vscode-vue-files.lifecycle.showUnmountedScriptOption": false,
+"vscode-vue-files.lifecycle.showErrorCapturedScriptOption": false,
+"vscode-vue-files.lifecycle.showRenderTrackedScriptOption": false,
+"vscode-vue-files.lifecycle.showRenderTriggeredScriptOption": false
 ```
 
 ## Release Notes
+### 1.1.0
+
+* Many code quality improvements.
+* Included many other options that can be enabled/disabled through settings.
+* Added a fancy menu and better description for the settings.
+* Previous settings were removed, now more general settings were included to show the menu options.
+* Included the base template of a working V-Model for new components (can be disabled on settings).
+* Improved how component name is generated based on the given string.
 ### 1.0.0
 
 * Initial release.
@@ -71,5 +127,9 @@ or take any responsibility in case of lost data.
 ## License
 
 MIT
+
+## Donate
+
+💚 If you find this extension useful, I'd be very happy if you support me [here](https://www.buymeacoffee.com/c.thor)! 😃
 
 **Enjoy!**
