@@ -1,4 +1,4 @@
 export enum VueStyleLang {
-	scss = 'scss',
-	css = 'css'
+	scss = "scss",
+	css = "css",
 }
