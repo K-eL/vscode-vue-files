@@ -5,7 +5,7 @@
 	"version": "1.1.1",
 	"type": "commonjs",
 	"engines": {
-		"vscode": "^1.77.0"
+		"vscode": "^1.92.0"
 	},
 	"publisher": "K-eL",
 	"license": "MIT",
