@@ -1,417 +1,428 @@
 {
-  "name": "vscode-vue-files",
-  "displayName": "Vue Files",
-  "description": "Quickly create Vue files with different templates",
-  "version": "1.1.0",
-  "engines": {
-    "vscode": "^1.77.0"
-  },
-  "publisher": "K-eL",
-  "license": "MIT",
-  "author": {
-    "name": "Claudio Thorschmidt"
-  },
-  "icon": "assets/vue-files-icon.png",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/K-eL/vscode-vue-files"
-  },
-  "bugs": {
-    "url": "https://github.com/K-eL/vscode-vue-files/issues"
-  },
-  "keywords": [
-    "vue",
-    "typescript",
-    "files",
-    "javascript",
-    "templates"
-  ],
-  "categories": [
-    "Other",
-    "Snippets",
-    "Programming Languages"
-  ],
-  "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
-  },
-  "activationEvents": [
-    "*"
-  ],
-  "main": "./out/extension.js",
-  "contributes": {
-    "configuration": [
-      {
-        "type": "object",
-        "title": "Menu",
-        "order": 1,
-        "properties": {
-          "vscode-vue-files.menu.showCompositionApi": {
-            "type": "boolean",
-            "default": true,
-            "order": 1,
-            "description": "Show menu options that use Composition API (Setup) template"
-          },
-          "vscode-vue-files.menu.showOptionsApi": {
-            "type": "boolean",
-            "default": true,
-            "order": 2,
-            "description": "Show menu options that use Options API template"
-          },
-          "vscode-vue-files.menu.showTypescript": {
-            "type": "boolean",
-            "default": true,
-            "order": 3,
-            "description": "Show menu options that use Typescript as the Script language"
-          },
-          "vscode-vue-files.menu.showJavascript": {
-            "type": "boolean",
-            "default": true,
-            "order": 4,
-            "description": "Show menu options that use Javascript as the Script language"
-          },
-          "vscode-vue-files.menu.showCss": {
-            "type": "boolean",
-            "default": true,
-            "order": 5,
-            "description": "Show menu options that use CSS as the Style language"
-          },
-          "vscode-vue-files.menu.showScss": {
-            "type": "boolean",
-            "default": true,
-            "order": 6,
-            "description": "Show menu options that use SCSS as the Style language"
-          }
-        }
-      },
-      {
-        "type": "object",
-        "title": "File Structure",
-        "order": 2,
-        "properties": {
-          "vscode-vue-files.fileStructure.scriptTagComesFirst": {
-            "type": "boolean",
-            "default": false,
-            "order": 0,
-            "description": "The Script tag will come first in the file, otherwise Template tag comes first"
-          }
-        }
-      },
-      {
-        "type": "object",
-        "title": "Templates",
-        "order": 3,
-        "properties": {
-          "vscode-vue-files.template.showV-ModelTemplate": {
-            "type": "boolean",
-            "default": true,
-            "order": 1,
-            "description": "Generates a working V-Model structure in the new file (Props, Emits, and Computed options must be enabled to be functional)"
-          }
-        }
-      },
-      {
-        "type": "object",
-        "title": "Options",
-        "order": 4,
-        "properties": {
-          "vscode-vue-files.option.showNameScriptOption": {
-            "type": "boolean",
-            "default": true,
-            "order": 2,
-            "description": "Generates the \"Name\" option in the new file script tag"
-          },
-          "vscode-vue-files.option.showComponentsScriptOption": {
-            "type": "boolean",
-            "default": true,
-            "order": 3,
-            "description": "Generates the \"Components\" script option in the new file script tag"
-          },
-          "vscode-vue-files.option.showDirectivesScriptOption": {
-            "type": "boolean",
-            "default": false,
-            "order": 4,
-            "description": "Generates the \"Directives\" script option in the new file script tag"
-          },
-          "vscode-vue-files.option.showExtendsScriptOption": {
-            "type": "boolean",
-            "default": false,
-            "order": 5,
-            "description": "Generates the \"Extends\" script option in the new file script tag"
-          },
-          "vscode-vue-files.option.showMixinsScriptOption": {
-            "type": "boolean",
-            "default": false,
-            "order": 6,
-            "description": "Generates the \"Mixins\" script option in the new file script tag"
-          },
-          "vscode-vue-files.option.showProvideInjectScriptOption": {
-            "type": "boolean",
-            "default": false,
-            "order": 7,
-            "description": "Generates the \"Provide/Inject\" script option in the new file script tag"
-          },
-          "vscode-vue-files.option.showInheritAttributesScriptOption": {
-            "type": "boolean",
-            "default": false,
-            "order": 8,
-            "description": "Generates the \"Inherit Attributes\" script option in the new file script tag"
-          },
-          "vscode-vue-files.option.showPropsScriptOption": {
-            "type": "boolean",
-            "default": true,
-            "order": 9,
-            "description": "Generates the \"Props\" script option in the new file script tag"
-          },
-          "vscode-vue-files.option.showEmitsScriptOption": {
-            "type": "boolean",
-            "default": true,
-            "order": 10,
-            "description": "Generates the \"Emits\" script option in the new file script tag"
-          },
-          "vscode-vue-files.option.showSetupScriptOption": {
-            "type": "boolean",
-            "default": false,
-            "order": 11,
-            "description": "Generates the \"Setup\" script option in the new file script tag"
-          },
-          "vscode-vue-files.option.showDataScriptOption": {
-            "type": "boolean",
-            "default": true,
-            "order": 12,
-            "description": "Generates the \"Data\" script option in the new file script tag"
-          },
-          "vscode-vue-files.option.showComputedScriptOption": {
-            "type": "boolean",
-            "default": true,
-            "order": 13,
-            "description": "Generates the \"Computed\" script option in the new file script tag"
-          },
-          "vscode-vue-files.option.showWatchScriptOption": {
-            "type": "boolean",
-            "default": true,
-            "order": 14,
-            "description": "Generates the \"Watch\" script option in the new file script tag"
-          },
-          "vscode-vue-files.option.showMethodsScriptOption": {
-            "type": "boolean",
-            "default": true,
-            "order": 15,
-            "description": "Generates the \"Methods\" script option in the new file script tag"
-          }
-        }
-      },
-      {
-        "type": "object",
-        "title": "Life Cycle Hooks",
-        "order": 5,
-        "properties": {
-          "vscode-vue-files.lifecycle.showLifecycleHooksScriptOptions": {
-            "type": "boolean",
-            "default": true,
-            "order": 0,
-            "description": "Generates the lifecycle hooks script options in the new file script tag, when enabled, only the below active options will be displayed, otherwise all will be hidden"
-          },
-          "vscode-vue-files.lifecycle.showBeforeCreateScriptOption": {
-            "type": "boolean",
-            "default": false,
-            "order": 1,
-            "description": "Generates the \"Before Create\" script option in the new file script tag"
-          },
-          "vscode-vue-files.lifecycle.showCreatedScriptOption": {
-            "type": "boolean",
-            "default": false,
-            "order": 2,
-            "description": "Generates the \"Created\" script option in the new file script tag"
-          },
-          "vscode-vue-files.lifecycle.showBeforeMountScriptOption": {
-            "type": "boolean",
-            "default": false,
-            "order": 3,
-            "description": "Generates the \"Before Mount\" script option in the new file script tag"
-          },
-          "vscode-vue-files.lifecycle.showMountedScriptOption": {
-            "type": "boolean",
-            "default": true,
-            "order": 4,
-            "description": "Generates the \"Mounted\" script option in the new file script tag"
-          },
-          "vscode-vue-files.lifecycle.showBeforeUpdateScriptOption": {
-            "type": "boolean",
-            "default": false,
-            "order": 5,
-            "description": "Generates the \"Before Update\" script option in the new file script tag"
-          },
-          "vscode-vue-files.lifecycle.showUpdatedScriptOption": {
-            "type": "boolean",
-            "default": true,
-            "order": 6,
-            "description": "Generates the \"Updated\" script option in the new file script tag"
-          },
-          "vscode-vue-files.lifecycle.showActivatedScriptOption": {
-            "type": "boolean",
-            "default": false,
-            "order": 7,
-            "description": "Generates the \"Activated\" script option in the new file script tag"
-          },
-          "vscode-vue-files.lifecycle.showDeactivatedScriptOption": {
-            "type": "boolean",
-            "default": false,
-            "order": 8,
-            "description": "Generates the \"Deactivated\" script option in the new file script tag"
-          },
-          "vscode-vue-files.lifecycle.showBeforeUnmountScriptOption": {
-            "type": "boolean",
-            "default": true,
-            "order": 9,
-            "description": "Generates the \"Before Unmount\" script option in the new file script tag"
-          },
-          "vscode-vue-files.lifecycle.showUnmountedScriptOption": {
-            "type": "boolean",
-            "default": false,
-            "order": 10,
-            "description": "Generates the \"Unmounted\" script option in the new file script tag"
-          },
-          "vscode-vue-files.lifecycle.showErrorCapturedScriptOption": {
-            "type": "boolean",
-            "default": false,
-            "order": 11,
-            "description": "Generates the \"Error Captured\" script option in the new file script tag"
-          },
-          "vscode-vue-files.lifecycle.showRenderTrackedScriptOption": {
-            "type": "boolean",
-            "default": false,
-            "order": 12,
-            "description": "Generates the \"Render Tracked\" script option in the new file script tag"
-          },
-          "vscode-vue-files.lifecycle.showRenderTriggeredScriptOption": {
-            "type": "boolean",
-            "default": false,
-            "order": 13,
-            "description": "Generates the \"Render Triggered\" script option in the new file script tag"
-          }
-        }
-      }
-    ],
-    "commands": [
-      {
-        "command": "vscode-vue-files.vueOptionsJsCss",
-        "title": "Create New Options API (JS + CSS)"
-      },
-      {
-        "command": "vscode-vue-files.vueOptionsJsScss",
-        "title": "Create New Options API (JS + SCSS)"
-      },
-      {
-        "command": "vscode-vue-files.vueOptionsTsCss",
-        "title": "Create New Options API (TS + CSS)"
-      },
-      {
-        "command": "vscode-vue-files.vueOptionsTsScss",
-        "title": "Create New Options API (TS + SCSS)"
-      },
-      {
-        "command": "vscode-vue-files.vueSetupTsScss",
-        "title": "Create New Composition API (Setup + TS + SCSS)"
-      },
-      {
-        "command": "vscode-vue-files.vueSetupTsCss",
-        "title": "Create New Composition API (Setup + TS + CSS)"
-      },
-      {
-        "command": "vscode-vue-files.vueSetupJsScss",
-        "title": "Create New Composition API (Setup + JS + SCSS)"
-      },
-      {
-        "command": "vscode-vue-files.vueSetupJsCss",
-        "title": "Create New Composition API (Setup + JS + CSS)"
-      },
-      {
-        "command": "vscode-vue-files.devEnvTest",
-        "title": "TEST"
-      }
-    ],
-    "submenus": [
-      {
-        "id": "vuefiles",
-        "label": "Vue Files"
-      }
-    ],
-    "menus": {
-      "explorer/context": [
-        {
-          "submenu": "vuefiles",
-          "group": "1_vuefiles"
-        }
-      ],
-      "vuefiles": [
-        {
-          "when": "config.vscode-vue-files.menu.showCompositionApi && config.vscode-vue-files.menu.showTypescript && config.vscode-vue-files.menu.showScss",
-          "group": "1_setup",
-          "command": "vscode-vue-files.vueSetupTsScss"
-        },
-        {
-          "when": "config.vscode-vue-files.menu.showCompositionApi && config.vscode-vue-files.menu.showTypescript && config.vscode-vue-files.menu.showCss",
-          "group": "1_setup",
-          "command": "vscode-vue-files.vueSetupTsCss"
-        },
-        {
-          "when": "config.vscode-vue-files.menu.showCompositionApi && config.vscode-vue-files.menu.showJavascript && config.vscode-vue-files.menu.showScss",
-          "group": "1_setup",
-          "command": "vscode-vue-files.vueSetupJsScss"
-        },
-        {
-          "when": "config.vscode-vue-files.menu.showCompositionApi && config.vscode-vue-files.menu.showJavascript && config.vscode-vue-files.menu.showCss",
-          "group": "1_setup",
-          "command": "vscode-vue-files.vueSetupJsCss"
-        },
-        {
-          "when": "config.vscode-vue-files.menu.showOptionsApi && config.vscode-vue-files.menu.showTypescript && config.vscode-vue-files.menu.showScss",
-          "group": "2_options",
-          "command": "vscode-vue-files.vueOptionsTsScss"
-        },
-        {
-          "when": "config.vscode-vue-files.menu.showOptionsApi && config.vscode-vue-files.menu.showTypescript && config.vscode-vue-files.menu.showCss",
-          "group": "2_options",
-          "command": "vscode-vue-files.vueOptionsTsCss"
-        },
-        {
-          "when": "config.vscode-vue-files.menu.showOptionsApi && config.vscode-vue-files.menu.showJavascript && config.vscode-vue-files.menu.showScss",
-          "group": "2_options",
-          "command": "vscode-vue-files.vueOptionsJsScss"
-        },
-        {
-          "when": "config.vscode-vue-files.menu.showOptionsApi && config.vscode-vue-files.menu.showJavascript && config.vscode-vue-files.menu.showCss",
-          "group": "2_options",
-          "command": "vscode-vue-files.vueOptionsJsCss"
-        },
-        {
-          "when": "config.vscode-vue-files.isDevEnvironment",
-          "group": "3_dev",
-          "command": "vscode-vue-files.devEnvTest"
-        }
-      ]
-    }
-  },
-  "dependencies": {
-    "chai": "^5.1.1"
-  },
-  "devDependencies": {
-    "@types/chai": "^4.3.17",
-    "@types/glob": "^8.1.0",
-    "@types/mocha": "^10.0.1",
-    "@types/node": "^22.1.0",
-    "@types/vscode": "^1.92.0",
-    "@typescript-eslint/eslint-plugin": "^8.0.0",
-    "@typescript-eslint/parser": "^8.0.0",
-    "@vscode/test-electron": "^2.4.1",
-    "eslint": "^9.8.0",
-    "glob": "^11.0.0",
-    "mocha": "^10.7.0",
-    "typescript": "^5.5.4"
-  }
+	"name": "vscode-vue-files",
+	"displayName": "Vue Files",
+	"description": "Quickly create Vue files with different templates",
+	"version": "1.1.1",
+	"type": "commonjs",
+	"engines": {
+		"vscode": "^1.77.0"
+	},
+	"publisher": "K-eL",
+	"license": "MIT",
+	"author": {
+		"name": "Claudio Thorschmidt"
+	},
+	"icon": "assets/vue-files-icon.png",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/K-eL/vscode-vue-files"
+	},
+	"bugs": {
+		"url": "https://github.com/K-eL/vscode-vue-files/issues"
+	},
+	"keywords": [
+		"vue",
+		"typescript",
+		"files",
+		"javascript",
+		"templates"
+	],
+	"categories": [
+		"Other",
+		"Snippets",
+		"Programming Languages"
+	],
+	"files": [
+		"out/**/*.js",
+		"package.json",
+		"README.md",
+		"CHANGELOG.md",
+		"LICENSE.md"
+	],
+	"scripts": {
+		"vscode:package": "vsce package",
+		"vscode:prepublish": "npm run test",
+		"vscode:publish": "vsce publish",
+		"test": "vscode-test",
+		"pretest": "npm run lint && npm run compile",
+		"lint": "eslint --fix src/**/*.ts",
+		"compile": "npm run clean && tsc -p ./",
+		"clean": "rimraf out",
+		"watch": "tsc -watch -p ./"
+	},
+	"devDependencies": {
+		"@types/chai": "^4.3.17",
+		"@types/mocha": "^10.0.1",
+		"@types/node": "^22.1.0",
+		"@types/vscode": "^1.92.0",
+		"@typescript-eslint/eslint-plugin": "^8.0.0",
+		"@typescript-eslint/parser": "^8.0.0",
+		"@vscode/test-cli": "^0.0.10",
+		"@vscode/test-electron": "^2.4.1",
+		"chai": "^5.1.1",
+		"eslint": "^8.57.0",
+		"glob": "^11.0.0",
+		"mocha": "^10.7.0",
+		"rimraf": "^6.0.1",
+		"typescript": "^5.5.4",
+		"typescript-eslint": "^8.0.0"
+	},
+	"activationEvents": [
+		"*"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"configuration": [
+			{
+				"type": "object",
+				"title": "Menu",
+				"order": 1,
+				"properties": {
+					"vscode-vue-files.menu.showCompositionApi": {
+						"type": "boolean",
+						"default": true,
+						"order": 1,
+						"description": "Show menu options that use Composition API (Setup) template"
+					},
+					"vscode-vue-files.menu.showOptionsApi": {
+						"type": "boolean",
+						"default": true,
+						"order": 2,
+						"description": "Show menu options that use Options API template"
+					},
+					"vscode-vue-files.menu.showTypescript": {
+						"type": "boolean",
+						"default": true,
+						"order": 3,
+						"description": "Show menu options that use Typescript as the Script language"
+					},
+					"vscode-vue-files.menu.showJavascript": {
+						"type": "boolean",
+						"default": true,
+						"order": 4,
+						"description": "Show menu options that use Javascript as the Script language"
+					},
+					"vscode-vue-files.menu.showCss": {
+						"type": "boolean",
+						"default": true,
+						"order": 5,
+						"description": "Show menu options that use CSS as the Style language"
+					},
+					"vscode-vue-files.menu.showScss": {
+						"type": "boolean",
+						"default": true,
+						"order": 6,
+						"description": "Show menu options that use SCSS as the Style language"
+					}
+				}
+			},
+			{
+				"type": "object",
+				"title": "File Structure",
+				"order": 2,
+				"properties": {
+					"vscode-vue-files.fileStructure.scriptTagComesFirst": {
+						"type": "boolean",
+						"default": false,
+						"order": 0,
+						"description": "The Script tag will come first in the file, otherwise Template tag comes first"
+					}
+				}
+			},
+			{
+				"type": "object",
+				"title": "Templates",
+				"order": 3,
+				"properties": {
+					"vscode-vue-files.template.showV-ModelTemplate": {
+						"type": "boolean",
+						"default": true,
+						"order": 1,
+						"description": "Generates a working V-Model structure in the new file (Props, Emits, and Computed options must be enabled to be functional)"
+					}
+				}
+			},
+			{
+				"type": "object",
+				"title": "Options",
+				"order": 4,
+				"properties": {
+					"vscode-vue-files.option.showNameScriptOption": {
+						"type": "boolean",
+						"default": true,
+						"order": 2,
+						"description": "Generates the \"Name\" option in the new file script tag"
+					},
+					"vscode-vue-files.option.showComponentsScriptOption": {
+						"type": "boolean",
+						"default": true,
+						"order": 3,
+						"description": "Generates the \"Components\" script option in the new file script tag"
+					},
+					"vscode-vue-files.option.showDirectivesScriptOption": {
+						"type": "boolean",
+						"default": false,
+						"order": 4,
+						"description": "Generates the \"Directives\" script option in the new file script tag"
+					},
+					"vscode-vue-files.option.showExtendsScriptOption": {
+						"type": "boolean",
+						"default": false,
+						"order": 5,
+						"description": "Generates the \"Extends\" script option in the new file script tag"
+					},
+					"vscode-vue-files.option.showMixinsScriptOption": {
+						"type": "boolean",
+						"default": false,
+						"order": 6,
+						"description": "Generates the \"Mixins\" script option in the new file script tag"
+					},
+					"vscode-vue-files.option.showProvideInjectScriptOption": {
+						"type": "boolean",
+						"default": false,
+						"order": 7,
+						"description": "Generates the \"Provide/Inject\" script option in the new file script tag"
+					},
+					"vscode-vue-files.option.showInheritAttributesScriptOption": {
+						"type": "boolean",
+						"default": false,
+						"order": 8,
+						"description": "Generates the \"Inherit Attributes\" script option in the new file script tag"
+					},
+					"vscode-vue-files.option.showPropsScriptOption": {
+						"type": "boolean",
+						"default": true,
+						"order": 9,
+						"description": "Generates the \"Props\" script option in the new file script tag"
+					},
+					"vscode-vue-files.option.showEmitsScriptOption": {
+						"type": "boolean",
+						"default": true,
+						"order": 10,
+						"description": "Generates the \"Emits\" script option in the new file script tag"
+					},
+					"vscode-vue-files.option.showSetupScriptOption": {
+						"type": "boolean",
+						"default": false,
+						"order": 11,
+						"description": "Generates the \"Setup\" script option in the new file script tag"
+					},
+					"vscode-vue-files.option.showDataScriptOption": {
+						"type": "boolean",
+						"default": true,
+						"order": 12,
+						"description": "Generates the \"Data\" script option in the new file script tag"
+					},
+					"vscode-vue-files.option.showComputedScriptOption": {
+						"type": "boolean",
+						"default": true,
+						"order": 13,
+						"description": "Generates the \"Computed\" script option in the new file script tag"
+					},
+					"vscode-vue-files.option.showWatchScriptOption": {
+						"type": "boolean",
+						"default": true,
+						"order": 14,
+						"description": "Generates the \"Watch\" script option in the new file script tag"
+					},
+					"vscode-vue-files.option.showMethodsScriptOption": {
+						"type": "boolean",
+						"default": true,
+						"order": 15,
+						"description": "Generates the \"Methods\" script option in the new file script tag"
+					}
+				}
+			},
+			{
+				"type": "object",
+				"title": "Life Cycle Hooks",
+				"order": 5,
+				"properties": {
+					"vscode-vue-files.lifecycle.showLifecycleHooksScriptOptions": {
+						"type": "boolean",
+						"default": true,
+						"order": 0,
+						"description": "Generates the lifecycle hooks script options in the new file script tag, when enabled, only the below active options will be displayed, otherwise all will be hidden"
+					},
+					"vscode-vue-files.lifecycle.showBeforeCreateScriptOption": {
+						"type": "boolean",
+						"default": false,
+						"order": 1,
+						"description": "Generates the \"Before Create\" script option in the new file script tag"
+					},
+					"vscode-vue-files.lifecycle.showCreatedScriptOption": {
+						"type": "boolean",
+						"default": false,
+						"order": 2,
+						"description": "Generates the \"Created\" script option in the new file script tag"
+					},
+					"vscode-vue-files.lifecycle.showBeforeMountScriptOption": {
+						"type": "boolean",
+						"default": false,
+						"order": 3,
+						"description": "Generates the \"Before Mount\" script option in the new file script tag"
+					},
+					"vscode-vue-files.lifecycle.showMountedScriptOption": {
+						"type": "boolean",
+						"default": true,
+						"order": 4,
+						"description": "Generates the \"Mounted\" script option in the new file script tag"
+					},
+					"vscode-vue-files.lifecycle.showBeforeUpdateScriptOption": {
+						"type": "boolean",
+						"default": false,
+						"order": 5,
+						"description": "Generates the \"Before Update\" script option in the new file script tag"
+					},
+					"vscode-vue-files.lifecycle.showUpdatedScriptOption": {
+						"type": "boolean",
+						"default": true,
+						"order": 6,
+						"description": "Generates the \"Updated\" script option in the new file script tag"
+					},
+					"vscode-vue-files.lifecycle.showActivatedScriptOption": {
+						"type": "boolean",
+						"default": false,
+						"order": 7,
+						"description": "Generates the \"Activated\" script option in the new file script tag"
+					},
+					"vscode-vue-files.lifecycle.showDeactivatedScriptOption": {
+						"type": "boolean",
+						"default": false,
+						"order": 8,
+						"description": "Generates the \"Deactivated\" script option in the new file script tag"
+					},
+					"vscode-vue-files.lifecycle.showBeforeUnmountScriptOption": {
+						"type": "boolean",
+						"default": true,
+						"order": 9,
+						"description": "Generates the \"Before Unmount\" script option in the new file script tag"
+					},
+					"vscode-vue-files.lifecycle.showUnmountedScriptOption": {
+						"type": "boolean",
+						"default": false,
+						"order": 10,
+						"description": "Generates the \"Unmounted\" script option in the new file script tag"
+					},
+					"vscode-vue-files.lifecycle.showErrorCapturedScriptOption": {
+						"type": "boolean",
+						"default": false,
+						"order": 11,
+						"description": "Generates the \"Error Captured\" script option in the new file script tag"
+					},
+					"vscode-vue-files.lifecycle.showRenderTrackedScriptOption": {
+						"type": "boolean",
+						"default": false,
+						"order": 12,
+						"description": "Generates the \"Render Tracked\" script option in the new file script tag"
+					},
+					"vscode-vue-files.lifecycle.showRenderTriggeredScriptOption": {
+						"type": "boolean",
+						"default": false,
+						"order": 13,
+						"description": "Generates the \"Render Triggered\" script option in the new file script tag"
+					}
+				}
+			}
+		],
+		"commands": [
+			{
+				"command": "vscode-vue-files.vueOptionsJsCss",
+				"title": "Create New Options API (JS + CSS)"
+			},
+			{
+				"command": "vscode-vue-files.vueOptionsJsScss",
+				"title": "Create New Options API (JS + SCSS)"
+			},
+			{
+				"command": "vscode-vue-files.vueOptionsTsCss",
+				"title": "Create New Options API (TS + CSS)"
+			},
+			{
+				"command": "vscode-vue-files.vueOptionsTsScss",
+				"title": "Create New Options API (TS + SCSS)"
+			},
+			{
+				"command": "vscode-vue-files.vueSetupTsScss",
+				"title": "Create New Composition API (Setup + TS + SCSS)"
+			},
+			{
+				"command": "vscode-vue-files.vueSetupTsCss",
+				"title": "Create New Composition API (Setup + TS + CSS)"
+			},
+			{
+				"command": "vscode-vue-files.vueSetupJsScss",
+				"title": "Create New Composition API (Setup + JS + SCSS)"
+			},
+			{
+				"command": "vscode-vue-files.vueSetupJsCss",
+				"title": "Create New Composition API (Setup + JS + CSS)"
+			},
+			{
+				"command": "vscode-vue-files.devEnvTest",
+				"title": "TEST"
+			}
+		],
+		"submenus": [
+			{
+				"id": "vuefiles",
+				"label": "Vue Files"
+			}
+		],
+		"menus": {
+			"explorer/context": [
+				{
+					"submenu": "vuefiles",
+					"group": "1_vuefiles"
+				}
+			],
+			"vuefiles": [
+				{
+					"when": "config.vscode-vue-files.menu.showCompositionApi && config.vscode-vue-files.menu.showTypescript && config.vscode-vue-files.menu.showScss",
+					"group": "1_setup",
+					"command": "vscode-vue-files.vueSetupTsScss"
+				},
+				{
+					"when": "config.vscode-vue-files.menu.showCompositionApi && config.vscode-vue-files.menu.showTypescript && config.vscode-vue-files.menu.showCss",
+					"group": "1_setup",
+					"command": "vscode-vue-files.vueSetupTsCss"
+				},
+				{
+					"when": "config.vscode-vue-files.menu.showCompositionApi && config.vscode-vue-files.menu.showJavascript && config.vscode-vue-files.menu.showScss",
+					"group": "1_setup",
+					"command": "vscode-vue-files.vueSetupJsScss"
+				},
+				{
+					"when": "config.vscode-vue-files.menu.showCompositionApi && config.vscode-vue-files.menu.showJavascript && config.vscode-vue-files.menu.showCss",
+					"group": "1_setup",
+					"command": "vscode-vue-files.vueSetupJsCss"
+				},
+				{
+					"when": "config.vscode-vue-files.menu.showOptionsApi && config.vscode-vue-files.menu.showTypescript && config.vscode-vue-files.menu.showScss",
+					"group": "2_options",
+					"command": "vscode-vue-files.vueOptionsTsScss"
+				},
+				{
+					"when": "config.vscode-vue-files.menu.showOptionsApi && config.vscode-vue-files.menu.showTypescript && config.vscode-vue-files.menu.showCss",
+					"group": "2_options",
+					"command": "vscode-vue-files.vueOptionsTsCss"
+				},
+				{
+					"when": "config.vscode-vue-files.menu.showOptionsApi && config.vscode-vue-files.menu.showJavascript && config.vscode-vue-files.menu.showScss",
+					"group": "2_options",
+					"command": "vscode-vue-files.vueOptionsJsScss"
+				},
+				{
+					"when": "config.vscode-vue-files.menu.showOptionsApi && config.vscode-vue-files.menu.showJavascript && config.vscode-vue-files.menu.showCss",
+					"group": "2_options",
+					"command": "vscode-vue-files.vueOptionsJsCss"
+				},
+				{
+					"when": "config.vscode-vue-files.isDevEnvironment",
+					"group": "3_dev",
+					"command": "vscode-vue-files.devEnvTest"
+				}
+			]
+		}
+	}
 }
