@@ -1,12 +1,12 @@
 # VSCode Vue Files
 
-This extension allows you to quickly create new Vue files filled with some boilerplate content depending on your choice.
+This extension allows you to quickly create new Vue files filled with some boilerplate content depending on your preferences.
 
 > Inspired by Angular Files (https://github.com/ivalexa/vscode-angular2-files)
 
 ## Features
 
-Right-click inside your explorer panel or over a folder to open "Vue Files" menu option. 
+Right-click inside your explorer panel or over a folder to open "Vue Files" menu option.
 
 You will find many options to choose how you want to create your new file.
 
@@ -35,6 +35,7 @@ You can add these options to your VS Code Settings to have a better experience (
 **Menu Options**
 
 These configs enable/disable the corresponding menu options, all enabled by default:
+
 ```
 "vscode-vue-files.menu.showCompositionApi": true,
 "vscode-vue-files.menu.showOptionsApi": true,
@@ -47,6 +48,7 @@ These configs enable/disable the corresponding menu options, all enabled by defa
 **File Structure**
 
 If true, places the `script` tag at the top of the new files, otherwise, the `template` tag comes at the top. It's **false** by default (`template` first).
+
 ```
 "vscode-vue-files.fileStructure.scriptTagComesFirst": false
 ```
@@ -101,28 +103,12 @@ These settings show/hide the corresponding life-cycle hooks in the newly generat
 "vscode-vue-files.lifecycle.showRenderTriggeredScriptOption": false
 ```
 
-## Release Notes
-### 1.1.0
-
-* Many code quality improvements.
-* Included many other options that can be enabled/disabled through settings.
-* Added a fancy menu and better description for the settings.
-* Previous settings were removed, now more general settings were included to show the menu options.
-* Included the base template of a working V-Model for new components (can be disabled on settings).
-* Improved how component name is generated based on the given string.
-### 1.0.0
-
-* Initial release.
-* Users can choose between Options API and Composition API.
-* Users can choose Javascript or Typescript as script language.
-* Users can choose Css or Scss as style language.
-
 ## Disclaimer
 
->**Important:** This extension due to the nature of it's purpose will create
-files on your hard drive and if necessary create the respective folder structure.
-While it should not override any files during this process, I'm not giving any guarantees
-or take any responsibility in case of lost data. 
+> **Important:** This extension due to the nature of it's purpose will create
+> files on your hard drive and if necessary create the respective folder structure.
+> While it should not override any files during this process, I'm not giving any guarantees
+> or take any responsibility in case of lost data.
 
 ## License
 
