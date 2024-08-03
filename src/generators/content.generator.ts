@@ -1,63 +1,114 @@
 import { FileSettings } from "../interfaces/file-settings";
-import { VueScriptLang } from '../enums/vue-script-lang.enum';
-import { VueStyleLang } from '../enums/vue-style-lang.enum';
+import { VueScriptLang } from "../enums/vue-script-lang.enum";
+import { VueStyleLang } from "../enums/vue-style-lang.enum";
 import { generateOptionsApiScriptTemplate } from "./options-script.generator";
 import { generateCompositionApiScriptTemplate } from "./composition-script.generator";
-import { isScriptFirst, showInheritAttrsScriptOption, showVModelTemplate } from "../helpers/config.helper";
+import { ConfigHelper } from "../helpers/config.helper";
 
-export const generateContent = (fileSettings: FileSettings) => {
-	return isScriptFirst() ?
-		generateContentScriptFirst(fileSettings) :
-		generateContentTemplateFirst(fileSettings);
+let _configHelper = new ConfigHelper();
+let ind: (x?: number) => string;
+
+/**
+ *  Generates the content for the script that will be included in the Vue component. Depending on the parameters, it will generate either the OptionsApiScriptTemplate script or the CompositionApiScriptTemplate script. It will also generate the Template and Style content accordingly.
+ * @param fileSettings The settings for the file. It includes the api type, script language, style language, and component name.
+ * @returns string
+ * */
+export const generateContent = (
+	fileSettings: FileSettings,
+	configHelper: ConfigHelper,
+) => {
+	_configHelper = configHelper;
+	ind = configHelper.ind;
+	return configHelper.isScriptFirst()
+		? generateContentScriptFirst(fileSettings)
+		: generateContentTemplateFirst(fileSettings);
 };
 
 const generateContentScriptFirst = (fileSettings: FileSettings) => {
 	const { isSetupApi, scriptLang, styleLang, componentName } = fileSettings;
-	return generateScriptContent(isSetupApi, scriptLang, componentName) +
+	return (
+		generateScriptContent(isSetupApi, scriptLang, componentName) +
 		generateTemplate() +
-		generateStyleContent(styleLang, true);
+		generateStyleContent(styleLang, true)
+	);
 };
 
 const generateContentTemplateFirst = (fileSettings: FileSettings) => {
 	const { isSetupApi, scriptLang, styleLang, componentName } = fileSettings;
-	return generateTemplate() +
+	return (
+		generateTemplate() +
 		generateScriptContent(isSetupApi, scriptLang, componentName) +
-		generateStyleContent(styleLang, true);
+		generateStyleContent(styleLang, true)
+	);
 };
 
-const generateScriptContent = (isSetupApi: boolean, scriptLang: VueScriptLang, componentName: string) => {
+const generateScriptContent = (
+	isSetupApi: boolean,
+	scriptLang: VueScriptLang,
+	componentName: string,
+) => {
 	const isTs = scriptLang === VueScriptLang.typeScript;
-	const optionsTemplate = generateOptionsApiScriptTemplate(componentName, isTs);
-	const setupTemplate = generateCompositionApiScriptTemplate(isTs);
-	return `<script ${isSetupApi ? 'setup ' : ''}lang='${scriptLang}'>` + `\n` +
+	const optionsTemplate = generateOptionsApiScriptTemplate(
+		componentName,
+		isTs,
+		_configHelper,
+	);
+	const setupTemplate = generateCompositionApiScriptTemplate(
+		isTs,
+		_configHelper,
+	);
+	return (
+		`<script ${isSetupApi ? "setup " : ""}lang='${scriptLang}'>` +
+		`\n` +
 		`${!isSetupApi ? optionsTemplate : setupTemplate}` +
-		`</script>` + `\n\n` +
-		`${isSetupApi ? generateInheritAttrs(scriptLang) : ``}`;
+		`</script>` +
+		`\n\n` +
+		`${isSetupApi ? generateInheritAttrs(scriptLang) : ``}`
+	);
 };
 
 const generateInheritAttrs = (scriptLang: VueScriptLang) => {
-	if (!showInheritAttrsScriptOption()) return ``;
-	return `<script lang='${scriptLang}'>` + `\n` +
-		`\t` + `export default {` + `\n` +
-		`\t\t` + `inheritAttrs: false,` + `\n` +
-		`\t` + `};` + `\n` +
-		`</script>` + `\n\n`;
+	if (!_configHelper.showInheritAttrsScriptOption()) return ``;
+	return (
+		`<script lang='${scriptLang}'>` +
+		`\n` +
+		ind() +
+		`export default {` +
+		`\n` +
+		ind(2) +
+		`inheritAttrs: false,` +
+		`\n` +
+		ind() +
+		`};` +
+		`\n` +
+		`</script>` +
+		`\n\n`
+	);
 };
 
 const generateTemplate = () => {
-	return `<template>` + `\n` +
-		`\t` + `<div>` + `\n` +
+	return (
+		`<template>` +
+		`\n` +
+		ind() +
+		`<div>` +
+		`\n` +
 		generateTemplateVModel() +
-		`\t` + `</div>` + `\n` +
-		`</template>` + `\n\n`;
+		ind() +
+		`</div>` +
+		`\n` +
+		`</template>` +
+		`\n\n`
+	);
 };
 
 const generateTemplateVModel = () => {
-	if (!showVModelTemplate()) return '';
-	return `\t\t` + `<input v-model="value" />` + `\n`;
+	if (!_configHelper.showVModelTemplate()) return "";
+	return ind(2) + `<input v-model="value" />` + `\n`;
 };
 
 const generateStyleContent = (styleLang: VueStyleLang, scoped: boolean) => {
-	return `<style ${scoped ? 'scoped ' : ''}lang="${styleLang}">` + `\n` +
-		`</style>`;
+	return (
+		`<style ${scoped ? "scoped " : ""}lang="${styleLang}">` + `\n` + `</style>`
+	);
 };

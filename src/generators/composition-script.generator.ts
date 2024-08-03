@@ -1,28 +1,18 @@
-import {
-	showActivatedScriptOption,
-	showBeforeMountScriptOption,
-	showBeforeUnmountScriptOption,
-	showBeforeUpdateScriptOption,
-	showComputedScriptOption,
-	showDeactivatedScriptOption,
-	showEmitsScriptOption,
-	showErrorCapturedScriptOption,
-	showLifecycleHooksScriptOptions,
-	showMountedScriptOption,
-	showPropsScriptOption,
-	showRenderTrackedScriptOption,
-	showRenderTriggeredScriptOption,
-	showUnmountedScriptOption,
-	showUpdatedScriptOption,
-	showVModelTemplate,
-	showWatchScriptOption
-} from "../helpers/config.helper";
+import { ConfigHelper } from "../helpers/config.helper";
 
 let _isTs: boolean = false;
+let _configHelper = new ConfigHelper();
+let ind: (x?: number) => string;
 
-export const generateCompositionApiScriptTemplate = (isTs: boolean) => {
+export const generateCompositionApiScriptTemplate = (
+	isTs: boolean,
+	configHelper: ConfigHelper,
+) => {
 	_isTs = isTs;
-	return generateImportStatement() +
+	_configHelper = configHelper;
+	ind = _configHelper.ind;
+	return (
+		generateImportStatement() +
 		generateProps() +
 		generateEmits() +
 		generateComputed() +
@@ -37,161 +27,275 @@ export const generateCompositionApiScriptTemplate = (isTs: boolean) => {
 		generateUnmounted() +
 		generateErrorCaptured() +
 		generateRenderTracked() +
-		generateRenderTriggered();
+		generateRenderTriggered()
+	);
 };
 
 const generateImportStatement = (): string => {
 	const imports = [];
-	if (showComputedScriptOption()) imports.push('computed');
-	if (showWatchScriptOption()) imports.push('watch');
-	if (showLifecycleHooksScriptOptions()) {
-		if (showBeforeMountScriptOption()) imports.push('onBeforeMount');
-		if (showMountedScriptOption()) imports.push('onMounted');
-		if (showBeforeUpdateScriptOption()) imports.push('onBeforeUpdate');
-		if (showUpdatedScriptOption()) imports.push('onUpdated');
-		if (showActivatedScriptOption()) imports.push('onActivated');
-		if (showDeactivatedScriptOption()) imports.push('onDeactivated');
-		if (showBeforeUnmountScriptOption()) imports.push('onBeforeUnmount');
-		if (showUnmountedScriptOption()) imports.push('onUnmounted');
-		if (showErrorCapturedScriptOption()) imports.push('onErrorCaptured');
-		if (showRenderTrackedScriptOption()) imports.push('onRenderTracked');
-		if (showRenderTriggeredScriptOption()) imports.push('onRenderTriggered');
+	if (_configHelper.showComputedScriptOption()) imports.push("computed");
+	if (_configHelper.showWatchScriptOption()) imports.push("watch");
+	if (_configHelper.showLifecycleHooksScriptOptions()) {
+		if (_configHelper.showBeforeMountScriptOption())
+			imports.push("onBeforeMount");
+		if (_configHelper.showMountedScriptOption()) imports.push("onMounted");
+		if (_configHelper.showBeforeUpdateScriptOption())
+			imports.push("onBeforeUpdate");
+		if (_configHelper.showUpdatedScriptOption()) imports.push("onUpdated");
+		if (_configHelper.showActivatedScriptOption()) imports.push("onActivated");
+		if (_configHelper.showDeactivatedScriptOption())
+			imports.push("onDeactivated");
+		if (_configHelper.showBeforeUnmountScriptOption())
+			imports.push("onBeforeUnmount");
+		if (_configHelper.showUnmountedScriptOption()) imports.push("onUnmounted");
+		if (_configHelper.showErrorCapturedScriptOption())
+			imports.push("onErrorCaptured");
+		if (_configHelper.showRenderTrackedScriptOption())
+			imports.push("onRenderTracked");
+		if (_configHelper.showRenderTriggeredScriptOption())
+			imports.push("onRenderTriggered");
 	}
-	return `import { ${imports.join(', ')} } from 'vue'` + `\n\n`;
+	return `import { ${imports.join(", ")} } from 'vue'` + `\n\n`;
 };
 
 const generateProps = (): string => {
-	if (!showPropsScriptOption()) return '';
-	return `const props = defineProps({` + `\n` +
+	if (!_configHelper.showPropsScriptOption()) return "";
+	return (
+		`const props = defineProps({` +
+		`\n` +
 		generatePropsVModel() +
-		`});` + `\n\n`;
+		`});` +
+		`\n\n`
+	);
 };
 
 const generatePropsVModel = (): string => {
-	if (!showVModelTemplate()) return `\t` + `text: String` + `\n`;
-	return `\t` + `// v-model` + `\n` +
-		`\t` + `modelValue: {` + `\n` +
-		`${_isTs ? '\t\t' + 'type: String, ' + '\n' : ''}` +
-		`\t\t` + `default: '',` + `\n` +
-		`\t` + `},` + `\n`;
+	if (!_configHelper.showVModelTemplate()) return ind() + `text: String` + `\n`;
+	return (
+		ind() +
+		`// v-model` +
+		`\n` +
+		ind() +
+		`modelValue: {` +
+		`\n` +
+		`${_isTs ? ind(2) + "type: String, " + "\n" : ""}` +
+		ind(2) +
+		`default: '',` +
+		`\n` +
+		ind() +
+		`},` +
+		`\n`
+	);
 };
 
 const generateEmits = (): string => {
-	if (!showEmitsScriptOption()) return '';
-	return `const emit = defineEmits({` + `\n` +
-		generateEmitsVModel() +
-		`});` + `\n\n`;
+	if (!_configHelper.showEmitsScriptOption()) return "";
+	return (
+		`const emit = defineEmits({` + `\n` + generateEmitsVModel() + `});` + `\n\n`
+	);
 };
 
 const generateEmitsVModel = (): string => {
-	if (!showVModelTemplate()) {
-		if (showPropsScriptOption()) return `\t` + `'update:text': (value${_isTs ? ': any' : ''}) => value !== null,` + `\n`;
-		return `\t` + `'update:foo': (value${_isTs ? ': any' : ''}) => value !== null,` + `\n`;
+	if (!_configHelper.showVModelTemplate()) {
+		if (_configHelper.showPropsScriptOption())
+			return (
+				ind() +
+				`'update:text': (value${_isTs ? ": any" : ""}) => value !== null,` +
+				`\n`
+			);
+		return (
+			ind() +
+			`'update:foo': (value${_isTs ? ": any" : ""}) => value !== null,` +
+			`\n`
+		);
 	}
-	return `\t` + `// v-model event with validation` + `\n` +
-		`\t` + `'update:modelValue': (value${_isTs ? ': any' : ''}) => value !== null,` + `\n`;
+	return (
+		ind() +
+		`// v-model event with validation` +
+		`\n` +
+		ind() +
+		`'update:modelValue': (value${_isTs ? ": any" : ""}) => value !== null,` +
+		`\n`
+	);
 };
 
 const generateComputed = (): string => {
-	if (!showComputedScriptOption()) return '';
-	if (!showVModelTemplate()) return `const now = computed(() => Date.now());` + `\n\n`;
+	if (!_configHelper.showComputedScriptOption()) return "";
+	if (!_configHelper.showVModelTemplate())
+		return `const now = computed(() => Date.now());` + `\n\n`;
 	return `const value = computed(` + generateComputedVModel() + `);` + `\n\n`;
 };
 
 const generateComputedVModel = (): string => {
-	return `{` + `\n` +
-		`\t` + `get () {` + `\n` +
-		`\t\t` + `return props.modelValue;` + `\n` +
-		`\t` + `},` + `\n` +
-		`\t` + `set (value${_isTs ? ': any' : ''}) {` + `\n` +
-		`${showEmitsScriptOption() ? `\t\t` + `emit('update:modelValue', value);` + `\n` : ''}` +
-		`\t` + `},` + `\n` +
-		`}`;
+	return (
+		`{` +
+		`\n` +
+		ind() +
+		`get () {` +
+		`\n` +
+		ind(2) +
+		`return props.modelValue;` +
+		`\n` +
+		ind() +
+		`},` +
+		`\n` +
+		ind() +
+		`set (value${_isTs ? ": any" : ""}) {` +
+		`\n` +
+		`${
+			_configHelper.showEmitsScriptOption()
+				? ind(2) + `emit('update:modelValue', value);` + `\n`
+				: ""
+		}` +
+		ind() +
+		`},` +
+		`\n` +
+		`}`
+	);
 };
 
 const generateWatch = (): string => {
-	if (!showWatchScriptOption()) return '';
-	return `const stopWatch = watch(` + `\n` +
-		`\t` + generateWatchVModel() + `, async (_newValue${_isTs ? ': any' : ''}, _oldValue${_isTs ? ': any' : ''}) => {` + `\n` +
-		`\t\t` + `// do something` + `\n` +
-		`\t` + `},` + `\n` +
-		`\t` + `{` + `\n` +
-		`\t\t` + `immediate: true` + `\n` +
-		`\t` + `}` + `\n` +
-		`);` + `\n\n`;
+	if (!_configHelper.showWatchScriptOption()) return "";
+	return (
+		`const stopWatch = watch(` +
+		`\n` +
+		ind() +
+		generateWatchVModel() +
+		`, async (_newValue${_isTs ? ": any" : ""}, _oldValue${
+			_isTs ? ": any" : ""
+		}) => {` +
+		`\n` +
+		ind(2) +
+		`// do something` +
+		`\n` +
+		ind() +
+		`},` +
+		`\n` +
+		ind() +
+		`{` +
+		`\n` +
+		ind(2) +
+		`immediate: true` +
+		`\n` +
+		ind() +
+		`}` +
+		`\n` +
+		`);` +
+		`\n\n`
+	);
 };
 
 const generateWatchVModel = (): string => {
-	if (!showVModelTemplate()) {
-		if (!showPropsScriptOption()) return `() => new Date()`;
+	if (!_configHelper.showVModelTemplate()) {
+		if (!_configHelper.showPropsScriptOption()) return `() => new Date()`;
 		return `() => props.text`;
 	}
 	return `() => props.modelValue`;
 };
 
 const generateBeforeMount = (): string => {
-	if (!showLifecycleHooksScriptOptions() || !showBeforeMountScriptOption()) return '';
-	return `onBeforeMount(() => {` + `\n` +
-		`});` + `\n\n`;
+	if (
+		!_configHelper.showLifecycleHooksScriptOptions() ||
+		!_configHelper.showBeforeMountScriptOption()
+	)
+		return "";
+	return `onBeforeMount(() => {` + `\n` + `});` + `\n\n`;
 };
 
 const generateMounted = (): string => {
-	if (!showLifecycleHooksScriptOptions() || !showMountedScriptOption()) return '';
-	return `onMounted(() => {` + `\n` +
-		`});` + `\n\n`;
+	if (
+		!_configHelper.showLifecycleHooksScriptOptions() ||
+		!_configHelper.showMountedScriptOption()
+	)
+		return "";
+	return `onMounted(() => {` + `\n` + `});` + `\n\n`;
 };
 
 const generateBeforeUpdate = (): string => {
-	if (!showLifecycleHooksScriptOptions() || !showBeforeUpdateScriptOption()) return '';
-	return `onBeforeUpdate(() => {` + `\n` +
-		`});` + `\n\n`;
+	if (
+		!_configHelper.showLifecycleHooksScriptOptions() ||
+		!_configHelper.showBeforeUpdateScriptOption()
+	)
+		return "";
+	return `onBeforeUpdate(() => {` + `\n` + `});` + `\n\n`;
 };
 
 const generateUpdated = (): string => {
-	if (!showLifecycleHooksScriptOptions() || !showUpdatedScriptOption()) return '';
-	return `onUpdated(() => {` + `\n` +
-		`});` + `\n\n`;
+	if (
+		!_configHelper.showLifecycleHooksScriptOptions() ||
+		!_configHelper.showUpdatedScriptOption()
+	)
+		return "";
+	return `onUpdated(() => {` + `\n` + `});` + `\n\n`;
 };
 
 const generateActivated = (): string => {
-	if (!showLifecycleHooksScriptOptions() || !showActivatedScriptOption()) return '';
-	return `onActivated(() => {` + `\n` +
-		`});` + `\n\n`;
+	if (
+		!_configHelper.showLifecycleHooksScriptOptions() ||
+		!_configHelper.showActivatedScriptOption()
+	)
+		return "";
+	return `onActivated(() => {` + `\n` + `});` + `\n\n`;
 };
 
 const generateDeactivated = (): string => {
-	if (!showLifecycleHooksScriptOptions() || !showDeactivatedScriptOption()) return '';
-	return `onDeactivated(() => {` + `\n` +
-		`});` + `\n\n`;
+	if (
+		!_configHelper.showLifecycleHooksScriptOptions() ||
+		!_configHelper.showDeactivatedScriptOption()
+	)
+		return "";
+	return `onDeactivated(() => {` + `\n` + `});` + `\n\n`;
 };
 
 const generateBeforeUnmount = (): string => {
-	if (!showLifecycleHooksScriptOptions() || !showBeforeUnmountScriptOption()) return '';
-	return `onBeforeUnmount(() => {` + `\n` +
-		`${showWatchScriptOption() ? `\t` + `stopWatch();` + `\n` : ''}` +
-		`});` + `\n\n`;
+	if (
+		!_configHelper.showLifecycleHooksScriptOptions() ||
+		!_configHelper.showBeforeUnmountScriptOption()
+	)
+		return "";
+	return (
+		`onBeforeUnmount(() => {` +
+		`\n` +
+		`${
+			_configHelper.showWatchScriptOption() ? ind() + `stopWatch();` + `\n` : ""
+		}` +
+		`});` +
+		`\n\n`
+	);
 };
 
 const generateUnmounted = (): string => {
-	if (!showLifecycleHooksScriptOptions() || !showUnmountedScriptOption()) return '';
-	return `onUnmounted(() => {` + `\n` +
-		`});` + `\n\n`;
+	if (
+		!_configHelper.showLifecycleHooksScriptOptions() ||
+		!_configHelper.showUnmountedScriptOption()
+	)
+		return "";
+	return `onUnmounted(() => {` + `\n` + `});` + `\n\n`;
 };
 
 const generateErrorCaptured = (): string => {
-	if (!showLifecycleHooksScriptOptions() || !showErrorCapturedScriptOption()) return '';
-	return `onErrorCaptured(() => {` + `\n` +
-		`});` + `\n\n`;
+	if (
+		!_configHelper.showLifecycleHooksScriptOptions() ||
+		!_configHelper.showErrorCapturedScriptOption()
+	)
+		return "";
+	return `onErrorCaptured(() => {` + `\n` + `});` + `\n\n`;
 };
 
 const generateRenderTracked = (): string => {
-	if (!showLifecycleHooksScriptOptions() || !showRenderTrackedScriptOption()) return '';
-	return `onRenderTracked(() => {` + `\n` +
-		`});` + `\n\n`;
+	if (
+		!_configHelper.showLifecycleHooksScriptOptions() ||
+		!_configHelper.showRenderTrackedScriptOption()
+	)
+		return "";
+	return `onRenderTracked(() => {` + `\n` + `});` + `\n\n`;
 };
 
 const generateRenderTriggered = (): string => {
-	if (!showLifecycleHooksScriptOptions() || !showRenderTriggeredScriptOption()) return '';
-	return `onRenderTriggered(() => {` + `\n` +
-		`});` + `\n\n`;
+	if (
+		!_configHelper.showLifecycleHooksScriptOptions() ||
+		!_configHelper.showRenderTriggeredScriptOption()
+	)
+		return "";
+	return `onRenderTriggered(() => {` + `\n` + `});` + `\n\n`;
 };

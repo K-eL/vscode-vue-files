@@ -1,4 +1,4 @@
 export enum VueApiType {
-	setup = 'setup',
-	options = 'options'
+	setup = "setup",
+	options = "options",
 }

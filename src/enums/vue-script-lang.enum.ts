@@ -1,4 +1,4 @@
 export enum VueScriptLang {
-	typeScript = 'ts',
-	javaScript = 'js'
+	typeScript = "ts",
+	javaScript = "js",
 }
