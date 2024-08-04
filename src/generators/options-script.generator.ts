@@ -142,9 +142,7 @@ const generateEmitsVModel = (): string => {
 		`// v-model event with validation` +
 		`\n` +
 		ind(2) +
-		`'update:modelValue': (value${
-			_isTs ? ": any" : ""
-		}) => value !_configHelper.== null,` +
+		`'update:modelValue': (value${_isTs ? ": any" : ""}) => value !== null,` +
 		`\n`
 	);
 };
