@@ -33,20 +33,21 @@
 		"Programming Languages"
 	],
 	"scripts": {
+		"clean": "rimraf out",
+		"compile": "npm run clean && tsc -p ./",
+		"compile:tests": "tsc -p ./tsconfig.test.json",
+		"lint": "eslint --fix src/**/*.ts",
+		"prepare": "husky",
+		"pretest": "npm run lint && npm run compile && npm run compile:tests",
+		"release:first": "commit-and-tag-version --first-release",
+		"release:major": "commit-and-tag-version --release-as major",
+		"release:minor": "commit-and-tag-version --release-as minor",
+		"release": "commit-and-tag-version",
+		"test": "vscode-test",
 		"vscode:package": "vsce package",
 		"vscode:prepublish": "npm run test",
 		"vscode:publish": "vsce publish",
-		"test": "vscode-test",
-		"pretest": "npm run lint && npm run compile",
-		"lint": "eslint --fix src/**/*.ts",
-		"compile": "npm run clean && tsc -p ./",
-		"clean": "rimraf out",
-		"watch": "tsc -watch -p ./",
-		"prepare": "husky",
-		"release": "commit-and-tag-version",
-		"release:minor": "commit-and-tag-version --release-as minor",
-		"release:major": "commit-and-tag-version --release-as major",
-		"release:first": "commit-and-tag-version --first-release"
+		"watch": "tsc -watch -p ./"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^20.1.0",
@@ -70,13 +71,13 @@
 		"typescript-eslint": "^8.0.0"
 	},
 	"activationEvents": [
-		"*"
+		"onCommand:vscode-vue-files.createNewVueFile"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"configuration": [
 			{
-				"type": "object",
+				"id": "VueFiles-menu",
 				"title": "Menu",
 				"order": 1,
 				"properties": {
@@ -119,9 +120,40 @@
 				}
 			},
 			{
-				"type": "object",
-				"title": "File Structure",
+				"id": "VueFiles-framework-detection",
+				"title": "Framework Detection",
 				"order": 2,
+				"properties": {
+					"vscode-vue-files.framework.autoDetect": {
+						"type": "boolean",
+						"default": true,
+						"order": 1,
+						"description": "Automatically detect the Vue framework (Nuxt, Vite, Vue CLI) from package.json"
+					},
+					"vscode-vue-files.framework.override": {
+						"type": "string",
+						"default": "none",
+						"order": 2,
+						"enum": [
+							"none",
+							"nuxt",
+							"vite",
+							"vue-cli"
+						],
+						"enumDescriptions": [
+							"Auto-detect framework",
+							"Force Nuxt framework",
+							"Force Vite framework",
+							"Force Vue CLI framework"
+						],
+						"description": "Manually override the detected framework"
+					}
+				}
+			},
+			{
+				"id": "VueFiles-file-structure",
+				"title": "File Structure",
+				"order": 3,
 				"properties": {
 					"vscode-vue-files.fileStructure.scriptTagComesFirst": {
 						"type": "boolean",
@@ -132,9 +164,9 @@
 				}
 			},
 			{
-				"type": "object",
+				"id": "VueFiles-templates",
 				"title": "Templates",
-				"order": 3,
+				"order": 4,
 				"properties": {
 					"vscode-vue-files.template.showV-ModelTemplate": {
 						"type": "boolean",
@@ -145,9 +177,9 @@
 				}
 			},
 			{
-				"type": "object",
+				"id": "VueFiles-options",
 				"title": "Options",
-				"order": 4,
+				"order": 5,
 				"properties": {
 					"vscode-vue-files.option.showNameScriptOption": {
 						"type": "boolean",
@@ -236,9 +268,9 @@
 				}
 			},
 			{
-				"type": "object",
+				"id": "VueFiles-lifecycle",
 				"title": "Life Cycle Hooks",
-				"order": 5,
+				"order": 6,
 				"properties": {
 					"vscode-vue-files.lifecycle.showLifecycleHooksScriptOptions": {
 						"type": "boolean",
@@ -329,6 +361,10 @@
 		],
 		"commands": [
 			{
+				"command": "vscode-vue-files.createNewVueFileQuick",
+				"title": "Create Vue File (Quick Pick)"
+			},
+			{
 				"command": "vscode-vue-files.vueOptionsJsCss",
 				"title": "Create New Options API (JS + CSS)"
 			},
@@ -379,6 +415,10 @@
 				}
 			],
 			"vuefiles": [
+				{
+					"group": "0_quick",
+					"command": "vscode-vue-files.createNewVueFileQuick"
+				},
 				{
 					"when": "config.vscode-vue-files.menu.showCompositionApi && config.vscode-vue-files.menu.showTypescript && config.vscode-vue-files.menu.showScss",
 					"group": "1_setup",
