@@ -269,7 +269,7 @@ const generateCreated = (): string => {
 const generateBeforeMount = (): string => {
 	if (
 		!_configHelper.showLifecycleHooksScriptOptions() ||
-		_configHelper.showBeforeMountScriptOption()
+		!_configHelper.showBeforeMountScriptOption()
 	)
 		return "";
 	return ind() + `beforeMount() {` + `\n` + ind() + `},` + `\n`;
