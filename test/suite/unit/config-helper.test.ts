@@ -1,11 +1,11 @@
 import * as vscode from "vscode";
 import * as assert from "assert";
 import { before, beforeEach } from "mocha";
-import { ConfigHelper } from "../../../helpers/config.helper";
+import { ConfigHelper } from "../../../src/helpers/config.helper";
 
 suite("Config Helper", () => {
 	let _configHelper: ConfigHelper;
-	let _mockedEditorConfig: vscode.WorkspaceConfiguration = {
+	const _mockedEditorConfig: vscode.WorkspaceConfiguration = {
 		get: (key: string) => {
 			switch (key) {
 				case "insertSpaces":
@@ -26,7 +26,7 @@ suite("Config Helper", () => {
 			return null as any;
 		},
 	};
-	let _mockedVueFilesConfig: vscode.WorkspaceConfiguration = {
+	const _mockedVueFilesConfig: vscode.WorkspaceConfiguration = {
 		get: (key: string) => {
 			switch (key) {
 				case "fileStructure.scriptTagComesFirst":
