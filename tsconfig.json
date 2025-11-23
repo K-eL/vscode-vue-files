@@ -5,6 +5,6 @@
 		"rootDir": "src",
 		"removeComments": true
 	},
-	"exclude": ["node_modules", "out", "*.vsix"],
-	"include": ["src/**/*.ts", ".vscode-test.mjs"]
+	"exclude": ["node_modules", "out", "*.vsix", "test"],
+	"include": ["src/**/*.ts"]
 }
