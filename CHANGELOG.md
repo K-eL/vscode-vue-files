@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.1.8](https://github.com/K-eL/vscode-vue-files/compare/v1.1.7...v1.1.8) (2025-11-23)
+
+
+### Bug Fixes
+
+* run vsce publish in xvfb to ensure compatibility with headless environments ([4d6e558](https://github.com/K-eL/vscode-vue-files/commit/4d6e558a9afb1e78b04a72348b5f79ec8175b8d6))
+
 ## [1.1.7](https://github.com/K-eL/vscode-vue-files/compare/v1.1.6...v1.1.7) (2025-11-23)
 
 
