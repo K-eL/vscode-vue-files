@@ -23,7 +23,7 @@ jobs:
         run: npm ci
         
       - name: Run tests
-        run: npm test
+        run: xvfb-run -a npm test
         
       - name: Install VSCE
         run: npm install -g @vscode/vsce
