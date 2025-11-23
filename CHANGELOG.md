@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.1.7](https://github.com/K-eL/vscode-vue-files/compare/v1.1.6...v1.1.7) (2025-11-23)
+
+
+### Bug Fixes
+
+* update .vscodeignore and remove unnecessary files from package.json ([71bfa0c](https://github.com/K-eL/vscode-vue-files/commit/71bfa0caf7048fe6dd6b4f2a062c8d5a7e51b2a0))
+
 ## [1.1.6](https://github.com/K-eL/vscode-vue-files/compare/v1.1.5...v1.1.6) (2025-11-23)
 
 
