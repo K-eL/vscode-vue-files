@@ -32,13 +32,6 @@
 		"Snippets",
 		"Programming Languages"
 	],
-	"files": [
-		"out/**/*.js",
-		"package.json",
-		"README.md",
-		"CHANGELOG.md",
-		"LICENSE.md"
-	],
 	"scripts": {
 		"vscode:package": "vsce package",
 		"vscode:prepublish": "npm run test",
