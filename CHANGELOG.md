@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.1.5](https://github.com/K-eL/vscode-vue-files/compare/v1.1.4...v1.1.5) (2025-11-23)
+
+
+### Bug Fixes
+
+* run tests in xvfb for headless environment; clean up husky scripts ([1c1001c](https://github.com/K-eL/vscode-vue-files/commit/1c1001c12fab5080cff84d9fc5dd592f85f4402e))
+
 ## [1.1.4](https://github.com/K-eL/vscode-vue-files/compare/v1.1.2...v1.1.4) (2025-11-23)
 
 ## [1.1.3]
