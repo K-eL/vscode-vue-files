@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [1.1.9](https://github.com/K-eL/vscode-vue-files/compare/v1.1.8...v1.1.9) (2025-11-25)
+
 ## [1.1.8](https://github.com/K-eL/vscode-vue-files/compare/v1.1.7...v1.1.8) (2025-11-23)
 
 
