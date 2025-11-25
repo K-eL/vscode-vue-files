@@ -32,33 +32,57 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [1.1.4](https://github.com/K-eL/vscode-vue-files/compare/v1.1.2...v1.1.4) (2025-11-23)
 
-## [1.1.3]
 
-- Fixed npm deps vulnerabilities.
+### Features
 
-## [1.1.2]
+* add automations to release, versioning and changelog
+* add release scripts for versioning and tagging
+* introduce commitlint and husky for commit message validation
+* create GitHub Actions workflow for publishing the extension
+* add pre-commit hook for linting
+* add commit message hook for linting
+* create versioning configuration for changelog generation
 
-- Fixed a typo.
+### Bug Fixes
 
-## [1.1.1]
+* fix npm deps vulnerabilities
 
-- The extension now checks the user's 'tabSize' and 'insertSpaces' settings values to generate the file content with the appropriate indentation.
-- Added tests. (Still in progress)
-- Upgraded dependencies.
-- Updated coding styles.
-- Updated README.md and CHANGELOG.md files.
+## [1.1.2](https://github.com/K-eL/vscode-vue-files/compare/v1.1.1...v1.1.2) (2024-08-04)
 
-## [1.1.0]
 
-- Many code quality improvements.
-- Included many other options that can be enabled/disabled through settings.
-- Added a fancy menu and better description for the settings.
-- Previous settings were removed, now more general settings were included to show the menu options.
-- Included the base template of a working V-Model for new components (can be disabled on settings).
-- Improved how component name is generated based on the given string.
+### Bug Fixes
 
-## [1.0.0] - Initial Release
+* fix typo
 
-- Users can choose between Options API and Composition API.
-- Users can choose Javascript or Typescript as script language.
-- Users can choose Css or Scss as style language.
+## [1.1.1](https://github.com/K-eL/vscode-vue-files/compare/v1.1.0...v1.1.1) (2024-08-04)
+
+
+### Features
+
+* check the user's 'tabSize' and 'insertSpaces' settings values to generate the file content with the appropriate indentation
+* add tests
+* upgrade dependencies
+* update coding styles
+* update README.md and CHANGELOG.md files
+
+## [1.1.0](https://github.com/K-eL/vscode-vue-files/compare/v1.0.0...v1.1.0) (2023-04-17)
+
+
+### Features
+
+* improve code quality
+* include more customization options in extension settings
+* add an improved menu and better description for the settings
+* remove previous settings
+* include more general settings to show the menu options
+* include the base template of a working V-Model for new components (can be disabled on settings)
+* improve how component name is generated based on the given string
+
+## [1.0.0](https://github.com/K-eL/vscode-vue-files/commit/41409e711edde150dc04d7d2ccdb038bcc5e6d46) Initial Release (2023-04-10)
+
+
+### Features
+
+* make users able to choose between Options API and Composition API
+* make users able to choose between Javascript or Typescript as script language
+* make users able to choose between Css or Scss as style language

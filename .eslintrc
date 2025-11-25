@@ -9,5 +9,5 @@
 		"semi": "off",
 		"@typescript-eslint/no-unused-vars": "warn"
 	},
-	"ignorePatterns": ["out", "dist", "**/*.d.ts", "src/**/*.test.ts"]
+	"ignorePatterns": ["out", "dist", "**/*.d.ts", "test/**/*.test.ts"]
 }

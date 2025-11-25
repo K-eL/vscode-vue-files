@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { handleVueFileName } from "../../../helpers/file.helper";
+import { handleVueFileName } from "../../../src/helpers/file.helper";
 
 suite("File Helper", () => {
 	test("should return the correct file name", () => {

@@ -2,6 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { createNewVueFileCommand } from "./commands/create-new-vue-file.command";
+import { createNewVueFileQuickCommand } from "./commands/create-new-vue-file-quick.command";
 import { VueStyleLang } from "./enums/vue-style-lang.enum";
 import { VueApiType } from "./enums/vue-api-type.enum";
 import { VueScriptLang } from "./enums/vue-script-lang.enum";
@@ -10,7 +11,14 @@ import { createFilesForTestCommand } from "./commands/create-files-for-test.comm
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function activate(_context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext) {
+	// Register Quick Pick command
+	vscode.commands.registerCommand(
+		"vscode-vue-files.createNewVueFileQuick",
+		async (uri) => createNewVueFileQuickCommand(uri, context),
+	);
+
+	// Register existing commands
 	vscode.commands.registerCommand(
 		"vscode-vue-files.vueSetupTsScss",
 		async uri =>
