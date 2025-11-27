@@ -1,5 +1,9 @@
 # VSCode Vue Files
 
+[![CI](https://github.com/K-eL/vscode-vue-files/actions/workflows/ci.yml/badge.svg)](https://github.com/K-eL/vscode-vue-files/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/K-eL/vscode-vue-files/branch/main/graph/badge.svg)](https://codecov.io/gh/K-eL/vscode-vue-files)
+[![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/K-eL.vscode-vue-files)](https://marketplace.visualstudio.com/items?itemName=K-eL.vscode-vue-files)
+
 This extension allows you to quickly create new Vue files filled with some boilerplate content depending on your preferences.
 
 > Inspired by Angular Files (https://github.com/ivalexa/vscode-angular2-files)
