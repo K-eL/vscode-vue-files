@@ -115,10 +115,10 @@ suite("Config Helper", () => {
 		actual = _configHelper.showVModelTemplate();
 		assert.strictEqual(actual, true);
 		// undefined should return true
-		actual = _configHelper.showNameScriptOption();
+		actual = _configHelper.options.showName();
 		assert.strictEqual(actual, true);
 		// null should return true
-		actual = _configHelper.showMethodsScriptOption();
+		actual = _configHelper.options.showMethods();
 		assert.strictEqual(actual, true);
 	});
 });

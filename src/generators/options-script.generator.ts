@@ -55,32 +55,32 @@ const generateImportStatement = (): string => {
 };
 
 const generateName = (name: string): string => {
-	if (!_configHelper.showNameScriptOption()) return "";
+	if (!_configHelper.options.showName()) return "";
 	return ind() + `name: '${name}',` + `\n`;
 };
 
 const generateComponents = (): string => {
-	if (!_configHelper.showComponentsScriptOption()) return "";
+	if (!_configHelper.options.showComponents()) return "";
 	return ind() + `components: {` + `\n` + ind() + `},` + `\n`;
 };
 
 const generateDirectives = (): string => {
-	if (!_configHelper.showDirectivesScriptOption()) return "";
+	if (!_configHelper.options.showDirectives()) return "";
 	return ind() + `directives: {` + `\n` + ind() + `},` + `\n`;
 };
 
 const generateExtends = (): string => {
-	if (!_configHelper.showExtendsScriptOption()) return "";
+	if (!_configHelper.options.showExtends()) return "";
 	return ind() + `extends: {` + `\n` + ind() + `},` + `\n`;
 };
 
 const generateMixins = (): string => {
-	if (!_configHelper.showMixinsScriptOption()) return "";
+	if (!_configHelper.options.showMixins()) return "";
 	return ind() + `mixins: [` + `\n` + ind() + `],` + `\n`;
 };
 
 const generateProvideInject = (): string => {
-	if (!_configHelper.showProvideInjectScriptOption()) return "";
+	if (!_configHelper.options.showProvideInject()) return "";
 	return (
 		ind() +
 		`provide: {` +
@@ -98,12 +98,12 @@ const generateProvideInject = (): string => {
 };
 
 const generateInheritAttrs = (): string => {
-	if (!_configHelper.showInheritAttrsScriptOption()) return "";
+	if (!_configHelper.options.showInheritAttrs()) return "";
 	return ind() + `inheritAttrs: false,` + `\n`;
 };
 
 const generateProps = (): string => {
-	if (!_configHelper.showPropsScriptOption()) return "";
+	if (!_configHelper.options.showProps()) return "";
 	return (
 		ind() + `props: {` + `\n` + generatePropsVModel() + ind() + `},` + `\n`
 	);
@@ -129,7 +129,7 @@ const generatePropsVModel = (): string => {
 };
 
 const generateEmits = (): string => {
-	if (!_configHelper.showEmitsScriptOption()) return "";
+	if (!_configHelper.options.showEmits()) return "";
 	return (
 		ind() + `emits: {` + `\n` + generateEmitsVModel() + ind() + `},` + `\n`
 	);
@@ -148,12 +148,12 @@ const generateEmitsVModel = (): string => {
 };
 
 const generateSetup = (): string => {
-	if (!_configHelper.showSetupScriptOption()) return "";
+	if (!_configHelper.options.showSetup()) return "";
 	return ind() + `setup() {` + `\n` + ind() + `},` + `\n`;
 };
 
 const generateData = (): string => {
-	if (!_configHelper.showDataScriptOption()) return "";
+	if (!_configHelper.options.showData()) return "";
 	return (
 		ind() +
 		`data() {` +
@@ -171,7 +171,7 @@ const generateData = (): string => {
 };
 
 const generateComputed = (): string => {
-	if (!_configHelper.showComputedScriptOption()) return "";
+	if (!_configHelper.options.showComputed()) return "";
 	return (
 		ind() +
 		`computed: {` +
@@ -202,7 +202,7 @@ const generateComputedVModel = (): string => {
 		`set (value${_isTs ? ": any" : ""}) {` +
 		`\n` +
 		`${
-			_configHelper.showEmitsScriptOption()
+			_configHelper.options.showEmits()
 				? ind(4) + `this.$emit('update:modelValue', value);` + `\n`
 				: ""
 		}` +
@@ -216,7 +216,7 @@ const generateComputedVModel = (): string => {
 };
 
 const generateWatch = (): string => {
-	if (!_configHelper.showWatchScriptOption()) return "";
+	if (!_configHelper.options.showWatch()) return "";
 	return (
 		ind() + `watch: {` + `\n` + generateWatchVModel() + ind() + `},` + `\n`
 	);
@@ -250,8 +250,8 @@ const generateWatchVModel = (): string => {
 
 const generateBeforeCreate = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showBeforeCreateScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showBeforeCreate()
 	)
 		return "";
 	return ind() + `beforeCreate() {` + `\n` + ind() + `},` + `\n`;
@@ -259,8 +259,8 @@ const generateBeforeCreate = (): string => {
 
 const generateCreated = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showCreatedScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showCreated()
 	)
 		return "";
 	return ind() + `created() {` + `\n` + ind() + `},` + `\n`;
@@ -268,8 +268,8 @@ const generateCreated = (): string => {
 
 const generateBeforeMount = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showBeforeMountScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showBeforeMount()
 	)
 		return "";
 	return ind() + `beforeMount() {` + `\n` + ind() + `},` + `\n`;
@@ -277,8 +277,8 @@ const generateBeforeMount = (): string => {
 
 const generateMounted = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showMountedScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showMounted()
 	)
 		return "";
 	return ind() + `mounted() {` + `\n` + ind() + `},` + `\n`;
@@ -286,8 +286,8 @@ const generateMounted = (): string => {
 
 const generateBeforeUpdate = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showBeforeUpdateScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showBeforeUpdate()
 	)
 		return "";
 	return ind() + `beforeUpdate() {` + `\n` + ind() + `},` + `\n`;
@@ -295,8 +295,8 @@ const generateBeforeUpdate = (): string => {
 
 const generateUpdated = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showUpdatedScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showUpdated()
 	)
 		return "";
 	return ind() + `updated() {` + `\n` + ind() + `},` + `\n`;
@@ -304,8 +304,8 @@ const generateUpdated = (): string => {
 
 const generateActivated = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showActivatedScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showActivated()
 	)
 		return "";
 	return ind() + `activated() {` + `\n` + ind() + `},` + `\n`;
@@ -313,8 +313,8 @@ const generateActivated = (): string => {
 
 const generateDeactivated = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showDeactivatedScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showDeactivated()
 	)
 		return "";
 	return ind() + `deactivated() {` + `\n` + ind() + `},` + `\n`;
@@ -322,8 +322,8 @@ const generateDeactivated = (): string => {
 
 const generateBeforeUnmount = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showBeforeUnmountScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showBeforeUnmount()
 	)
 		return "";
 	return (
@@ -340,7 +340,7 @@ const generateBeforeUnmount = (): string => {
 const generateBeforeUnmountVModel = (): string => {
 	if (
 		!_configHelper.showVModelTemplate() ||
-		!_configHelper.showWatchScriptOption()
+		!_configHelper.options.showWatch()
 	)
 		return "";
 	return (
@@ -355,29 +355,29 @@ const generateBeforeUnmountVModel = (): string => {
 
 const generateUnmounted = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showUnmountedScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showUnmounted()
 	)
 		return "";
 	return ind() + `unmounted() {` + `\n` + ind() + `},` + `\n`;
 };
 
 const generateErrorCaptured = (): string => {
-	if (!_configHelper.showErrorCapturedScriptOption()) return "";
+	if (!_configHelper.lifecycle.showErrorCaptured()) return "";
 	return ind() + `errorCaptured() {` + `\n` + ind() + `},` + `\n`;
 };
 
 const generateRenderTracked = (): string => {
-	if (!_configHelper.showRenderTrackedScriptOption()) return "";
+	if (!_configHelper.lifecycle.showRenderTracked()) return "";
 	return ind() + `renderTracked() {` + `\n` + ind() + `},` + `\n`;
 };
 
 const generateRenderTriggered = (): string => {
-	if (!_configHelper.showRenderTriggeredScriptOption()) return "";
+	if (!_configHelper.lifecycle.showRenderTriggered()) return "";
 	return ind() + `renderTriggered() {` + `\n` + ind() + `},` + `\n`;
 };
 
 const generateMethods = (): string => {
-	if (!_configHelper.showMethodsScriptOption()) return "";
+	if (!_configHelper.options.showMethods()) return "";
 	return ind() + `methods: {` + `\n` + ind() + `},` + `\n`;
 };

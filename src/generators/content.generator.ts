@@ -68,7 +68,7 @@ const generateScriptContent = (
 };
 
 const generateInheritAttrs = (scriptLang: VueScriptLang) => {
-	if (!_configHelper.showInheritAttrsScriptOption()) return ``;
+	if (!_configHelper.options.showInheritAttrs()) return ``;
 	return (
 		`<script lang='${scriptLang}'>` +
 		`\n` +

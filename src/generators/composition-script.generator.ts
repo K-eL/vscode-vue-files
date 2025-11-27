@@ -37,26 +37,26 @@ export const generateCompositionApiScriptTemplate = (
 
 const generateImportStatement = (): string => {
 	const imports = [];
-	if (_configHelper.showComputedScriptOption()) imports.push("computed");
-	if (_configHelper.showWatchScriptOption()) imports.push("watch");
-	if (_configHelper.showLifecycleHooksScriptOptions()) {
-		if (_configHelper.showBeforeMountScriptOption())
+	if (_configHelper.options.showComputed()) imports.push("computed");
+	if (_configHelper.options.showWatch()) imports.push("watch");
+	if (_configHelper.lifecycle.showHooks()) {
+		if (_configHelper.lifecycle.showBeforeMount())
 			imports.push("onBeforeMount");
-		if (_configHelper.showMountedScriptOption()) imports.push("onMounted");
-		if (_configHelper.showBeforeUpdateScriptOption())
+		if (_configHelper.lifecycle.showMounted()) imports.push("onMounted");
+		if (_configHelper.lifecycle.showBeforeUpdate())
 			imports.push("onBeforeUpdate");
-		if (_configHelper.showUpdatedScriptOption()) imports.push("onUpdated");
-		if (_configHelper.showActivatedScriptOption()) imports.push("onActivated");
-		if (_configHelper.showDeactivatedScriptOption())
+		if (_configHelper.lifecycle.showUpdated()) imports.push("onUpdated");
+		if (_configHelper.lifecycle.showActivated()) imports.push("onActivated");
+		if (_configHelper.lifecycle.showDeactivated())
 			imports.push("onDeactivated");
-		if (_configHelper.showBeforeUnmountScriptOption())
+		if (_configHelper.lifecycle.showBeforeUnmount())
 			imports.push("onBeforeUnmount");
-		if (_configHelper.showUnmountedScriptOption()) imports.push("onUnmounted");
-		if (_configHelper.showErrorCapturedScriptOption())
+		if (_configHelper.lifecycle.showUnmounted()) imports.push("onUnmounted");
+		if (_configHelper.lifecycle.showErrorCaptured())
 			imports.push("onErrorCaptured");
-		if (_configHelper.showRenderTrackedScriptOption())
+		if (_configHelper.lifecycle.showRenderTracked())
 			imports.push("onRenderTracked");
-		if (_configHelper.showRenderTriggeredScriptOption())
+		if (_configHelper.lifecycle.showRenderTriggered())
 			imports.push("onRenderTriggered");
 	}
 	return `import { ${imports.join(", ")} } from 'vue'` + `\n\n`;
@@ -67,7 +67,7 @@ const generateImportStatement = (): string => {
  * Used for inheritAttrs, name, and other component options
  */
 const generateDefineOptions = (): string => {
-	if (!_configHelper.showDefineOptions()) return "";
+	if (!_configHelper.scriptSetup.showDefineOptions()) return "";
 	return (
 		`// Component options (Vue 3.3+)` +
 		`\n` +
@@ -90,7 +90,7 @@ const generateDefineOptions = (): string => {
  */
 const generateDefineModel = (): string => {
 	// Only generate if using defineModel AND v-model template is enabled
-	if (!_configHelper.useDefineModel() || !_configHelper.showVModelTemplate()) {
+	if (!_configHelper.scriptSetup.useDefineModel() || !_configHelper.showVModelTemplate()) {
 		return "";
 	}
 	
@@ -116,7 +116,7 @@ const generateDefineModel = (): string => {
  * For typed slot definitions
  */
 const generateDefineSlots = (): string => {
-	if (!_configHelper.showDefineSlots()) return "";
+	if (!_configHelper.scriptSetup.showDefineSlots()) return "";
 	
 	if (_isTs) {
 		return (
@@ -148,7 +148,7 @@ const generateDefineSlots = (): string => {
  * Exposes component internals to parent via template ref
  */
 const generateDefineExpose = (): string => {
-	if (!_configHelper.showDefineExpose()) return "";
+	if (!_configHelper.scriptSetup.showDefineExpose()) return "";
 	return (
 		`// Expose to parent component via template ref` +
 		`\n` +
@@ -163,12 +163,12 @@ const generateDefineExpose = (): string => {
 };
 
 const generateProps = (): string => {
-	if (!_configHelper.showPropsScriptOption()) return "";
+	if (!_configHelper.options.showProps()) return "";
 	
 	// If using defineModel for v-model, skip the modelValue prop
-	const useDefineModelForVModel = _configHelper.useDefineModel() && _configHelper.showVModelTemplate();
+	const useDefineModelForVModel = _configHelper.scriptSetup.useDefineModel() && _configHelper.showVModelTemplate();
 	
-	if (_configHelper.useWithDefaults() && _isTs) {
+	if (_configHelper.scriptSetup.useWithDefaults() && _isTs) {
 		return generatePropsWithDefaults(useDefineModelForVModel);
 	}
 	
@@ -258,10 +258,10 @@ const generatePropsVModel = (skipModelValue: boolean = false): string => {
 };
 
 const generateEmits = (): string => {
-	if (!_configHelper.showEmitsScriptOption()) return "";
+	if (!_configHelper.options.showEmits()) return "";
 	
 	// If using defineModel for v-model, skip the update:modelValue emit
-	const useDefineModelForVModel = _configHelper.useDefineModel() && _configHelper.showVModelTemplate();
+	const useDefineModelForVModel = _configHelper.scriptSetup.useDefineModel() && _configHelper.showVModelTemplate();
 	
 	return (
 		`const emit = defineEmits({` + `\n` + generateEmitsVModel(useDefineModelForVModel) + `});` + `\n\n`
@@ -279,7 +279,7 @@ const generateEmitsVModel = (skipModelValue: boolean = false): string => {
 	}
 	
 	if (!_configHelper.showVModelTemplate()) {
-		if (_configHelper.showPropsScriptOption())
+		if (_configHelper.options.showProps())
 			return (
 				ind() +
 				`'update:text': (value${_isTs ? ": string" : ""}) => typeof value === 'string',` +
@@ -302,10 +302,10 @@ const generateEmitsVModel = (skipModelValue: boolean = false): string => {
 };
 
 const generateComputed = (): string => {
-	if (!_configHelper.showComputedScriptOption()) return "";
+	if (!_configHelper.options.showComputed()) return "";
 	
 	// If using defineModel, show simple computed example
-	const useDefineModelForVModel = _configHelper.useDefineModel() && _configHelper.showVModelTemplate();
+	const useDefineModelForVModel = _configHelper.scriptSetup.useDefineModel() && _configHelper.showVModelTemplate();
 	
 	if (!_configHelper.showVModelTemplate() || useDefineModelForVModel)
 		return `const now = computed(() => Date.now());` + `\n\n`;
@@ -329,7 +329,7 @@ const generateComputedVModel = (): string => {
 		`set (value${_isTs ? ": string" : ""}) {` +
 		`\n` +
 		`${
-			_configHelper.showEmitsScriptOption()
+			_configHelper.options.showEmits()
 				? ind(2) + `emit('update:modelValue', value);` + `\n`
 				: ""
 		}` +
@@ -341,10 +341,10 @@ const generateComputedVModel = (): string => {
 };
 
 const generateWatch = (): string => {
-	if (!_configHelper.showWatchScriptOption()) return "";
+	if (!_configHelper.options.showWatch()) return "";
 	
 	// If using defineModel, watch the model ref directly
-	const useDefineModelForVModel = _configHelper.useDefineModel() && _configHelper.showVModelTemplate();
+	const useDefineModelForVModel = _configHelper.scriptSetup.useDefineModel() && _configHelper.showVModelTemplate();
 	
 	return (
 		`const stopWatch = watch(` +
@@ -381,7 +381,7 @@ const generateWatchVModel = (useDefineModel: boolean = false): string => {
 		return `model`;
 	}
 	if (!_configHelper.showVModelTemplate()) {
-		if (!_configHelper.showPropsScriptOption()) return `() => new Date()`;
+		if (!_configHelper.options.showProps()) return `() => new Date()`;
 		return `() => props.text`;
 	}
 	return `() => props.modelValue`;
@@ -389,8 +389,8 @@ const generateWatchVModel = (useDefineModel: boolean = false): string => {
 
 const generateBeforeMount = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showBeforeMountScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showBeforeMount()
 	)
 		return "";
 	return `onBeforeMount(() => {` + `\n` + `});` + `\n\n`;
@@ -398,8 +398,8 @@ const generateBeforeMount = (): string => {
 
 const generateMounted = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showMountedScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showMounted()
 	)
 		return "";
 	return `onMounted(() => {` + `\n` + `});` + `\n\n`;
@@ -407,8 +407,8 @@ const generateMounted = (): string => {
 
 const generateBeforeUpdate = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showBeforeUpdateScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showBeforeUpdate()
 	)
 		return "";
 	return `onBeforeUpdate(() => {` + `\n` + `});` + `\n\n`;
@@ -416,8 +416,8 @@ const generateBeforeUpdate = (): string => {
 
 const generateUpdated = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showUpdatedScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showUpdated()
 	)
 		return "";
 	return `onUpdated(() => {` + `\n` + `});` + `\n\n`;
@@ -425,8 +425,8 @@ const generateUpdated = (): string => {
 
 const generateActivated = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showActivatedScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showActivated()
 	)
 		return "";
 	return `onActivated(() => {` + `\n` + `});` + `\n\n`;
@@ -434,8 +434,8 @@ const generateActivated = (): string => {
 
 const generateDeactivated = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showDeactivatedScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showDeactivated()
 	)
 		return "";
 	return `onDeactivated(() => {` + `\n` + `});` + `\n\n`;
@@ -443,15 +443,15 @@ const generateDeactivated = (): string => {
 
 const generateBeforeUnmount = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showBeforeUnmountScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showBeforeUnmount()
 	)
 		return "";
 	return (
 		`onBeforeUnmount(() => {` +
 		`\n` +
 		`${
-			_configHelper.showWatchScriptOption() ? ind() + `stopWatch();` + `\n` : ""
+			_configHelper.options.showWatch() ? ind() + `stopWatch();` + `\n` : ""
 		}` +
 		`});` +
 		`\n\n`
@@ -460,8 +460,8 @@ const generateBeforeUnmount = (): string => {
 
 const generateUnmounted = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showUnmountedScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showUnmounted()
 	)
 		return "";
 	return `onUnmounted(() => {` + `\n` + `});` + `\n\n`;
@@ -469,8 +469,8 @@ const generateUnmounted = (): string => {
 
 const generateErrorCaptured = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showErrorCapturedScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showErrorCaptured()
 	)
 		return "";
 	return `onErrorCaptured(() => {` + `\n` + `});` + `\n\n`;
@@ -478,8 +478,8 @@ const generateErrorCaptured = (): string => {
 
 const generateRenderTracked = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showRenderTrackedScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showRenderTracked()
 	)
 		return "";
 	return `onRenderTracked(() => {` + `\n` + `});` + `\n\n`;
@@ -487,8 +487,8 @@ const generateRenderTracked = (): string => {
 
 const generateRenderTriggered = (): string => {
 	if (
-		!_configHelper.showLifecycleHooksScriptOptions() ||
-		!_configHelper.showRenderTriggeredScriptOption()
+		!_configHelper.lifecycle.showHooks() ||
+		!_configHelper.lifecycle.showRenderTriggered()
 	)
 		return "";
 	return `onRenderTriggered(() => {` + `\n` + `});` + `\n\n`;
