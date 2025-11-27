@@ -169,4 +169,66 @@ suite('Pinia Store Generator', () => {
       expect(result).to.include("defineStore('auth'");
     });
   });
+
+  suite('Minimal stores (no examples)', () => {
+    test('should generate minimal setup store without examples', () => {
+      const result = generatePiniaStore({
+        name: 'minimal',
+        type: PiniaStoreType.setup,
+        includeExampleState: false,
+        includeExampleGetter: false,
+        includeExampleAction: false
+      });
+
+      expect(result).to.include('export const useMinimalStore');
+      expect(result).to.include("defineStore('minimal'");
+      expect(result).not.to.include('const count = ref');
+      expect(result).not.to.include('doubleCount');
+      expect(result).not.to.include('increment');
+    });
+
+    test('should generate minimal options store without examples', () => {
+      const result = generatePiniaStore({
+        name: 'minimal',
+        type: PiniaStoreType.options,
+        includeExampleState: false,
+        includeExampleGetter: false,
+        includeExampleAction: false
+      });
+
+      expect(result).to.include('export const useMinimalStore');
+      expect(result).to.include("defineStore('minimal'");
+      expect(result).to.include('state: () => ({');
+      expect(result).not.to.include('count: 0');
+      expect(result).not.to.include('doubleCount');
+      expect(result).not.to.include('increment');
+    });
+
+    test('should generate store with only state example', () => {
+      const result = generatePiniaStore({
+        name: 'stateOnly',
+        type: PiniaStoreType.setup,
+        includeExampleState: true,
+        includeExampleGetter: false,
+        includeExampleAction: false
+      });
+
+      expect(result).to.include('const count = ref(0)');
+      expect(result).not.to.include('doubleCount');
+      expect(result).not.to.include('increment');
+    });
+
+    test('should generate store with only getter example', () => {
+      const result = generatePiniaStore({
+        name: 'getterOnly',
+        type: PiniaStoreType.setup,
+        includeExampleState: true, // Need state for getter
+        includeExampleGetter: true,
+        includeExampleAction: false
+      });
+
+      expect(result).to.include('const doubleCount = computed');
+      expect(result).not.to.include('increment');
+    });
+  });
 });
