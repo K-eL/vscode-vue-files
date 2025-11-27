@@ -12,7 +12,6 @@ import { createFilesForTestCommand } from "./commands/create-files-for-test.comm
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function activate(context: vscode.ExtensionContext) {
 	// Register Quick Pick command
 	vscode.commands.registerCommand(

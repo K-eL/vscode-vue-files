@@ -28,10 +28,10 @@ export function generateComposable(config: ComposableConfig): string {
     case ComposablePattern.useFetch:
       return generateUseFetchComposable(composableName, useGenerics);
     case ComposablePattern.useEventListener:
-      return generateUseEventListenerComposable(composableName);
+      return generateUseEventListenerComposable(composableName, useGenerics);
     case ComposablePattern.custom:
     default:
-      return generateCustomComposable(composableName);
+      return generateCustomComposable(composableName, useGenerics);
   }
 }
 
@@ -206,8 +206,9 @@ export function ${name}(url, options) {
  * Generates useEventListener pattern composable
  * DOM event listener with automatic cleanup
  */
-function generateUseEventListenerComposable(name: string): string {
-  return `import { onMounted, onUnmounted, type Ref, unref } from 'vue';
+function generateUseEventListenerComposable(name: string, useGenerics: boolean): string {
+  if (useGenerics) {
+    return `import { onMounted, onUnmounted, type Ref, unref } from 'vue';
 
 type MaybeRef<T> = T | Ref<T>;
 type EventTarget = Window | Document | HTMLElement;
@@ -248,13 +249,49 @@ export function ${name}<K extends keyof WindowEventMap>(
   });
 }
 `;
+  }
+
+  return `import { onMounted, onUnmounted, unref } from 'vue';
+
+/**
+ * ${name} - DOM event listener with automatic cleanup
+ * Attaches event listener on mount, removes on unmount
+ * @param target - The event target (window, document, or element)
+ * @param event - The event name to listen for
+ * @param handler - The event handler function
+ * @param options - Optional event listener options
+ */
+export function ${name}(target, event, handler, options) {
+  let cleanup;
+
+  function setup() {
+    const el = unref(target);
+    if (!el) return;
+
+    el.addEventListener(event, handler, options);
+    
+    cleanup = () => {
+      el.removeEventListener(event, handler, options);
+    };
+  }
+
+  onMounted(() => {
+    setup();
+  });
+
+  onUnmounted(() => {
+    cleanup?.();
+  });
+}
+`;
 }
 
 /**
  * Generates custom/empty composable template
  */
-function generateCustomComposable(name: string): string {
-  return `import { shallowRef, computed, onMounted, onUnmounted, type ShallowRef } from 'vue';
+function generateCustomComposable(name: string, useGenerics: boolean): string {
+  if (useGenerics) {
+    return `import { shallowRef, computed, onMounted, onUnmounted, type ShallowRef } from 'vue';
 
 /**
  * ${name} - Custom composable
@@ -271,6 +308,45 @@ export function ${name}<T = unknown>(initialValue: T | null = null) {
 
   // Methods
   function updateState(newValue: T | null): void {
+    state.value = newValue;
+  }
+
+  // Lifecycle
+  onMounted(() => {
+    // Setup logic here
+  });
+
+  onUnmounted(() => {
+    // Cleanup logic here
+  });
+
+  // Return public API
+  return {
+    state,
+    computedValue,
+    updateState
+  };
+}
+`;
+  }
+
+  return `import { shallowRef, computed, onMounted, onUnmounted } from 'vue';
+
+/**
+ * ${name} - Custom composable
+ * @description Add your composable description here
+ */
+export function ${name}(initialValue = null) {
+  // State
+  const state = shallowRef(initialValue);
+
+  // Computed
+  const computedValue = computed(() => {
+    return state.value;
+  });
+
+  // Methods
+  function updateState(newValue) {
     state.value = newValue;
   }
 
