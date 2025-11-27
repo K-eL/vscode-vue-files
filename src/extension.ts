@@ -3,6 +3,8 @@
 import * as vscode from "vscode";
 import { createNewVueFileCommand } from "./commands/create-new-vue-file.command";
 import { createNewVueFileQuickCommand } from "./commands/create-new-vue-file-quick.command";
+import { createPiniaStoreCommand } from "./commands/create-pinia-store.command";
+import { createComposableCommand } from "./commands/create-composable.command";
 import { VueStyleLang } from "./enums/vue-style-lang.enum";
 import { VueApiType } from "./enums/vue-api-type.enum";
 import { VueScriptLang } from "./enums/vue-script-lang.enum";
@@ -97,6 +99,18 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 	vscode.commands.registerCommand("vscode-vue-files.devEnvTest", async uri =>
 		createFilesForTestCommand(uri),
+	);
+
+	// Register Pinia Store command
+	vscode.commands.registerCommand(
+		"vscode-vue-files.createPiniaStore",
+		async uri => createPiniaStoreCommand(uri),
+	);
+
+	// Register Composable command
+	vscode.commands.registerCommand(
+		"vscode-vue-files.createComposable",
+		async uri => createComposableCommand(uri),
 	);
 }
 

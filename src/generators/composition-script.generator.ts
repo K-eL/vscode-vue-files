@@ -13,8 +13,12 @@ export const generateCompositionApiScriptTemplate = (
 	ind = _configHelper.ind;
 	return (
 		generateImportStatement() +
+		generateDefineOptions() +
+		generateDefineModel() +
 		generateProps() +
 		generateEmits() +
+		generateDefineSlots() +
+		generateDefineExpose() +
 		generateComputed() +
 		generateWatch() +
 		generateBeforeMount() +
@@ -58,19 +62,184 @@ const generateImportStatement = (): string => {
 	return `import { ${imports.join(", ")} } from 'vue'` + `\n\n`;
 };
 
-const generateProps = (): string => {
-	if (!_configHelper.showPropsScriptOption()) return "";
+/**
+ * Generates defineOptions macro (Vue 3.3+)
+ * Used for inheritAttrs, name, and other component options
+ */
+const generateDefineOptions = (): string => {
+	if (!_configHelper.showDefineOptions()) return "";
 	return (
-		`const props = defineProps({` +
+		`// Component options (Vue 3.3+)` +
 		`\n` +
-		generatePropsVModel() +
+		`defineOptions({` +
+		`\n` +
+		ind() +
+		`inheritAttrs: true,` +
+		`\n` +
+		ind() +
+		`// name: 'ComponentName',` +
+		`\n` +
 		`});` +
 		`\n\n`
 	);
 };
 
-const generatePropsVModel = (): string => {
-	if (!_configHelper.showVModelTemplate()) return ind() + `text: String` + `\n`;
+/**
+ * Generates defineModel macro (Vue 3.4+)
+ * Modern approach for v-model bindings
+ */
+const generateDefineModel = (): string => {
+	// Only generate if using defineModel AND v-model template is enabled
+	if (!_configHelper.useDefineModel() || !_configHelper.showVModelTemplate()) {
+		return "";
+	}
+	
+	if (_isTs) {
+		return (
+			`// v-model binding (Vue 3.4+)` +
+			`\n` +
+			`const model = defineModel<string>({ default: '' });` +
+			`\n\n`
+		);
+	}
+	
+	return (
+		`// v-model binding (Vue 3.4+)` +
+		`\n` +
+		`const model = defineModel({ default: '' });` +
+		`\n\n`
+	);
+};
+
+/**
+ * Generates defineSlots macro (Vue 3.3+)
+ * For typed slot definitions
+ */
+const generateDefineSlots = (): string => {
+	if (!_configHelper.showDefineSlots()) return "";
+	
+	if (_isTs) {
+		return (
+			`// Typed slots (Vue 3.3+)` +
+			`\n` +
+			`const slots = defineSlots<{` +
+			`\n` +
+			ind() +
+			`default(props: { msg: string }): any;` +
+			`\n` +
+			ind() +
+			`// Add more slot definitions here` +
+			`\n` +
+			`}>();` +
+			`\n\n`
+		);
+	}
+	
+	return (
+		`// Slots (Vue 3.3+)` +
+		`\n` +
+		`const slots = defineSlots();` +
+		`\n\n`
+	);
+};
+
+/**
+ * Generates defineExpose macro
+ * Exposes component internals to parent via template ref
+ */
+const generateDefineExpose = (): string => {
+	if (!_configHelper.showDefineExpose()) return "";
+	return (
+		`// Expose to parent component via template ref` +
+		`\n` +
+		`defineExpose({` +
+		`\n` +
+		ind() +
+		`// Add methods/properties to expose here` +
+		`\n` +
+		`});` +
+		`\n\n`
+	);
+};
+
+const generateProps = (): string => {
+	if (!_configHelper.showPropsScriptOption()) return "";
+	
+	// If using defineModel for v-model, skip the modelValue prop
+	const useDefineModelForVModel = _configHelper.useDefineModel() && _configHelper.showVModelTemplate();
+	
+	if (_configHelper.useWithDefaults() && _isTs) {
+		return generatePropsWithDefaults(useDefineModelForVModel);
+	}
+	
+	return (
+		`const props = defineProps({` +
+		`\n` +
+		generatePropsVModel(useDefineModelForVModel) +
+		`});` +
+		`\n\n`
+	);
+};
+
+/**
+ * Generates props using withDefaults for TypeScript
+ */
+const generatePropsWithDefaults = (skipModelValue: boolean): string => {
+	if (skipModelValue) {
+		// When using defineModel, show a simple prop example
+		return (
+			`// Props with defaults (TypeScript)` +
+			`\n` +
+			`interface Props {` +
+			`\n` +
+			ind() +
+			`text?: string;` +
+			`\n` +
+			ind() +
+			`count?: number;` +
+			`\n` +
+			`}` +
+			`\n\n` +
+			`const props = withDefaults(defineProps<Props>(), {` +
+			`\n` +
+			ind() +
+			`text: '',` +
+			`\n` +
+			ind() +
+			`count: 0,` +
+			`\n` +
+			`});` +
+			`\n\n`
+		);
+	}
+	
+	// Legacy v-model approach with withDefaults
+	return (
+		`// Props with defaults (TypeScript)` +
+		`\n` +
+		`interface Props {` +
+		`\n` +
+		ind() +
+		`modelValue?: string;` +
+		`\n` +
+		`}` +
+		`\n\n` +
+		`const props = withDefaults(defineProps<Props>(), {` +
+		`\n` +
+		ind() +
+		`modelValue: '',` +
+		`\n` +
+		`});` +
+		`\n\n`
+	);
+};
+
+const generatePropsVModel = (skipModelValue: boolean = false): string => {
+	// If using defineModel, show simple text prop instead of modelValue
+	if (skipModelValue || !_configHelper.showVModelTemplate()) {
+		return ind() + `text: String` + `\n`;
+	}
+	
 	return (
 		ind() +
 		`// v-model` +
@@ -90,22 +259,35 @@ const generatePropsVModel = (): string => {
 
 const generateEmits = (): string => {
 	if (!_configHelper.showEmitsScriptOption()) return "";
+	
+	// If using defineModel for v-model, skip the update:modelValue emit
+	const useDefineModelForVModel = _configHelper.useDefineModel() && _configHelper.showVModelTemplate();
+	
 	return (
-		`const emit = defineEmits({` + `\n` + generateEmitsVModel() + `});` + `\n\n`
+		`const emit = defineEmits({` + `\n` + generateEmitsVModel(useDefineModelForVModel) + `});` + `\n\n`
 	);
 };
 
-const generateEmitsVModel = (): string => {
+const generateEmitsVModel = (skipModelValue: boolean = false): string => {
+	// If using defineModel, show simple text update emit instead
+	if (skipModelValue) {
+		return (
+			ind() +
+			`'update:text': (value${_isTs ? ": string" : ""}) => typeof value === 'string',` +
+			`\n`
+		);
+	}
+	
 	if (!_configHelper.showVModelTemplate()) {
 		if (_configHelper.showPropsScriptOption())
 			return (
 				ind() +
-				`'update:text': (value${_isTs ? ": any" : ""}) => value !== null,` +
+				`'update:text': (value${_isTs ? ": string" : ""}) => typeof value === 'string',` +
 				`\n`
 			);
 		return (
 			ind() +
-			`'update:foo': (value${_isTs ? ": any" : ""}) => value !== null,` +
+			`'update:foo': (value${_isTs ? ": unknown" : ""}) => value !== null,` +
 			`\n`
 		);
 	}
@@ -114,14 +296,18 @@ const generateEmitsVModel = (): string => {
 		`// v-model event with validation` +
 		`\n` +
 		ind() +
-		`'update:modelValue': (value${_isTs ? ": any" : ""}) => value !== null,` +
+		`'update:modelValue': (value${_isTs ? ": string" : ""}) => typeof value === 'string',` +
 		`\n`
 	);
 };
 
 const generateComputed = (): string => {
 	if (!_configHelper.showComputedScriptOption()) return "";
-	if (!_configHelper.showVModelTemplate())
+	
+	// If using defineModel, show simple computed example
+	const useDefineModelForVModel = _configHelper.useDefineModel() && _configHelper.showVModelTemplate();
+	
+	if (!_configHelper.showVModelTemplate() || useDefineModelForVModel)
 		return `const now = computed(() => Date.now());` + `\n\n`;
 	return `const value = computed(` + generateComputedVModel() + `);` + `\n\n`;
 };
@@ -140,7 +326,7 @@ const generateComputedVModel = (): string => {
 		`},` +
 		`\n` +
 		ind() +
-		`set (value${_isTs ? ": any" : ""}) {` +
+		`set (value${_isTs ? ": string" : ""}) {` +
 		`\n` +
 		`${
 			_configHelper.showEmitsScriptOption()
@@ -156,13 +342,17 @@ const generateComputedVModel = (): string => {
 
 const generateWatch = (): string => {
 	if (!_configHelper.showWatchScriptOption()) return "";
+	
+	// If using defineModel, watch the model ref directly
+	const useDefineModelForVModel = _configHelper.useDefineModel() && _configHelper.showVModelTemplate();
+	
 	return (
 		`const stopWatch = watch(` +
 		`\n` +
 		ind() +
-		generateWatchVModel() +
-		`, async (_newValue${_isTs ? ": any" : ""}, _oldValue${
-			_isTs ? ": any" : ""
+		generateWatchVModel(useDefineModelForVModel) +
+		`, async (_newValue${_isTs ? ": string | undefined" : ""}, _oldValue${
+			_isTs ? ": string | undefined" : ""
 		}) => {` +
 		`\n` +
 		ind(2) +
@@ -185,7 +375,11 @@ const generateWatch = (): string => {
 	);
 };
 
-const generateWatchVModel = (): string => {
+const generateWatchVModel = (useDefineModel: boolean = false): string => {
+	// If using defineModel, watch the model ref
+	if (useDefineModel) {
+		return `model`;
+	}
 	if (!_configHelper.showVModelTemplate()) {
 		if (!_configHelper.showPropsScriptOption()) return `() => new Date()`;
 		return `() => props.text`;

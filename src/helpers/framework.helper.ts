@@ -2,13 +2,16 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
 import { FrameworkType } from "../enums/framework-type.enum";
+import { ConfigHelper } from "./config.helper";
 
 export class FrameworkHelper {
 	private detectedFramework: FrameworkType | null = null;
 	private workspaceRoot: string | undefined;
+	private config: ConfigHelper;
 
 	constructor() {
 		this.workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+		this.config = new ConfigHelper();
 	}
 
 	/**
@@ -16,19 +19,15 @@ export class FrameworkHelper {
 	 * @returns The detected framework type
 	 */
 	public detectFramework(): FrameworkType {
-		// Check if auto-detection is enabled
-		const config = vscode.workspace.getConfiguration("vscode-vue-files");
-		const autoDetect = config.get<boolean>("framework.autoDetect", true);
-
 		// Check for manual override
-		const override = config.get<string>("framework.override", "none");
+		const override = this.config.framework.override();
 		if (override !== "none") {
 			this.detectedFramework = override as FrameworkType;
 			return this.detectedFramework;
 		}
 
 		// If auto-detect is disabled, return none
-		if (!autoDetect) {
+		if (!this.config.framework.autoDetect()) {
 			this.detectedFramework = FrameworkType.None;
 			return this.detectedFramework;
 		}

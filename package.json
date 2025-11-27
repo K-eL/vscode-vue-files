@@ -70,9 +70,7 @@
 		"typescript": "^5.5.4",
 		"typescript-eslint": "^8.0.0"
 	},
-	"activationEvents": [
-		"onCommand:vscode-vue-files.createNewVueFile"
-	],
+	"activationEvents": [],
 	"main": "./out/extension.js",
 	"contributes": {
 		"configuration": [
@@ -357,12 +355,109 @@
 						"description": "Generates the \"Render Triggered\" script option in the new file script tag"
 					}
 				}
+			},
+			{
+				"id": "VueFiles-script-setup",
+				"title": "Script Setup Macros",
+				"order": 7,
+				"properties": {
+					"vscode-vue-files.scriptSetup.useDefineModel": {
+						"type": "boolean",
+						"default": true,
+						"order": 1,
+						"description": "Use defineModel() (Vue 3.4+) for v-model bindings instead of defineProps + defineEmits. Disable for Vue < 3.4 compatibility."
+					},
+					"vscode-vue-files.scriptSetup.useWithDefaults": {
+						"type": "boolean",
+						"default": true,
+						"order": 2,
+						"description": "Use withDefaults() with defineProps for TypeScript projects"
+					},
+					"vscode-vue-files.scriptSetup.showDefineOptions": {
+						"type": "boolean",
+						"default": false,
+						"order": 3,
+						"description": "Include defineOptions() macro (Vue 3.3+) for inheritAttrs, name, etc."
+					},
+					"vscode-vue-files.scriptSetup.showDefineExpose": {
+						"type": "boolean",
+						"default": false,
+						"order": 4,
+						"description": "Include defineExpose() macro to expose component internals via template ref"
+					},
+					"vscode-vue-files.scriptSetup.showDefineSlots": {
+						"type": "boolean",
+						"default": false,
+						"order": 5,
+						"description": "Include defineSlots() macro (Vue 3.3+) for typed slot definitions"
+					}
+				}
+			},
+			{
+				"id": "VueFiles-pinia",
+				"title": "Pinia Stores",
+				"order": 8,
+				"properties": {
+					"vscode-vue-files.pinia.defaultStoreType": {
+						"type": "string",
+						"default": "setup",
+						"order": 1,
+						"enum": [
+							"setup",
+							"options"
+						],
+						"enumDescriptions": [
+							"Setup Store - Composition API style (recommended)",
+							"Options Store - Options API style (like Vuex)"
+						],
+						"description": "Default store type when creating new Pinia stores"
+					},
+					"vscode-vue-files.pinia.createInStoresFolder": {
+						"type": "boolean",
+						"default": true,
+						"order": 2,
+						"description": "Automatically create stores in a 'stores' subfolder"
+					},
+					"vscode-vue-files.pinia.includeExamples": {
+						"type": "boolean",
+						"default": true,
+						"order": 3,
+						"description": "Include example state, getters, and actions in generated stores"
+					}
+				}
+			},
+			{
+				"id": "VueFiles-composables",
+				"title": "Composables",
+				"order": 9,
+				"properties": {
+					"vscode-vue-files.composables.createInComposablesFolder": {
+						"type": "boolean",
+						"default": true,
+						"order": 1,
+						"description": "Automatically create composables in a 'composables' subfolder"
+					},
+					"vscode-vue-files.composables.useTypeScript": {
+						"type": "boolean",
+						"default": true,
+						"order": 2,
+						"description": "Generate composables with TypeScript types and generics"
+					}
+				}
 			}
 		],
 		"commands": [
 			{
 				"command": "vscode-vue-files.createNewVueFileQuick",
 				"title": "Create Vue File (Quick Pick)"
+			},
+			{
+				"command": "vscode-vue-files.createPiniaStore",
+				"title": "Create Pinia Store"
+			},
+			{
+				"command": "vscode-vue-files.createComposable",
+				"title": "Create Composable"
 			},
 			{
 				"command": "vscode-vue-files.vueOptionsJsCss",
@@ -418,6 +513,14 @@
 				{
 					"group": "0_quick",
 					"command": "vscode-vue-files.createNewVueFileQuick"
+				},
+				{
+					"group": "0_quick",
+					"command": "vscode-vue-files.createPiniaStore"
+				},
+				{
+					"group": "0_quick",
+					"command": "vscode-vue-files.createComposable"
 				},
 				{
 					"when": "config.vscode-vue-files.menu.showCompositionApi && config.vscode-vue-files.menu.showTypescript && config.vscode-vue-files.menu.showScss",
