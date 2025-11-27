@@ -449,51 +449,51 @@
 		"commands": [
 			{
 				"command": "vscode-vue-files.createNewVueFileQuick",
-				"title": "Create Vue File (Quick Pick)"
+				"title": "Vue Files: Create Vue File (Quick Pick)"
 			},
 			{
 				"command": "vscode-vue-files.createPiniaStore",
-				"title": "Create Pinia Store"
+				"title": "Vue Files: Create Pinia Store"
 			},
 			{
 				"command": "vscode-vue-files.createComposable",
-				"title": "Create Composable"
+				"title": "Vue Files: Create Composable"
 			},
 			{
 				"command": "vscode-vue-files.vueOptionsJsCss",
-				"title": "Create New Options API (JS + CSS)"
+				"title": "Vue Files: Create New Options API (JS + CSS)"
 			},
 			{
 				"command": "vscode-vue-files.vueOptionsJsScss",
-				"title": "Create New Options API (JS + SCSS)"
+				"title": "Vue Files: Create New Options API (JS + SCSS)"
 			},
 			{
 				"command": "vscode-vue-files.vueOptionsTsCss",
-				"title": "Create New Options API (TS + CSS)"
+				"title": "Vue Files: Create New Options API (TS + CSS)"
 			},
 			{
 				"command": "vscode-vue-files.vueOptionsTsScss",
-				"title": "Create New Options API (TS + SCSS)"
+				"title": "Vue Files: Create New Options API (TS + SCSS)"
 			},
 			{
 				"command": "vscode-vue-files.vueSetupTsScss",
-				"title": "Create New Composition API (Setup + TS + SCSS)"
+				"title": "Vue Files: Create New Composition API (Setup + TS + SCSS)"
 			},
 			{
 				"command": "vscode-vue-files.vueSetupTsCss",
-				"title": "Create New Composition API (Setup + TS + CSS)"
+				"title": "Vue Files: Create New Composition API (Setup + TS + CSS)"
 			},
 			{
 				"command": "vscode-vue-files.vueSetupJsScss",
-				"title": "Create New Composition API (Setup + JS + SCSS)"
+				"title": "Vue Files: Create New Composition API (Setup + JS + SCSS)"
 			},
 			{
 				"command": "vscode-vue-files.vueSetupJsCss",
-				"title": "Create New Composition API (Setup + JS + CSS)"
+				"title": "Vue Files: Create New Composition API (Setup + JS + CSS)"
 			},
 			{
 				"command": "vscode-vue-files.devEnvTest",
-				"title": "TEST"
+				"title": "Vue Files: TEST"
 			}
 		],
 		"submenus": [
@@ -566,6 +566,12 @@
 					"when": "config.vscode-vue-files.isDevEnvironment",
 					"group": "3_dev",
 					"command": "vscode-vue-files.devEnvTest"
+				}
+			],
+			"commandPalette": [
+				{
+					"command": "vscode-vue-files.devEnvTest",
+					"when": "config.vscode-vue-files.isDevEnvironment"
 				}
 			]
 		}
