@@ -1,27 +1,26 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
-import { requestStringDialog } from "../helpers/input-dialog.helper";
-import { createFile, openFile } from "../helpers/file.helper";
-import { handleVueFileName } from "../helpers/vue-file.helper";
-import { VueComponentSettings } from "../interfaces/vue-component-settings";
-import { generateVueSfcContent } from "../generators/vue-sfc.generator";
 import { ConfigHelper } from "../helpers/config.helper";
 import { QuickPickHelper } from "../helpers/quick-pick.helper";
+import { VueFileService, vueFileService } from "../services/vue-file.service";
 
 const templateCursorPosition = new vscode.Position(2, 2);
 const scriptCursorPosition = new vscode.Position(2, 0);
 
 /**
  * Creates a new Vue file using Quick Pick interface with recently used templates
- * @param uri The uri of the file. It can be either a file or a folder
+ * @param uri The uri of the file or folder (can be undefined when called from command palette)
  * @param context The extension context for storing recent templates
- * @returns
+ * @param service The Vue file service (injectable for testing)
  */
 export const createVueFileQuickCommand = async (
 	uri: vscode.Uri | undefined,
 	context: vscode.ExtensionContext,
+	service: VueFileService = vueFileService,
 ) => {
+	const configHelper = ConfigHelper.getInstance();
+
 	// Show quick pick for template selection
 	const quickPickHelper = new QuickPickHelper(context);
 	const selectedTemplate = await quickPickHelper.showTemplateQuickPick();
@@ -36,55 +35,71 @@ export const createVueFileQuickCommand = async (
 		return; // User cancelled or no valid folder
 	}
 
-	// loads/updates workspace config
-	const configHelper = ConfigHelper.getInstance();
+	// Get file name from user input
+	const componentName = await vscode.window.showInputBox({
+		prompt: "Enter the name of the new component file",
+		placeHolder: "MyComponent",
+		validateInput: (value) => service.validateComponentName(value),
+	});
 
-	// get file name from user input
-	const stringInput = await requestStringDialog(
-		"Enter the name of the new component file",
-		"MyComponent",
-	);
-
-	// return if no file name was entered
-	if (!stringInput) {
+	if (!componentName) {
 		return;
 	}
 
-	// handle file name
-	const fileName = handleVueFileName(stringInput);
-	// handle component name
-	const componentName = fileName
-		.split("/")
-		.pop()!
-		.replace(".vue", "")
-		.replace(/[-_](.)/g, (_: string, char: string) => char.toUpperCase())
-		.replace(/^(.)/g, (_: string, char: string) => char.toUpperCase());
-
-	// create file settings
-	const fileSettings: VueComponentSettings = {
+	// Create file using service
+	const result = await service.create({
+		componentName,
+		targetDirectory: targetUri.fsPath,
 		apiType: selectedTemplate.apiType,
 		scriptLang: selectedTemplate.scriptLang,
 		styleLang: selectedTemplate.styleLang,
-		componentName: componentName,
-	};
+	});
 
-	// create file content
-	const fileContent = generateVueSfcContent(fileSettings, configHelper);
+	// Handle file already exists
+	if (!result.success && result.fileExisted) {
+		const overwrite = await vscode.window.showWarningMessage(
+			`File "${result.fileName}" already exists. Overwrite?`,
+			"Yes",
+			"No",
+		);
+		if (overwrite === "Yes") {
+			const retryResult = await service.create({
+				componentName,
+				targetDirectory: targetUri.fsPath,
+				apiType: selectedTemplate.apiType,
+				scriptLang: selectedTemplate.scriptLang,
+				styleLang: selectedTemplate.styleLang,
+				overwriteExisting: true,
+			});
+			if (retryResult.success && retryResult.filePath) {
+				await openCreatedFile(retryResult.filePath, configHelper);
+			} else {
+				vscode.window.showErrorMessage(`Failed to create component: ${retryResult.error}`);
+			}
+		}
+		return;
+	}
 
-	// create file path
-	const filePath = vscode.Uri.joinPath(targetUri, fileName);
+	// Handle other errors
+	if (!result.success) {
+		vscode.window.showErrorMessage(`Failed to create component: ${result.error}`);
+		return;
+	}
 
-	// create file
-	await createFile(filePath, fileContent);
-
-	// determine cursor position
-	const cursorPosition = configHelper.isScriptFirst()
-		? scriptCursorPosition
-		: templateCursorPosition;
-
-	// open the new file in the editor
-	await openFile(filePath, cursorPosition);
+	// Open the created file
+	await openCreatedFile(result.filePath!, configHelper);
 };
+
+/**
+ * Opens the created file in the editor with cursor at appropriate position
+ */
+async function openCreatedFile(filePath: string, config: ConfigHelper): Promise<void> {
+	const document = await vscode.workspace.openTextDocument(filePath);
+	const cursorPosition = config.isScriptFirst() ? scriptCursorPosition : templateCursorPosition;
+	await vscode.window.showTextDocument(document, {
+		selection: new vscode.Selection(cursorPosition, cursorPosition),
+	});
+}
 
 /**
  * Resolves the target URI for file creation

@@ -1,9 +1,8 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
-import * as fs from 'fs';
 import { PiniaStoreType } from '../enums/pinia-store-type.enum';
-import { generatePiniaStore } from '../generators/pinia-store.generator';
 import { ConfigHelper } from '../helpers/config.helper';
+import { getTargetDirectory } from '../helpers/target-directory.helper';
+import { PiniaStoreService, piniaStoreService } from '../services/pinia-store.service';
 
 interface StoreTypeChoice extends vscode.QuickPickItem {
   type: PiniaStoreType;
@@ -13,12 +12,18 @@ interface StoreTypeChoice extends vscode.QuickPickItem {
  * Command to create a new Pinia store file
  * Prompts user for store name and type, then creates the file
  */
-export async function createPiniaStoreCommand(uri?: vscode.Uri): Promise<void> {
+export async function createPiniaStoreCommand(
+  uri?: vscode.Uri,
+  service: PiniaStoreService = piniaStoreService
+): Promise<void> {
   const config = ConfigHelper.getInstance();
   
   try {
-    // Determine target directory
-    const targetDir = await getTargetDirectory(uri, config);
+    // Get target directory options from service
+    const targetDirOptions = service.getTargetDirectoryOptions();
+    
+    // Determine target directory using shared helper
+    const targetDir = await getTargetDirectory(uri, targetDirOptions);
     if (!targetDir) {
       return;
     }
@@ -27,15 +32,7 @@ export async function createPiniaStoreCommand(uri?: vscode.Uri): Promise<void> {
     const storeName = await vscode.window.showInputBox({
       prompt: 'Enter store name (e.g., "user", "cart", "auth")',
       placeHolder: 'storeName',
-      validateInput: (value) => {
-        if (!value || value.trim().length === 0) {
-          return 'Store name is required';
-        }
-        if (!/^[a-zA-Z][a-zA-Z0-9]*$/.test(value.trim())) {
-          return 'Store name must start with a letter and contain only alphanumeric characters';
-        }
-        return undefined;
-      }
+      validateInput: (value) => service.validateName(value)
     });
 
     if (!storeName) {
@@ -48,47 +45,44 @@ export async function createPiniaStoreCommand(uri?: vscode.Uri): Promise<void> {
       return; // User cancelled
     }
 
-    // Get configuration options
-    const includeExamples = config.pinia.includeExamples();
-
-    // Generate store content
-    const content = generatePiniaStore({
-      name: storeName.trim(),
-      type: storeType,
-      includeExampleState: includeExamples,
-      includeExampleGetter: includeExamples,
-      includeExampleAction: includeExamples
+    // Create store using service
+    const result = await service.create({
+      name: storeName,
+      storeType,
+      targetDirectory: targetDir,
     });
 
-    // Determine file path
-    const fileName = `${storeName.trim().toLowerCase()}.store.ts`;
-    const filePath = path.join(targetDir, fileName);
-
-    // Check if file already exists
-    if (fs.existsSync(filePath)) {
+    // Handle file already exists
+    if (!result.success && result.fileExisted) {
       const overwrite = await vscode.window.showWarningMessage(
-        `File "${fileName}" already exists. Overwrite?`,
+        `File "${result.fileName}" already exists. Overwrite?`,
         'Yes',
         'No'
       );
-      if (overwrite !== 'Yes') {
-        return;
+      if (overwrite === 'Yes') {
+        const retryResult = await service.create({
+          name: storeName,
+          storeType,
+          targetDirectory: targetDir,
+          overwriteExisting: true,
+        });
+        if (retryResult.success && retryResult.filePath) {
+          await openCreatedFile(retryResult.filePath, retryResult.fileName!);
+        } else {
+          vscode.window.showErrorMessage(`Failed to create Pinia store: ${retryResult.error}`);
+        }
       }
+      return;
     }
 
-    // Ensure directory exists
-    if (!fs.existsSync(targetDir)) {
-      fs.mkdirSync(targetDir, { recursive: true });
+    // Handle other errors
+    if (!result.success) {
+      vscode.window.showErrorMessage(`Failed to create Pinia store: ${result.error}`);
+      return;
     }
 
-    // Write file
-    fs.writeFileSync(filePath, content, 'utf8');
-
-    // Open the file in editor
-    const document = await vscode.workspace.openTextDocument(filePath);
-    await vscode.window.showTextDocument(document);
-
-    vscode.window.showInformationMessage(`Pinia store "${fileName}" created successfully!`);
+    // Open the created file
+    await openCreatedFile(result.filePath!, result.fileName!);
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error occurred';
     vscode.window.showErrorMessage(`Failed to create Pinia store: ${message}`);
@@ -96,48 +90,19 @@ export async function createPiniaStoreCommand(uri?: vscode.Uri): Promise<void> {
 }
 
 /**
- * Determines the target directory for the store file
- * Creates 'stores' subdirectory if configured and not already in a stores folder
+ * Opens the created file in the editor
  */
-async function getTargetDirectory(uri: vscode.Uri | undefined, config: ConfigHelper): Promise<string | undefined> {
-  let baseDir: string;
-
-  if (uri) {
-    // Use provided URI (from context menu)
-    const stat = fs.statSync(uri.fsPath);
-    baseDir = stat.isDirectory() ? uri.fsPath : path.dirname(uri.fsPath);
-  } else {
-    // No URI provided, try to use workspace folder
-    const workspaceFolders = vscode.workspace.workspaceFolders;
-    if (!workspaceFolders || workspaceFolders.length === 0) {
-      vscode.window.showErrorMessage('No workspace folder open');
-      return undefined;
-    }
-
-    // Use first workspace folder's src directory if it exists
-    const workspaceRoot = workspaceFolders[0].uri.fsPath;
-    const srcDir = path.join(workspaceRoot, 'src');
-    baseDir = fs.existsSync(srcDir) ? srcDir : workspaceRoot;
-  }
-
-  // Check if we should create in 'stores' subfolder
-  const createInStoresFolder = config.pinia.createInStoresFolder();
-
-  if (createInStoresFolder) {
-    // Check if already in a stores folder
-    const baseName = path.basename(baseDir).toLowerCase();
-    if (baseName !== 'stores' && baseName !== 'store') {
-      return path.join(baseDir, 'stores');
-    }
-  }
-
-  return baseDir;
+async function openCreatedFile(filePath: string, fileName: string): Promise<void> {
+  const document = await vscode.workspace.openTextDocument(filePath);
+  await vscode.window.showTextDocument(document);
+  vscode.window.showInformationMessage(`Pinia store "${fileName}" created successfully!`);
 }
 
 /**
  * Shows Quick Pick for selecting store type
+ * @internal Exported for testing
  */
-async function selectStoreType(config: ConfigHelper): Promise<PiniaStoreType | undefined> {
+export async function selectStoreType(config: ConfigHelper): Promise<PiniaStoreType | undefined> {
   const defaultType = config.pinia.defaultStoreType();
 
   const choices: StoreTypeChoice[] = [

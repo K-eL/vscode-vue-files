@@ -1,82 +1,100 @@
 import * as vscode from "vscode";
-import { requestStringDialog } from "../helpers/input-dialog.helper";
-import { createFile, openFile } from "../helpers/file.helper";
-import { handleVueFileName } from "../helpers/vue-file.helper";
+import * as path from "path";
 import { VueApiType } from "../enums/vue-api-type.enum";
-import { VueComponentSettings } from "../interfaces/vue-component-settings";
 import { VueStyleLang } from "../enums/vue-style-lang.enum";
 import { VueScriptLang } from "../enums/vue-script-lang.enum";
-import { generateVueSfcContent } from "../generators/vue-sfc.generator";
 import { ConfigHelper } from "../helpers/config.helper";
+import { VueFileService, vueFileService } from "../services/vue-file.service";
 
 const templateCursorPosition = new vscode.Position(2, 2);
 const scriptCursorPosition = new vscode.Position(2, 0);
 
 /**
- * Creates a new Vue file. It asks for the component name and creates the file. The cursor position is then determined and the file is finally opened in the editor.
- * @param uri The uri of the file. It can be either a file or a folder
- * @param apiType The type of the api. It can be either setup or options
- * @param scriptLang The language of the script. It can be either TypeScript or JavaScript
- * @param styleLang The language of the style. It can be either CSS, SCSS
- * @returns
+ * Creates a new Vue file with specific API type, script language, and style language.
+ * This command is called from the context menu with predefined options.
+ * @param uri The uri of the file or folder
+ * @param apiType The type of the api (setup or options)
+ * @param scriptLang The language of the script (TypeScript or JavaScript)
+ * @param styleLang The language of the style (CSS, SCSS)
+ * @param service The Vue file service (injectable for testing)
  */
-
 export const createVueFileCommand = async (
 	uri: vscode.Uri,
 	apiType: VueApiType,
 	scriptLang: VueScriptLang,
 	styleLang: VueStyleLang,
+	service: VueFileService = vueFileService,
 ) => {
-	// loads/updates workspace config
 	const configHelper = ConfigHelper.getInstance();
 
-	// get file name from user input
-	const stringInput = await requestStringDialog(
-		"Enter the name of the new component file",
-		"MyComponent",
-	);
+	// Get file name from user input
+	const componentName = await vscode.window.showInputBox({
+		prompt: "Enter the name of the new component file",
+		placeHolder: "MyComponent",
+		validateInput: (value) => service.validateComponentName(value),
+	});
 
-	// return if no file name was entered
-	if (!stringInput) {
+	if (!componentName) {
 		return;
 	}
 
-	// handle file name
-	const fileName = handleVueFileName(stringInput);
-	// handle component name
-	const componentName = fileName
-		.replace(".vue", "")
-		.split("-")
-		.map((word: string) => {
-			return word.charAt(0).toUpperCase() + word.slice(1);
-		})
-		.join("");
+	// Resolve target directory (if uri is a file, use parent folder)
+	let targetDirectory = uri.fsPath;
+	if (uri.fsPath.includes(".")) {
+		targetDirectory = path.dirname(uri.fsPath);
+	}
 
-	const newFileSettings: VueComponentSettings = {
+	// Create file using service
+	const result = await service.create({
+		componentName,
+		targetDirectory,
 		apiType,
 		scriptLang,
 		styleLang,
-		componentName,
-	};
+	});
 
-	// define the file content
-	const fileContent = generateVueSfcContent(newFileSettings, configHelper);
-
-	// if uri contains a file, use the parent folder
-	if (uri.fsPath.includes(".")) {
-		uri = uri.with({
-			path: uri.path.replace(uri.fsPath.split("/").pop() as string, ""),
-		});
+	// Handle file already exists
+	if (!result.success && result.fileExisted) {
+		const overwrite = await vscode.window.showWarningMessage(
+			`File "${result.fileName}" already exists. Overwrite?`,
+			"Yes",
+			"No",
+		);
+		if (overwrite === "Yes") {
+			const retryResult = await service.create({
+				componentName,
+				targetDirectory,
+				apiType,
+				scriptLang,
+				styleLang,
+				overwriteExisting: true,
+			});
+			if (retryResult.success && retryResult.filePath) {
+				await openCreatedFile(retryResult.filePath, configHelper);
+			} else {
+				vscode.window.showErrorMessage(`Failed to create component: ${retryResult.error}`);
+			}
+		}
+		return;
 	}
-	// define the new file uri
-	const newFileUri = uri.with({ path: `${uri.path}/${fileName}` });
 
-	// create the new file
-	await createFile(newFileUri, fileContent);
+	// Handle other errors
+	if (!result.success) {
+		vscode.window.showErrorMessage(`Failed to create component: ${result.error}`);
+		return;
+	}
 
-	// open the new file
-	const cursorPosition = configHelper.isScriptFirst()
-		? scriptCursorPosition
-		: templateCursorPosition;
-	await openFile(newFileUri, cursorPosition);
+	// Open the created file
+	await openCreatedFile(result.filePath!, configHelper);
 };
+
+/**
+ * Opens the created file in the editor with cursor at appropriate position
+ */
+async function openCreatedFile(filePath: string, config: ConfigHelper): Promise<void> {
+	const document = await vscode.workspace.openTextDocument(filePath);
+	const cursorPosition = config.isScriptFirst() ? scriptCursorPosition : templateCursorPosition;
+	await vscode.window.showTextDocument(document, {
+		selection: new vscode.Selection(cursorPosition, cursorPosition),
+	});
+}

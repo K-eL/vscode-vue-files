@@ -9,3 +9,12 @@ export { QuickPickHelper, type TemplateChoice } from "./quick-pick.helper";
 export { createFile, isFileNameValid, openFile } from "./file.helper";
 export { handleVueFileName } from "./vue-file.helper";
 export { requestStringDialog } from "./input-dialog.helper";
+export {
+	getTargetDirectory,
+	getBaseDirectory,
+	checkIfInSubdirectory,
+	ensureDirectoryExists,
+	fileExists,
+	type TargetDirectoryOptions,
+	type TargetDirectoryResult,
+} from "./target-directory.helper";
