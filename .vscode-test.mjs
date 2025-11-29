@@ -4,11 +4,11 @@ export default defineConfig({
 	files: "out/test/**/*.test.js",
 	coverage: {
 		includeAll: true,
-		include: ["out/src/**/*.js"],
+		include: ["src/**/*.ts"],
 		exclude: [
-			"out/src/test/**",
-			"out/src/extension.js",
-			"out/src/commands/create-files-for-test.command.js"
+			"src/test/**",
+			"src/extension.ts",
+			"src/commands/create-files-for-test.command.ts"
 		],
 		reporter: ["text", "html", "lcov"],
 		output: "./coverage"

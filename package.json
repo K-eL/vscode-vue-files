@@ -44,7 +44,7 @@
 		"release:minor": "commit-and-tag-version --release-as minor",
 		"release": "commit-and-tag-version",
 		"test": "vscode-test",
-		"test:coverage": "vscode-test --coverage",
+		"test:coverage": "vscode-test --coverage --coverage-reporter lcov --coverage-reporter text --coverage-reporter html",
 		"vscode:package": "vsce package",
 		"vscode:prepublish": "npm run test",
 		"vscode:publish": "vsce publish",
