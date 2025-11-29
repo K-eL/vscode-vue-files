@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as assert from "assert";
 import { before, beforeEach } from "mocha";
-import { ConfigHelper } from "../../../src/helpers/config.helper";
+import { ConfigHelper } from "../../../../src/helpers/config.helper";
 
 suite("Config Helper", () => {
 	let _configHelper: ConfigHelper;

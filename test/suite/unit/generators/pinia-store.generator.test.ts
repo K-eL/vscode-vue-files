@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { generatePiniaStore } from '../../../src/generators/pinia-store.generator';
-import { PiniaStoreType } from '../../../src/enums/pinia-store-type.enum';
+import { generatePiniaStore } from '../../../../src/generators/pinia-store.generator';
+import { PiniaStoreType } from '../../../../src/enums/pinia-store-type.enum';
 
 suite('Pinia Store Generator', () => {
   suite('Setup Store', () => {

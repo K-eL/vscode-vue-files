@@ -21,6 +21,18 @@ export {
 	DEFAULT_EDITOR_CONFIG,
 } from "./mocks/config.mock";
 
+export {
+	mockShowInputBox,
+	mockShowQuickPick,
+	mockShowInformationMessage,
+	mockShowErrorMessage,
+	mockShowWarningMessage,
+	mockOpenTextDocument,
+	mockShowTextDocument,
+	createMockWorkspaceFolders,
+	type MockWorkspaceFolder,
+} from "./mocks/vscode.mock";
+
 // Factories
 export {
 	createVueComponentSettings,
@@ -37,3 +49,13 @@ export {
 	ConfigHelperPresets,
 	type ConfigHelperFactoryOptions,
 } from "./factories/config.factory";
+
+// Sinon setup
+export {
+	chai,
+	sinon,
+	assertCalled,
+	assertCalledOnce,
+	assertCalledWith,
+	assertNotCalled,
+} from "./sinon-setup";

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { FrameworkType } from "../../../src/enums/framework-type.enum";
+import { FrameworkType } from "../../../../src/enums/framework-type.enum";
 
 suite("FrameworkHelper", () => {
 	suite("Framework Type Enum", () => {

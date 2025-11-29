@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { generateComposable } from '../../../src/generators/composable.generator';
-import { ComposablePattern } from '../../../src/enums/composable-pattern.enum';
+import { generateComposable } from '../../../../src/generators/composable.generator';
+import { ComposablePattern } from '../../../../src/enums/composable-pattern.enum';
 
 suite('Composable Generator', () => {
   suite('Name formatting', () => {
