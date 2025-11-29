@@ -1,14 +1,11 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
-import { requestStringDialog } from "../helpers/editor.helper";
-import {
-	createFile,
-	handleVueFileName,
-	openFile,
-} from "../helpers/file.helper";
-import { FileSettings } from "../interfaces/file-settings";
-import { generateContent } from "../generators/content.generator";
+import { requestStringDialog } from "../helpers/input-dialog.helper";
+import { createFile, openFile } from "../helpers/file.helper";
+import { handleVueFileName } from "../helpers/vue-file.helper";
+import { VueComponentSettings } from "../interfaces/vue-component-settings";
+import { generateVueSfcContent } from "../generators/vue-sfc.generator";
 import { ConfigHelper } from "../helpers/config.helper";
 import { QuickPickHelper } from "../helpers/quick-pick.helper";
 
@@ -21,7 +18,7 @@ const scriptCursorPosition = new vscode.Position(2, 0);
  * @param context The extension context for storing recent templates
  * @returns
  */
-export const createNewVueFileQuickCommand = async (
+export const createVueFileQuickCommand = async (
 	uri: vscode.Uri | undefined,
 	context: vscode.ExtensionContext,
 ) => {
@@ -60,11 +57,11 @@ export const createNewVueFileQuickCommand = async (
 		.split("/")
 		.pop()!
 		.replace(".vue", "")
-		.replace(/[-_](.)/g, (_, char) => char.toUpperCase())
-		.replace(/^(.)/, (_, char) => char.toUpperCase());
+		.replace(/[-_](.)/g, (_: string, char: string) => char.toUpperCase())
+		.replace(/^(.)/g, (_: string, char: string) => char.toUpperCase());
 
 	// create file settings
-	const fileSettings: FileSettings = {
+	const fileSettings: VueComponentSettings = {
 		apiType: selectedTemplate.apiType,
 		scriptLang: selectedTemplate.scriptLang,
 		styleLang: selectedTemplate.styleLang,
@@ -72,7 +69,7 @@ export const createNewVueFileQuickCommand = async (
 	};
 
 	// create file content
-	const fileContent = generateContent(fileSettings, configHelper);
+	const fileContent = generateVueSfcContent(fileSettings, configHelper);
 
 	// create file path
 	const filePath = vscode.Uri.joinPath(targetUri, fileName);

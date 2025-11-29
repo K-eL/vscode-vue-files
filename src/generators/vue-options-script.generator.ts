@@ -2,7 +2,7 @@
  * @fileoverview Generator for Vue 3 Options API script templates.
  * Generates traditional Options API component structures with defineComponent.
  *
- * @module generators/options-script
+ * @module generators/vue-options-script
  */
 import { GeneratorContext } from "../interfaces/generator-context";
 

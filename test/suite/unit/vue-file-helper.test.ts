@@ -1,7 +1,7 @@
 import * as assert from "assert";
-import { handleVueFileName } from "../../../src/helpers/file.helper";
+import { handleVueFileName } from "../../../src/helpers/vue-file.helper";
 
-suite("File Helper", () => {
+suite("Vue File Helper", () => {
 	test("should return the correct file name", () => {
 		const fileName = "test";
 		const expected = "test.vue";

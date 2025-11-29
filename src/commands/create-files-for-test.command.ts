@@ -4,11 +4,11 @@ import { VueScriptLang } from "../enums/vue-script-lang.enum";
 import { VueStyleLang } from "../enums/vue-style-lang.enum";
 import { PiniaStoreType } from "../enums/pinia-store-type.enum";
 import { ComposablePattern } from "../enums/composable-pattern.enum";
-import { generateContent } from "../generators/content.generator";
+import { generateVueSfcContent } from "../generators/vue-sfc.generator";
 import { generatePiniaStore } from "../generators/pinia-store.generator";
 import { generateComposable } from "../generators/composable.generator";
 import { createFile } from "../helpers/file.helper";
-import { FileSettings } from "../interfaces/file-settings";
+import { VueComponentSettings } from "../interfaces/vue-component-settings";
 import { ConfigHelper } from "../helpers/config.helper";
 
 /**
@@ -103,14 +103,14 @@ async function createVueComponents(
 			for (const styleLang of Object.values(VueStyleLang)) {
 				const fileName = `${isSetup ? "setup" : "options"}-${scriptLang}-${styleLang}.vue`;
 
-				const newFileSettings: FileSettings = {
+				const newFileSettings: VueComponentSettings = {
 					apiType: isSetup ? VueApiType.setup : VueApiType.options,
 					scriptLang,
 					styleLang,
 					componentName: "TestComponent",
 				};
 
-				const fileContent = generateContent(newFileSettings, configHelper);
+				const fileContent = generateVueSfcContent(newFileSettings, configHelper);
 				const newFileUri = langUri.with({ path: `${langUri.path}/${fileName}` });
 
 				await createFile(newFileUri, fileContent);

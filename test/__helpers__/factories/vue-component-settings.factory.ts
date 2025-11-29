@@ -1,15 +1,15 @@
 /**
- * @fileoverview Factory functions for creating test FileSettings objects
+ * @fileoverview Factory functions for creating test VueComponentSettings objects
  */
-import { FileSettings } from "../../../src/interfaces/file-settings";
+import { VueComponentSettings } from "../../../src/interfaces/vue-component-settings";
 import { VueApiType } from "../../../src/enums/vue-api-type.enum";
 import { VueScriptLang } from "../../../src/enums/vue-script-lang.enum";
 import { VueStyleLang } from "../../../src/enums/vue-style-lang.enum";
 
 /**
- * Default FileSettings for tests
+ * Default VueComponentSettings for tests
  */
-export const DEFAULT_FILE_SETTINGS: FileSettings = {
+export const DEFAULT_VUE_COMPONENT_SETTINGS: VueComponentSettings = {
 	apiType: VueApiType.setup,
 	scriptLang: VueScriptLang.typeScript,
 	styleLang: VueStyleLang.scss,
@@ -17,34 +17,34 @@ export const DEFAULT_FILE_SETTINGS: FileSettings = {
 };
 
 /**
- * Creates a FileSettings object with optional overrides
+ * Creates a VueComponentSettings object with optional overrides
  *
- * @param overrides - Partial FileSettings to override defaults
- * @returns Complete FileSettings object
+ * @param overrides - Partial VueComponentSettings to override defaults
+ * @returns Complete VueComponentSettings object
  *
  * @example
  * ```typescript
  * // Default settings (Composition API + TS + SCSS)
- * const settings = createFileSettings();
+ * const settings = createVueComponentSettings();
  *
  * // Options API with JavaScript
- * const optionsJs = createFileSettings({
+ * const optionsJs = createVueComponentSettings({
  *   apiType: VueApiType.options,
  *   scriptLang: VueScriptLang.javaScript,
  * });
  * ```
  */
-export function createFileSettings(
-	overrides: Partial<FileSettings> = {},
-): FileSettings {
+export function createVueComponentSettings(
+	overrides: Partial<VueComponentSettings> = {},
+): VueComponentSettings {
 	return {
-		...DEFAULT_FILE_SETTINGS,
+		...DEFAULT_VUE_COMPONENT_SETTINGS,
 		...overrides,
 	};
 }
 
 /**
- * Creates FileSettings for Composition API (script setup)
+ * Creates VueComponentSettings for Composition API (script setup)
  *
  * @param scriptLang - Script language (default: TypeScript)
  * @param styleLang - Style language (default: SCSS)
@@ -54,7 +54,7 @@ export function createCompositionApiSettings(
 	scriptLang: VueScriptLang = VueScriptLang.typeScript,
 	styleLang: VueStyleLang = VueStyleLang.scss,
 	componentName = "TestComponent",
-): FileSettings {
+): VueComponentSettings {
 	return {
 		apiType: VueApiType.setup,
 		scriptLang,
@@ -64,7 +64,7 @@ export function createCompositionApiSettings(
 }
 
 /**
- * Creates FileSettings for Options API
+ * Creates VueComponentSettings for Options API
  *
  * @param scriptLang - Script language (default: TypeScript)
  * @param styleLang - Style language (default: SCSS)
@@ -74,7 +74,7 @@ export function createOptionsApiSettings(
 	scriptLang: VueScriptLang = VueScriptLang.typeScript,
 	styleLang: VueStyleLang = VueStyleLang.scss,
 	componentName = "TestComponent",
-): FileSettings {
+): VueComponentSettings {
 	return {
 		apiType: VueApiType.options,
 		scriptLang,
@@ -84,60 +84,60 @@ export function createOptionsApiSettings(
 }
 
 /**
- * Pre-built FileSettings combinations for common test scenarios
+ * Pre-built VueComponentSettings combinations for common test scenarios
  */
-export const FileSettingsPresets = {
+export const VueComponentSettingsPresets = {
 	/** Composition API + TypeScript + SCSS */
-	setupTsScss: createFileSettings({
+	setupTsScss: createVueComponentSettings({
 		apiType: VueApiType.setup,
 		scriptLang: VueScriptLang.typeScript,
 		styleLang: VueStyleLang.scss,
 	}),
 
 	/** Composition API + TypeScript + CSS */
-	setupTsCss: createFileSettings({
+	setupTsCss: createVueComponentSettings({
 		apiType: VueApiType.setup,
 		scriptLang: VueScriptLang.typeScript,
 		styleLang: VueStyleLang.css,
 	}),
 
 	/** Composition API + JavaScript + SCSS */
-	setupJsScss: createFileSettings({
+	setupJsScss: createVueComponentSettings({
 		apiType: VueApiType.setup,
 		scriptLang: VueScriptLang.javaScript,
 		styleLang: VueStyleLang.scss,
 	}),
 
 	/** Composition API + JavaScript + CSS */
-	setupJsCss: createFileSettings({
+	setupJsCss: createVueComponentSettings({
 		apiType: VueApiType.setup,
 		scriptLang: VueScriptLang.javaScript,
 		styleLang: VueStyleLang.css,
 	}),
 
 	/** Options API + TypeScript + SCSS */
-	optionsTsScss: createFileSettings({
+	optionsTsScss: createVueComponentSettings({
 		apiType: VueApiType.options,
 		scriptLang: VueScriptLang.typeScript,
 		styleLang: VueStyleLang.scss,
 	}),
 
 	/** Options API + TypeScript + CSS */
-	optionsTsCss: createFileSettings({
+	optionsTsCss: createVueComponentSettings({
 		apiType: VueApiType.options,
 		scriptLang: VueScriptLang.typeScript,
 		styleLang: VueStyleLang.css,
 	}),
 
 	/** Options API + JavaScript + SCSS */
-	optionsJsScss: createFileSettings({
+	optionsJsScss: createVueComponentSettings({
 		apiType: VueApiType.options,
 		scriptLang: VueScriptLang.javaScript,
 		styleLang: VueStyleLang.scss,
 	}),
 
 	/** Options API + JavaScript + CSS */
-	optionsJsCss: createFileSettings({
+	optionsJsCss: createVueComponentSettings({
 		apiType: VueApiType.options,
 		scriptLang: VueScriptLang.javaScript,
 		styleLang: VueStyleLang.css,

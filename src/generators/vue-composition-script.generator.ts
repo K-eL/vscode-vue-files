@@ -2,7 +2,7 @@
  * @fileoverview Generator for Vue 3 Composition API script templates.
  * Generates script setup blocks with modern Vue 3 macros and patterns.
  *
- * @module generators/composition-script
+ * @module generators/vue-composition-script
  */
 import { GeneratorContext } from "../interfaces/generator-context";
 

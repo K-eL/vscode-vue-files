@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import * as vscode from "vscode";
-import { generateContent } from "../../../src/generators/content.generator";
+import { generateVueSfcContent } from "../../../src/generators/vue-sfc.generator";
 import { ConfigHelper } from "../../../src/helpers/config.helper";
-import { FileSettings } from "../../../src/interfaces/file-settings";
+import { VueComponentSettings } from "../../../src/interfaces/vue-component-settings";
 import { VueApiType } from "../../../src/enums/vue-api-type.enum";
 import { VueScriptLang } from "../../../src/enums/vue-script-lang.enum";
 import { VueStyleLang } from "../../../src/enums/vue-style-lang.enum";
@@ -66,14 +66,14 @@ suite("Content Generator", () => {
 
 	suite("File Structure", () => {
 		test("should generate template first by default", () => {
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.scss,
 				componentName: "TestComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			const templateIndex = result.indexOf("<template>");
 			const scriptIndex = result.indexOf("<script");
@@ -85,14 +85,14 @@ suite("Content Generator", () => {
 				"fileStructure.scriptTagComesFirst": true,
 			});
 
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.scss,
 				componentName: "TestComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			const templateIndex = result.indexOf("<template>");
 			const scriptIndex = result.indexOf("<script");
@@ -102,41 +102,41 @@ suite("Content Generator", () => {
 
 	suite("Script Tag Generation", () => {
 		test("should generate setup script tag for Composition API", () => {
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			expect(result).to.include("<script setup lang='ts'>");
 		});
 
 		test("should generate regular script tag for Options API", () => {
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.options,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			expect(result).to.include("<script lang='ts'>");
 			expect(result).not.to.include("<script setup");
 		});
 
 		test("should use js lang for JavaScript", () => {
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.javaScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			expect(result).to.include("<script setup lang='js'>");
 		});
@@ -144,27 +144,27 @@ suite("Content Generator", () => {
 
 	suite("Style Tag Generation", () => {
 		test("should generate SCSS style tag", () => {
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.scss,
 				componentName: "TestComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			expect(result).to.include('<style scoped lang="scss">');
 		});
 
 		test("should generate CSS style tag", () => {
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			expect(result).to.include('<style scoped lang="css">');
 		});
@@ -172,14 +172,14 @@ suite("Content Generator", () => {
 
 	suite("Template Generation", () => {
 		test("should generate basic template structure", () => {
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			expect(result).to.include("<template>");
 			expect(result).to.include("</template>");
@@ -193,14 +193,14 @@ suite("Content Generator", () => {
 				"scriptSetup.useDefineModel": true,
 			});
 
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			expect(result).to.include("v-model");
 		});
@@ -208,14 +208,14 @@ suite("Content Generator", () => {
 
 	suite("Options API Generation", () => {
 		test("should include defineComponent import for Options API", () => {
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.options,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			expect(result).to.include("import { defineComponent } from 'vue'");
 			expect(result).to.include("export default defineComponent({");
@@ -226,14 +226,14 @@ suite("Content Generator", () => {
 				"option.showNameScriptOption": true,
 			});
 
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.options,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "MyComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			expect(result).to.include("name: 'MyComponent'");
 		});
@@ -246,14 +246,14 @@ suite("Content Generator", () => {
 				"option.showWatchScriptOption": true,
 			});
 
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			expect(result).to.include("import {");
 			expect(result).to.include("computed");
@@ -267,14 +267,14 @@ suite("Content Generator", () => {
 				"lifecycle.showMountedScriptOption": true,
 			});
 
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			expect(result).to.include("onMounted");
 		});
@@ -286,14 +286,14 @@ suite("Content Generator", () => {
 				"scriptSetup.showDefineOptions": true,
 			});
 
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			expect(result).to.include("defineOptions({");
 		});
@@ -303,14 +303,14 @@ suite("Content Generator", () => {
 				"scriptSetup.showDefineExpose": true,
 			});
 
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			expect(result).to.include("defineExpose({");
 		});
@@ -320,14 +320,14 @@ suite("Content Generator", () => {
 				"scriptSetup.showDefineSlots": true,
 			});
 
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			expect(result).to.include("defineSlots");
 		});
@@ -338,14 +338,14 @@ suite("Content Generator", () => {
 				"scriptSetup.useDefineModel": true,
 			});
 
-			const fileSettings: FileSettings = {
+			const fileSettings: VueComponentSettings = {
 				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
 			};
 
-			const result = generateContent(fileSettings, configHelper);
+			const result = generateVueSfcContent(fileSettings, configHelper);
 
 			expect(result).to.include("defineModel");
 		});

@@ -1,15 +1,12 @@
 import * as vscode from "vscode";
-import { requestStringDialog } from "../helpers/editor.helper";
-import {
-	createFile,
-	handleVueFileName,
-	openFile,
-} from "../helpers/file.helper";
+import { requestStringDialog } from "../helpers/input-dialog.helper";
+import { createFile, openFile } from "../helpers/file.helper";
+import { handleVueFileName } from "../helpers/vue-file.helper";
 import { VueApiType } from "../enums/vue-api-type.enum";
-import { FileSettings } from "../interfaces/file-settings";
+import { VueComponentSettings } from "../interfaces/vue-component-settings";
 import { VueStyleLang } from "../enums/vue-style-lang.enum";
 import { VueScriptLang } from "../enums/vue-script-lang.enum";
-import { generateContent } from "../generators/content.generator";
+import { generateVueSfcContent } from "../generators/vue-sfc.generator";
 import { ConfigHelper } from "../helpers/config.helper";
 
 const templateCursorPosition = new vscode.Position(2, 2);
@@ -24,7 +21,7 @@ const scriptCursorPosition = new vscode.Position(2, 0);
  * @returns
  */
 
-export const createNewVueFileCommand = async (
+export const createVueFileCommand = async (
 	uri: vscode.Uri,
 	apiType: VueApiType,
 	scriptLang: VueScriptLang,
@@ -50,12 +47,12 @@ export const createNewVueFileCommand = async (
 	const componentName = fileName
 		.replace(".vue", "")
 		.split("-")
-		.map(word => {
+		.map((word: string) => {
 			return word.charAt(0).toUpperCase() + word.slice(1);
 		})
 		.join("");
 
-	const newFileSettings: FileSettings = {
+	const newFileSettings: VueComponentSettings = {
 		apiType,
 		scriptLang,
 		styleLang,
@@ -63,7 +60,7 @@ export const createNewVueFileCommand = async (
 	};
 
 	// define the file content
-	const fileContent = generateContent(newFileSettings, configHelper);
+	const fileContent = generateVueSfcContent(newFileSettings, configHelper);
 
 	// if uri contains a file, use the parent folder
 	if (uri.fsPath.includes(".")) {

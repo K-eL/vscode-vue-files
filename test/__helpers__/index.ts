@@ -6,8 +6,8 @@
  * ```typescript
  * import {
  *   createTestConfigHelper,
- *   createFileSettings,
- *   FileSettingsPresets,
+ *   createVueComponentSettings,
+ *   VueComponentSettingsPresets,
  *   ConfigHelperPresets,
  * } from "../../__helpers__";
  * ```
@@ -23,12 +23,12 @@ export {
 
 // Factories
 export {
-	createFileSettings,
+	createVueComponentSettings,
 	createCompositionApiSettings,
 	createOptionsApiSettings,
-	FileSettingsPresets,
-	DEFAULT_FILE_SETTINGS,
-} from "./factories/file-settings.factory";
+	VueComponentSettingsPresets,
+	DEFAULT_VUE_COMPONENT_SETTINGS,
+} from "./factories/vue-component-settings.factory";
 
 export {
 	createTestConfigHelper,

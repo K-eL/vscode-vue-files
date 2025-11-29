@@ -1,8 +1,8 @@
 /**
- * @fileoverview Editor utilities for user input and interaction.
- * Provides functions for showing dialogs and collecting user input.
+ * @fileoverview Input dialog utilities for user interaction.
+ * Provides functions for showing dialogs and collecting user input through VS Code input boxes.
  *
- * @module helpers/editor
+ * @module helpers/input-dialog
  */
 import * as vscode from "vscode";
 import { isFileNameValid } from "./file.helper";

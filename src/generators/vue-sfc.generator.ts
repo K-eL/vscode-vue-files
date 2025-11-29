@@ -2,14 +2,14 @@
  * @fileoverview Main content generator for Vue single-file components.
  * Orchestrates the generation of template, script, and style sections.
  *
- * @module generators/content
+ * @module generators/vue-sfc
  */
-import { FileSettings } from "../interfaces/file-settings";
+import { VueComponentSettings } from "../interfaces/vue-component-settings";
 import { VueApiType } from "../enums/vue-api-type.enum";
 import { VueScriptLang } from "../enums/vue-script-lang.enum";
 import { VueStyleLang } from "../enums/vue-style-lang.enum";
-import { generateOptionsApiScriptTemplate } from "./options-script.generator";
-import { generateCompositionApiScriptTemplate } from "./composition-script.generator";
+import { generateOptionsApiScriptTemplate } from "./vue-options-script.generator";
+import { generateCompositionApiScriptTemplate } from "./vue-composition-script.generator";
 import { ConfigHelper } from "../helpers/config.helper";
 import {
 	GeneratorContext,
@@ -35,8 +35,8 @@ import {
  * const content = generateContent(settings, ConfigHelper.getInstance());
  * ```
  */
-export const generateContent = (
-	fileSettings: FileSettings,
+export const generateVueSfcContent = (
+	fileSettings: VueComponentSettings,
 	configHelper: ConfigHelper,
 ): string => {
 	const { scriptLang } = fileSettings;
@@ -52,7 +52,7 @@ export const generateContent = (
  * Generates content with script section first.
  */
 const generateContentScriptFirst = (
-	fileSettings: FileSettings,
+	fileSettings: VueComponentSettings,
 	ctx: GeneratorContext,
 ): string => {
 	const { apiType, scriptLang, styleLang, componentName } = fileSettings;
@@ -69,7 +69,7 @@ const generateContentScriptFirst = (
  * Generates content with template section first.
  */
 const generateContentTemplateFirst = (
-	fileSettings: FileSettings,
+	fileSettings: VueComponentSettings,
 	ctx: GeneratorContext,
 ): string => {
 	const { apiType, scriptLang, styleLang, componentName } = fileSettings;

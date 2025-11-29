@@ -7,7 +7,7 @@ import { VueStyleLang } from "../enums/vue-style-lang.enum";
  *
  * @example
  * ```typescript
- * const settings: FileSettings = {
+ * const settings: VueComponentSettings = {
  *   apiType: VueApiType.setup,
  *   scriptLang: VueScriptLang.typeScript,
  *   styleLang: VueStyleLang.scss,
@@ -15,7 +15,7 @@ import { VueStyleLang } from "../enums/vue-style-lang.enum";
  * };
  * ```
  */
-export interface FileSettings {
+export interface VueComponentSettings {
 	/**
 	 * Vue API style to use for the component
 	 * - `VueApiType.setup`: Generates Composition API with `<script setup>` syntax

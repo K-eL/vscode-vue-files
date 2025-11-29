@@ -3,8 +3,8 @@
  * @module commands
  */
 
-export { createNewVueFileCommand } from "./create-new-vue-file.command";
-export { createNewVueFileQuickCommand } from "./create-new-vue-file-quick.command";
+export { createVueFileCommand as createNewVueFileCommand } from "./create-vue-file.command";
+export { createVueFileQuickCommand as createNewVueFileQuickCommand } from "./create-vue-file-quick.command";
 export { createPiniaStoreCommand } from "./create-pinia-store.command";
 export { createComposableCommand } from "./create-composable.command";
 export { createFilesForTestCommand } from "./create-files-for-test.command";
