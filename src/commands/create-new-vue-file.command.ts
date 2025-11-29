@@ -31,7 +31,7 @@ export const createNewVueFileCommand = async (
 	styleLang: VueStyleLang,
 ) => {
 	// loads/updates workspace config
-	const configHelper = new ConfigHelper();
+	const configHelper = ConfigHelper.getInstance();
 
 	// get file name from user input
 	const stringInput = await requestStringDialog(
@@ -56,7 +56,7 @@ export const createNewVueFileCommand = async (
 		.join("");
 
 	const newFileSettings: FileSettings = {
-		isSetupApi: apiType === VueApiType.setup,
+		apiType,
 		scriptLang,
 		styleLang,
 		componentName,

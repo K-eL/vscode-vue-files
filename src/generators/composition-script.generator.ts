@@ -1,73 +1,88 @@
-import { ConfigHelper } from "../helpers/config.helper";
+/**
+ * @fileoverview Generator for Vue 3 Composition API script templates.
+ * Generates script setup blocks with modern Vue 3 macros and patterns.
+ *
+ * @module generators/composition-script
+ */
+import { GeneratorContext } from "../interfaces/generator-context";
 
-let _isTs: boolean = false;
-let _configHelper = new ConfigHelper();
-let ind: (x?: number) => string;
-
+/**
+ * Generates the complete Composition API script template content.
+ * This includes imports, macros (defineOptions, defineModel, etc.),
+ * props, emits, computed, watch, and lifecycle hooks.
+ *
+ * @param ctx - Generator context with config, isTs flag, and indentation
+ * @returns Generated script content for a script setup block
+ *
+ * @example
+ * ```typescript
+ * const ctx = createGeneratorContext(true);
+ * const script = generateCompositionApiScriptTemplate(ctx);
+ * ```
+ */
 export const generateCompositionApiScriptTemplate = (
-	isTs: boolean,
-	configHelper: ConfigHelper,
-) => {
-	_isTs = isTs;
-	_configHelper = configHelper;
-	ind = _configHelper.ind;
+	ctx: GeneratorContext,
+): string => {
 	return (
-		generateImportStatement() +
-		generateDefineOptions() +
-		generateDefineModel() +
-		generateProps() +
-		generateEmits() +
-		generateDefineSlots() +
-		generateDefineExpose() +
-		generateComputed() +
-		generateWatch() +
-		generateBeforeMount() +
-		generateMounted() +
-		generateBeforeUpdate() +
-		generateUpdated() +
-		generateActivated() +
-		generateDeactivated() +
-		generateBeforeUnmount() +
-		generateUnmounted() +
-		generateErrorCaptured() +
-		generateRenderTracked() +
-		generateRenderTriggered()
+		generateImportStatement(ctx) +
+		generateDefineOptions(ctx) +
+		generateDefineModel(ctx) +
+		generateProps(ctx) +
+		generateEmits(ctx) +
+		generateDefineSlots(ctx) +
+		generateDefineExpose(ctx) +
+		generateComputed(ctx) +
+		generateWatch(ctx) +
+		generateBeforeMount(ctx) +
+		generateMounted(ctx) +
+		generateBeforeUpdate(ctx) +
+		generateUpdated(ctx) +
+		generateActivated(ctx) +
+		generateDeactivated(ctx) +
+		generateBeforeUnmount(ctx) +
+		generateUnmounted(ctx) +
+		generateErrorCaptured(ctx) +
+		generateRenderTracked(ctx) +
+		generateRenderTriggered(ctx)
 	);
 };
 
-const generateImportStatement = (): string => {
-	const imports = [];
-	if (_configHelper.options.showComputed()) imports.push("computed");
-	if (_configHelper.options.showWatch()) imports.push("watch");
-	if (_configHelper.lifecycle.showHooks()) {
-		if (_configHelper.lifecycle.showBeforeMount())
-			imports.push("onBeforeMount");
-		if (_configHelper.lifecycle.showMounted()) imports.push("onMounted");
-		if (_configHelper.lifecycle.showBeforeUpdate())
-			imports.push("onBeforeUpdate");
-		if (_configHelper.lifecycle.showUpdated()) imports.push("onUpdated");
-		if (_configHelper.lifecycle.showActivated()) imports.push("onActivated");
-		if (_configHelper.lifecycle.showDeactivated())
-			imports.push("onDeactivated");
-		if (_configHelper.lifecycle.showBeforeUnmount())
-			imports.push("onBeforeUnmount");
-		if (_configHelper.lifecycle.showUnmounted()) imports.push("onUnmounted");
-		if (_configHelper.lifecycle.showErrorCaptured())
-			imports.push("onErrorCaptured");
-		if (_configHelper.lifecycle.showRenderTracked())
-			imports.push("onRenderTracked");
-		if (_configHelper.lifecycle.showRenderTriggered())
+/**
+ * Generates Vue import statement based on enabled features.
+ */
+const generateImportStatement = (ctx: GeneratorContext): string => {
+	const { config } = ctx;
+	const imports: string[] = [];
+
+	if (config.options.showComputed()) imports.push("computed");
+	if (config.options.showWatch()) imports.push("watch");
+
+	if (config.lifecycle.showHooks()) {
+		if (config.lifecycle.showBeforeMount()) imports.push("onBeforeMount");
+		if (config.lifecycle.showMounted()) imports.push("onMounted");
+		if (config.lifecycle.showBeforeUpdate()) imports.push("onBeforeUpdate");
+		if (config.lifecycle.showUpdated()) imports.push("onUpdated");
+		if (config.lifecycle.showActivated()) imports.push("onActivated");
+		if (config.lifecycle.showDeactivated()) imports.push("onDeactivated");
+		if (config.lifecycle.showBeforeUnmount()) imports.push("onBeforeUnmount");
+		if (config.lifecycle.showUnmounted()) imports.push("onUnmounted");
+		if (config.lifecycle.showErrorCaptured()) imports.push("onErrorCaptured");
+		if (config.lifecycle.showRenderTracked()) imports.push("onRenderTracked");
+		if (config.lifecycle.showRenderTriggered())
 			imports.push("onRenderTriggered");
 	}
+
 	return `import { ${imports.join(", ")} } from 'vue'` + `\n\n`;
 };
 
 /**
- * Generates defineOptions macro (Vue 3.3+)
- * Used for inheritAttrs, name, and other component options
+ * Generates defineOptions macro (Vue 3.3+).
+ * Used for inheritAttrs, name, and other component options.
  */
-const generateDefineOptions = (): string => {
-	if (!_configHelper.scriptSetup.showDefineOptions()) return "";
+const generateDefineOptions = (ctx: GeneratorContext): string => {
+	const { config, ind } = ctx;
+	if (!config.scriptSetup.showDefineOptions()) return "";
+
 	return (
 		`// Component options (Vue 3.3+)` +
 		`\n` +
@@ -85,16 +100,18 @@ const generateDefineOptions = (): string => {
 };
 
 /**
- * Generates defineModel macro (Vue 3.4+)
- * Modern approach for v-model bindings
+ * Generates defineModel macro (Vue 3.4+).
+ * Modern approach for v-model bindings.
  */
-const generateDefineModel = (): string => {
+const generateDefineModel = (ctx: GeneratorContext): string => {
+	const { config, isTs } = ctx;
+
 	// Only generate if using defineModel AND v-model template is enabled
-	if (!_configHelper.scriptSetup.useDefineModel() || !_configHelper.showVModelTemplate()) {
+	if (!config.scriptSetup.useDefineModel() || !config.showVModelTemplate()) {
 		return "";
 	}
-	
-	if (_isTs) {
+
+	if (isTs) {
 		return (
 			`// v-model binding (Vue 3.4+)` +
 			`\n` +
@@ -102,7 +119,7 @@ const generateDefineModel = (): string => {
 			`\n\n`
 		);
 	}
-	
+
 	return (
 		`// v-model binding (Vue 3.4+)` +
 		`\n` +
@@ -112,13 +129,14 @@ const generateDefineModel = (): string => {
 };
 
 /**
- * Generates defineSlots macro (Vue 3.3+)
- * For typed slot definitions
+ * Generates defineSlots macro (Vue 3.3+).
+ * For typed slot definitions.
  */
-const generateDefineSlots = (): string => {
-	if (!_configHelper.scriptSetup.showDefineSlots()) return "";
-	
-	if (_isTs) {
+const generateDefineSlots = (ctx: GeneratorContext): string => {
+	const { config, isTs, ind } = ctx;
+	if (!config.scriptSetup.showDefineSlots()) return "";
+
+	if (isTs) {
 		return (
 			`// Typed slots (Vue 3.3+)` +
 			`\n` +
@@ -134,21 +152,18 @@ const generateDefineSlots = (): string => {
 			`\n\n`
 		);
 	}
-	
-	return (
-		`// Slots (Vue 3.3+)` +
-		`\n` +
-		`const slots = defineSlots();` +
-		`\n\n`
-	);
+
+	return `// Slots (Vue 3.3+)` + `\n` + `const slots = defineSlots();` + `\n\n`;
 };
 
 /**
- * Generates defineExpose macro
- * Exposes component internals to parent via template ref
+ * Generates defineExpose macro.
+ * Exposes component internals to parent via template ref.
  */
-const generateDefineExpose = (): string => {
-	if (!_configHelper.scriptSetup.showDefineExpose()) return "";
+const generateDefineExpose = (ctx: GeneratorContext): string => {
+	const { config, ind } = ctx;
+	if (!config.scriptSetup.showDefineExpose()) return "";
+
 	return (
 		`// Expose to parent component via template ref` +
 		`\n` +
@@ -162,29 +177,39 @@ const generateDefineExpose = (): string => {
 	);
 };
 
-const generateProps = (): string => {
-	if (!_configHelper.options.showProps()) return "";
-	
+/**
+ * Generates props definition using defineProps.
+ */
+const generateProps = (ctx: GeneratorContext): string => {
+	const { config, isTs } = ctx;
+	if (!config.options.showProps()) return "";
+
 	// If using defineModel for v-model, skip the modelValue prop
-	const useDefineModelForVModel = _configHelper.scriptSetup.useDefineModel() && _configHelper.showVModelTemplate();
-	
-	if (_configHelper.scriptSetup.useWithDefaults() && _isTs) {
-		return generatePropsWithDefaults(useDefineModelForVModel);
+	const useDefineModelForVModel =
+		config.scriptSetup.useDefineModel() && config.showVModelTemplate();
+
+	if (config.scriptSetup.useWithDefaults() && isTs) {
+		return generatePropsWithDefaults(ctx, useDefineModelForVModel);
 	}
-	
+
 	return (
 		`const props = defineProps({` +
 		`\n` +
-		generatePropsVModel(useDefineModelForVModel) +
+		generatePropsVModel(ctx, useDefineModelForVModel) +
 		`});` +
 		`\n\n`
 	);
 };
 
 /**
- * Generates props using withDefaults for TypeScript
+ * Generates props using withDefaults for TypeScript.
  */
-const generatePropsWithDefaults = (skipModelValue: boolean): string => {
+const generatePropsWithDefaults = (
+	ctx: GeneratorContext,
+	skipModelValue: boolean,
+): string => {
+	const { ind } = ctx;
+
 	if (skipModelValue) {
 		// When using defineModel, show a simple prop example
 		return (
@@ -212,7 +237,7 @@ const generatePropsWithDefaults = (skipModelValue: boolean): string => {
 			`\n\n`
 		);
 	}
-	
+
 	// Legacy v-model approach with withDefaults
 	return (
 		`// Props with defaults (TypeScript)` +
@@ -234,12 +259,20 @@ const generatePropsWithDefaults = (skipModelValue: boolean): string => {
 	);
 };
 
-const generatePropsVModel = (skipModelValue: boolean = false): string => {
+/**
+ * Generates v-model prop definition.
+ */
+const generatePropsVModel = (
+	ctx: GeneratorContext,
+	skipModelValue: boolean = false,
+): string => {
+	const { config, isTs, ind } = ctx;
+
 	// If using defineModel, show simple text prop instead of modelValue
-	if (skipModelValue || !_configHelper.showVModelTemplate()) {
+	if (skipModelValue || !config.showVModelTemplate()) {
 		return ind() + `text: String` + `\n`;
 	}
-	
+
 	return (
 		ind() +
 		`// v-model` +
@@ -247,7 +280,7 @@ const generatePropsVModel = (skipModelValue: boolean = false): string => {
 		ind() +
 		`modelValue: {` +
 		`\n` +
-		`${_isTs ? ind(2) + "type: String, " + "\n" : ""}` +
+		`${isTs ? ind(2) + "type: String, " + "\n" : ""}` +
 		ind(2) +
 		`default: '',` +
 		`\n` +
@@ -257,62 +290,91 @@ const generatePropsVModel = (skipModelValue: boolean = false): string => {
 	);
 };
 
-const generateEmits = (): string => {
-	if (!_configHelper.options.showEmits()) return "";
-	
+/**
+ * Generates emits definition using defineEmits.
+ */
+const generateEmits = (ctx: GeneratorContext): string => {
+	const { config } = ctx;
+	if (!config.options.showEmits()) return "";
+
 	// If using defineModel for v-model, skip the update:modelValue emit
-	const useDefineModelForVModel = _configHelper.scriptSetup.useDefineModel() && _configHelper.showVModelTemplate();
-	
+	const useDefineModelForVModel =
+		config.scriptSetup.useDefineModel() && config.showVModelTemplate();
+
 	return (
-		`const emit = defineEmits({` + `\n` + generateEmitsVModel(useDefineModelForVModel) + `});` + `\n\n`
+		`const emit = defineEmits({` +
+		`\n` +
+		generateEmitsVModel(ctx, useDefineModelForVModel) +
+		`});` +
+		`\n\n`
 	);
 };
 
-const generateEmitsVModel = (skipModelValue: boolean = false): string => {
+/**
+ * Generates v-model emit definition.
+ */
+const generateEmitsVModel = (
+	ctx: GeneratorContext,
+	skipModelValue: boolean = false,
+): string => {
+	const { config, isTs, ind } = ctx;
+
 	// If using defineModel, show simple text update emit instead
 	if (skipModelValue) {
 		return (
 			ind() +
-			`'update:text': (value${_isTs ? ": string" : ""}) => typeof value === 'string',` +
+			`'update:text': (value${isTs ? ": string" : ""}) => typeof value === 'string',` +
 			`\n`
 		);
 	}
-	
-	if (!_configHelper.showVModelTemplate()) {
-		if (_configHelper.options.showProps())
+
+	if (!config.showVModelTemplate()) {
+		if (config.options.showProps())
 			return (
 				ind() +
-				`'update:text': (value${_isTs ? ": string" : ""}) => typeof value === 'string',` +
+				`'update:text': (value${isTs ? ": string" : ""}) => typeof value === 'string',` +
 				`\n`
 			);
 		return (
 			ind() +
-			`'update:foo': (value${_isTs ? ": unknown" : ""}) => value !== null,` +
+			`'update:foo': (value${isTs ? ": unknown" : ""}) => value !== null,` +
 			`\n`
 		);
 	}
+
 	return (
 		ind() +
 		`// v-model event with validation` +
 		`\n` +
 		ind() +
-		`'update:modelValue': (value${_isTs ? ": string" : ""}) => typeof value === 'string',` +
+		`'update:modelValue': (value${isTs ? ": string" : ""}) => typeof value === 'string',` +
 		`\n`
 	);
 };
 
-const generateComputed = (): string => {
-	if (!_configHelper.options.showComputed()) return "";
-	
+/**
+ * Generates computed property definition.
+ */
+const generateComputed = (ctx: GeneratorContext): string => {
+	const { config } = ctx;
+	if (!config.options.showComputed()) return "";
+
 	// If using defineModel, show simple computed example
-	const useDefineModelForVModel = _configHelper.scriptSetup.useDefineModel() && _configHelper.showVModelTemplate();
-	
-	if (!_configHelper.showVModelTemplate() || useDefineModelForVModel)
+	const useDefineModelForVModel =
+		config.scriptSetup.useDefineModel() && config.showVModelTemplate();
+
+	if (!config.showVModelTemplate() || useDefineModelForVModel)
 		return `const now = computed(() => Date.now());` + `\n\n`;
-	return `const value = computed(` + generateComputedVModel() + `);` + `\n\n`;
+
+	return `const value = computed(` + generateComputedVModel(ctx) + `);` + `\n\n`;
 };
 
-const generateComputedVModel = (): string => {
+/**
+ * Generates v-model computed getter/setter.
+ */
+const generateComputedVModel = (ctx: GeneratorContext): string => {
+	const { config, isTs, ind } = ctx;
+
 	return (
 		`{` +
 		`\n` +
@@ -326,10 +388,10 @@ const generateComputedVModel = (): string => {
 		`},` +
 		`\n` +
 		ind() +
-		`set (value${_isTs ? ": string" : ""}) {` +
+		`set (value${isTs ? ": string" : ""}) {` +
 		`\n` +
 		`${
-			_configHelper.options.showEmits()
+			config.options.showEmits()
 				? ind(2) + `emit('update:modelValue', value);` + `\n`
 				: ""
 		}` +
@@ -340,19 +402,24 @@ const generateComputedVModel = (): string => {
 	);
 };
 
-const generateWatch = (): string => {
-	if (!_configHelper.options.showWatch()) return "";
-	
+/**
+ * Generates watch definition.
+ */
+const generateWatch = (ctx: GeneratorContext): string => {
+	const { config, isTs, ind } = ctx;
+	if (!config.options.showWatch()) return "";
+
 	// If using defineModel, watch the model ref directly
-	const useDefineModelForVModel = _configHelper.scriptSetup.useDefineModel() && _configHelper.showVModelTemplate();
-	
+	const useDefineModelForVModel =
+		config.scriptSetup.useDefineModel() && config.showVModelTemplate();
+
 	return (
 		`const stopWatch = watch(` +
 		`\n` +
 		ind() +
-		generateWatchVModel(useDefineModelForVModel) +
-		`, async (_newValue${_isTs ? ": string | undefined" : ""}, _oldValue${
-			_isTs ? ": string | undefined" : ""
+		generateWatchVModel(ctx, useDefineModelForVModel) +
+		`, async (_newValue${isTs ? ": string | undefined" : ""}, _oldValue${
+			isTs ? ": string | undefined" : ""
 		}) => {` +
 		`\n` +
 		ind(2) +
@@ -375,121 +442,142 @@ const generateWatch = (): string => {
 	);
 };
 
-const generateWatchVModel = (useDefineModel: boolean = false): string => {
+/**
+ * Generates watch source for v-model.
+ */
+const generateWatchVModel = (
+	ctx: GeneratorContext,
+	useDefineModel: boolean = false,
+): string => {
+	const { config } = ctx;
+
 	// If using defineModel, watch the model ref
 	if (useDefineModel) {
 		return `model`;
 	}
-	if (!_configHelper.showVModelTemplate()) {
-		if (!_configHelper.options.showProps()) return `() => new Date()`;
+	if (!config.showVModelTemplate()) {
+		if (!config.options.showProps()) return `() => new Date()`;
 		return `() => props.text`;
 	}
 	return `() => props.modelValue`;
 };
 
-const generateBeforeMount = (): string => {
-	if (
-		!_configHelper.lifecycle.showHooks() ||
-		!_configHelper.lifecycle.showBeforeMount()
-	)
+// ============================================================================
+// Lifecycle Hooks
+// ============================================================================
+
+/**
+ * Generates onBeforeMount lifecycle hook.
+ */
+const generateBeforeMount = (ctx: GeneratorContext): string => {
+	const { config } = ctx;
+	if (!config.lifecycle.showHooks() || !config.lifecycle.showBeforeMount())
 		return "";
 	return `onBeforeMount(() => {` + `\n` + `});` + `\n\n`;
 };
 
-const generateMounted = (): string => {
-	if (
-		!_configHelper.lifecycle.showHooks() ||
-		!_configHelper.lifecycle.showMounted()
-	)
+/**
+ * Generates onMounted lifecycle hook.
+ */
+const generateMounted = (ctx: GeneratorContext): string => {
+	const { config } = ctx;
+	if (!config.lifecycle.showHooks() || !config.lifecycle.showMounted())
 		return "";
 	return `onMounted(() => {` + `\n` + `});` + `\n\n`;
 };
 
-const generateBeforeUpdate = (): string => {
-	if (
-		!_configHelper.lifecycle.showHooks() ||
-		!_configHelper.lifecycle.showBeforeUpdate()
-	)
+/**
+ * Generates onBeforeUpdate lifecycle hook.
+ */
+const generateBeforeUpdate = (ctx: GeneratorContext): string => {
+	const { config } = ctx;
+	if (!config.lifecycle.showHooks() || !config.lifecycle.showBeforeUpdate())
 		return "";
 	return `onBeforeUpdate(() => {` + `\n` + `});` + `\n\n`;
 };
 
-const generateUpdated = (): string => {
-	if (
-		!_configHelper.lifecycle.showHooks() ||
-		!_configHelper.lifecycle.showUpdated()
-	)
+/**
+ * Generates onUpdated lifecycle hook.
+ */
+const generateUpdated = (ctx: GeneratorContext): string => {
+	const { config } = ctx;
+	if (!config.lifecycle.showHooks() || !config.lifecycle.showUpdated())
 		return "";
 	return `onUpdated(() => {` + `\n` + `});` + `\n\n`;
 };
 
-const generateActivated = (): string => {
-	if (
-		!_configHelper.lifecycle.showHooks() ||
-		!_configHelper.lifecycle.showActivated()
-	)
+/**
+ * Generates onActivated lifecycle hook.
+ */
+const generateActivated = (ctx: GeneratorContext): string => {
+	const { config } = ctx;
+	if (!config.lifecycle.showHooks() || !config.lifecycle.showActivated())
 		return "";
 	return `onActivated(() => {` + `\n` + `});` + `\n\n`;
 };
 
-const generateDeactivated = (): string => {
-	if (
-		!_configHelper.lifecycle.showHooks() ||
-		!_configHelper.lifecycle.showDeactivated()
-	)
+/**
+ * Generates onDeactivated lifecycle hook.
+ */
+const generateDeactivated = (ctx: GeneratorContext): string => {
+	const { config } = ctx;
+	if (!config.lifecycle.showHooks() || !config.lifecycle.showDeactivated())
 		return "";
 	return `onDeactivated(() => {` + `\n` + `});` + `\n\n`;
 };
 
-const generateBeforeUnmount = (): string => {
-	if (
-		!_configHelper.lifecycle.showHooks() ||
-		!_configHelper.lifecycle.showBeforeUnmount()
-	)
+/**
+ * Generates onBeforeUnmount lifecycle hook.
+ */
+const generateBeforeUnmount = (ctx: GeneratorContext): string => {
+	const { config, ind } = ctx;
+	if (!config.lifecycle.showHooks() || !config.lifecycle.showBeforeUnmount())
 		return "";
 	return (
 		`onBeforeUnmount(() => {` +
 		`\n` +
-		`${
-			_configHelper.options.showWatch() ? ind() + `stopWatch();` + `\n` : ""
-		}` +
+		`${config.options.showWatch() ? ind() + `stopWatch();` + `\n` : ""}` +
 		`});` +
 		`\n\n`
 	);
 };
 
-const generateUnmounted = (): string => {
-	if (
-		!_configHelper.lifecycle.showHooks() ||
-		!_configHelper.lifecycle.showUnmounted()
-	)
+/**
+ * Generates onUnmounted lifecycle hook.
+ */
+const generateUnmounted = (ctx: GeneratorContext): string => {
+	const { config } = ctx;
+	if (!config.lifecycle.showHooks() || !config.lifecycle.showUnmounted())
 		return "";
 	return `onUnmounted(() => {` + `\n` + `});` + `\n\n`;
 };
 
-const generateErrorCaptured = (): string => {
-	if (
-		!_configHelper.lifecycle.showHooks() ||
-		!_configHelper.lifecycle.showErrorCaptured()
-	)
+/**
+ * Generates onErrorCaptured lifecycle hook.
+ */
+const generateErrorCaptured = (ctx: GeneratorContext): string => {
+	const { config } = ctx;
+	if (!config.lifecycle.showHooks() || !config.lifecycle.showErrorCaptured())
 		return "";
 	return `onErrorCaptured(() => {` + `\n` + `});` + `\n\n`;
 };
 
-const generateRenderTracked = (): string => {
-	if (
-		!_configHelper.lifecycle.showHooks() ||
-		!_configHelper.lifecycle.showRenderTracked()
-	)
+/**
+ * Generates onRenderTracked lifecycle hook.
+ */
+const generateRenderTracked = (ctx: GeneratorContext): string => {
+	const { config } = ctx;
+	if (!config.lifecycle.showHooks() || !config.lifecycle.showRenderTracked())
 		return "";
 	return `onRenderTracked(() => {` + `\n` + `});` + `\n\n`;
 };
 
-const generateRenderTriggered = (): string => {
-	if (
-		!_configHelper.lifecycle.showHooks() ||
-		!_configHelper.lifecycle.showRenderTriggered()
-	)
+/**
+ * Generates onRenderTriggered lifecycle hook.
+ */
+const generateRenderTriggered = (ctx: GeneratorContext): string => {
+	const { config } = ctx;
+	if (!config.lifecycle.showHooks() || !config.lifecycle.showRenderTriggered())
 		return "";
 	return `onRenderTriggered(() => {` + `\n` + `});` + `\n\n`;
 };

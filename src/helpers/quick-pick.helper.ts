@@ -25,7 +25,7 @@ export class QuickPickHelper {
 
 	constructor(context: vscode.ExtensionContext) {
 		this.context = context;
-		this.config = new ConfigHelper();
+		this.config = ConfigHelper.getInstance();
 	}
 
 	/**

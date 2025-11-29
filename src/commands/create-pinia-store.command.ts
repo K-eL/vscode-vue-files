@@ -14,7 +14,7 @@ interface StoreTypeChoice extends vscode.QuickPickItem {
  * Prompts user for store name and type, then creates the file
  */
 export async function createPiniaStoreCommand(uri?: vscode.Uri): Promise<void> {
-  const config = new ConfigHelper();
+  const config = ConfigHelper.getInstance();
   
   try {
     // Determine target directory

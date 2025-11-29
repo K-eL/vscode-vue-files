@@ -7,9 +7,13 @@ import * as vscode from "vscode";
  * organized by feature area. All configuration access should go through
  * this helper to ensure consistency and maintainability.
  *
+ * Uses the Singleton pattern to ensure a single instance is shared
+ * across the extension, avoiding redundant configuration reads.
+ *
  * @example
  * ```typescript
- * const config = new ConfigHelper();
+ * // Get the singleton instance
+ * const config = ConfigHelper.getInstance();
  *
  * // Editor settings
  * const indent = config.ind(2);
@@ -17,14 +21,66 @@ import * as vscode from "vscode";
  * // Feature settings
  * if (config.pinia.createInStoresFolder()) { ... }
  * if (config.composables.useTypeScript()) { ... }
+ *
+ * // Refresh configuration (e.g., after settings change)
+ * ConfigHelper.refresh();
  * ```
  */
 export class ConfigHelper {
+	// ==========================================================================
+	// SINGLETON PATTERN
+	// ==========================================================================
+
+	private static _instance: ConfigHelper | null = null;
+
+	/**
+	 * Gets the singleton instance of ConfigHelper.
+	 * Creates a new instance if one doesn't exist.
+	 *
+	 * @returns The singleton ConfigHelper instance
+	 */
+	public static getInstance(): ConfigHelper {
+		if (!ConfigHelper._instance) {
+			ConfigHelper._instance = new ConfigHelper();
+		}
+		return ConfigHelper._instance;
+	}
+
+	/**
+	 * Refreshes the configuration by creating a new instance.
+	 * Call this when VS Code settings have changed.
+	 *
+	 * @returns The new ConfigHelper instance
+	 */
+	public static refresh(): ConfigHelper {
+		ConfigHelper._instance = new ConfigHelper();
+		return ConfigHelper._instance;
+	}
+
+	/**
+	 * Resets the singleton instance for testing purposes.
+	 * Allows injecting a mock ConfigHelper or resetting to null.
+	 *
+	 * @param instance - Optional mock instance to use, or undefined to reset
+	 * @internal This method is intended for testing only
+	 */
+	public static _resetForTesting(instance?: ConfigHelper): void {
+		ConfigHelper._instance = instance ?? null;
+	}
+
+	// ==========================================================================
+	// INSTANCE MEMBERS
+	// ==========================================================================
+
 	private _editorConfig: vscode.WorkspaceConfiguration | undefined;
 	private _vueFilesConfig: vscode.WorkspaceConfiguration | undefined;
 	private _useTabs = false;
 	private _tabSize = 2;
 
+	/**
+	 * Creates a new ConfigHelper instance.
+	 * Note: Prefer using `ConfigHelper.getInstance()` instead of direct construction.
+	 */
 	constructor() {
 		this.loadConfigurations();
 	}

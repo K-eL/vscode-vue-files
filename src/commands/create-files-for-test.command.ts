@@ -47,7 +47,7 @@ import { ConfigHelper } from "../helpers/config.helper";
  */
 export const createFilesForTestCommand = async (uri: vscode.Uri) => {
 	// loads/updates workspace config
-	const configHelper = new ConfigHelper();
+	const configHelper = ConfigHelper.getInstance();
 
 	// if uri contains a file, use the parent folder
 	if (uri.fsPath.includes(".")) {
@@ -104,7 +104,7 @@ async function createVueComponents(
 				const fileName = `${isSetup ? "setup" : "options"}-${scriptLang}-${styleLang}.vue`;
 
 				const newFileSettings: FileSettings = {
-					isSetupApi: isSetup,
+					apiType: isSetup ? VueApiType.setup : VueApiType.options,
 					scriptLang,
 					styleLang,
 					componentName: "TestComponent",

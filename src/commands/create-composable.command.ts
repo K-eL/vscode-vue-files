@@ -14,7 +14,7 @@ interface ComposablePatternChoice extends vscode.QuickPickItem {
  * Prompts user for composable name and pattern, then creates the file
  */
 export async function createComposableCommand(uri?: vscode.Uri): Promise<void> {
-  const config = new ConfigHelper();
+  const config = ConfigHelper.getInstance();
   
   try {
     // Determine target directory

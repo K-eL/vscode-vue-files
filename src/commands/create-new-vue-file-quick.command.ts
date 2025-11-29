@@ -7,7 +7,6 @@ import {
 	handleVueFileName,
 	openFile,
 } from "../helpers/file.helper";
-import { VueApiType } from "../enums/vue-api-type.enum";
 import { FileSettings } from "../interfaces/file-settings";
 import { generateContent } from "../generators/content.generator";
 import { ConfigHelper } from "../helpers/config.helper";
@@ -41,7 +40,7 @@ export const createNewVueFileQuickCommand = async (
 	}
 
 	// loads/updates workspace config
-	const configHelper = new ConfigHelper();
+	const configHelper = ConfigHelper.getInstance();
 
 	// get file name from user input
 	const stringInput = await requestStringDialog(
@@ -66,7 +65,7 @@ export const createNewVueFileQuickCommand = async (
 
 	// create file settings
 	const fileSettings: FileSettings = {
-		isSetupApi: selectedTemplate.apiType === VueApiType.setup,
+		apiType: selectedTemplate.apiType,
 		scriptLang: selectedTemplate.scriptLang,
 		styleLang: selectedTemplate.styleLang,
 		componentName: componentName,

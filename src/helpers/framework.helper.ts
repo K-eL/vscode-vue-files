@@ -11,7 +11,7 @@ export class FrameworkHelper {
 
 	constructor() {
 		this.workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-		this.config = new ConfigHelper();
+		this.config = ConfigHelper.getInstance();
 	}
 
 	/**

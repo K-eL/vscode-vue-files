@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import { generateContent } from "../../../src/generators/content.generator";
 import { ConfigHelper } from "../../../src/helpers/config.helper";
 import { FileSettings } from "../../../src/interfaces/file-settings";
+import { VueApiType } from "../../../src/enums/vue-api-type.enum";
 import { VueScriptLang } from "../../../src/enums/vue-script-lang.enum";
 import { VueStyleLang } from "../../../src/enums/vue-style-lang.enum";
 
@@ -66,7 +67,7 @@ suite("Content Generator", () => {
 	suite("File Structure", () => {
 		test("should generate template first by default", () => {
 			const fileSettings: FileSettings = {
-				isSetupApi: true,
+				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.scss,
 				componentName: "TestComponent",
@@ -85,7 +86,7 @@ suite("Content Generator", () => {
 			});
 
 			const fileSettings: FileSettings = {
-				isSetupApi: true,
+				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.scss,
 				componentName: "TestComponent",
@@ -102,7 +103,7 @@ suite("Content Generator", () => {
 	suite("Script Tag Generation", () => {
 		test("should generate setup script tag for Composition API", () => {
 			const fileSettings: FileSettings = {
-				isSetupApi: true,
+				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
@@ -115,7 +116,7 @@ suite("Content Generator", () => {
 
 		test("should generate regular script tag for Options API", () => {
 			const fileSettings: FileSettings = {
-				isSetupApi: false,
+				apiType: VueApiType.options,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
@@ -129,7 +130,7 @@ suite("Content Generator", () => {
 
 		test("should use js lang for JavaScript", () => {
 			const fileSettings: FileSettings = {
-				isSetupApi: true,
+				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.javaScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
@@ -144,7 +145,7 @@ suite("Content Generator", () => {
 	suite("Style Tag Generation", () => {
 		test("should generate SCSS style tag", () => {
 			const fileSettings: FileSettings = {
-				isSetupApi: true,
+				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.scss,
 				componentName: "TestComponent",
@@ -157,7 +158,7 @@ suite("Content Generator", () => {
 
 		test("should generate CSS style tag", () => {
 			const fileSettings: FileSettings = {
-				isSetupApi: true,
+				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
@@ -172,7 +173,7 @@ suite("Content Generator", () => {
 	suite("Template Generation", () => {
 		test("should generate basic template structure", () => {
 			const fileSettings: FileSettings = {
-				isSetupApi: true,
+				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
@@ -193,7 +194,7 @@ suite("Content Generator", () => {
 			});
 
 			const fileSettings: FileSettings = {
-				isSetupApi: true,
+				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
@@ -208,7 +209,7 @@ suite("Content Generator", () => {
 	suite("Options API Generation", () => {
 		test("should include defineComponent import for Options API", () => {
 			const fileSettings: FileSettings = {
-				isSetupApi: false,
+				apiType: VueApiType.options,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
@@ -226,7 +227,7 @@ suite("Content Generator", () => {
 			});
 
 			const fileSettings: FileSettings = {
-				isSetupApi: false,
+				apiType: VueApiType.options,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "MyComponent",
@@ -246,7 +247,7 @@ suite("Content Generator", () => {
 			});
 
 			const fileSettings: FileSettings = {
-				isSetupApi: true,
+				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
@@ -267,7 +268,7 @@ suite("Content Generator", () => {
 			});
 
 			const fileSettings: FileSettings = {
-				isSetupApi: true,
+				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
@@ -286,7 +287,7 @@ suite("Content Generator", () => {
 			});
 
 			const fileSettings: FileSettings = {
-				isSetupApi: true,
+				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
@@ -303,7 +304,7 @@ suite("Content Generator", () => {
 			});
 
 			const fileSettings: FileSettings = {
-				isSetupApi: true,
+				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
@@ -320,7 +321,7 @@ suite("Content Generator", () => {
 			});
 
 			const fileSettings: FileSettings = {
-				isSetupApi: true,
+				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
@@ -338,7 +339,7 @@ suite("Content Generator", () => {
 			});
 
 			const fileSettings: FileSettings = {
-				isSetupApi: true,
+				apiType: VueApiType.setup,
 				scriptLang: VueScriptLang.typeScript,
 				styleLang: VueStyleLang.css,
 				componentName: "TestComponent",
