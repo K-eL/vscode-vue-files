@@ -1,104 +1,44 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+/**
+ * @fileoverview Extension entry point for vscode-vue-files.
+ * Handles activation and deactivation of the extension.
+ *
+ * @module extension
+ */
 import * as vscode from "vscode";
-import { createNewVueFileCommand } from "./commands/create-new-vue-file.command";
-import { createNewVueFileQuickCommand } from "./commands/create-new-vue-file-quick.command";
-import { VueStyleLang } from "./enums/vue-style-lang.enum";
-import { VueApiType } from "./enums/vue-api-type.enum";
-import { VueScriptLang } from "./enums/vue-script-lang.enum";
-import { createFilesForTestCommand } from "./commands/create-files-for-test.command";
+import { registerAllCommands } from "./commands/command-registry";
+import { ConfigHelper } from "./helpers/config.helper";
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function activate(context: vscode.ExtensionContext) {
-	// Register Quick Pick command
-	vscode.commands.registerCommand(
-		"vscode-vue-files.createNewVueFileQuick",
-		async (uri) => createNewVueFileQuickCommand(uri, context),
+/**
+ * Called when the extension is activated.
+ * The extension is activated the first time a command is executed.
+ *
+ * @param context - The extension context provided by VS Code
+ */
+export function activate(context: vscode.ExtensionContext): void {
+	registerAllCommands(context);
+
+	// Listen for configuration changes and refresh ConfigHelper
+	const configChangeListener = vscode.workspace.onDidChangeConfiguration(
+		(event: vscode.ConfigurationChangeEvent) => {
+			// Check if our extension's settings or editor settings changed
+			if (
+				event.affectsConfiguration("vscode-vue-files") ||
+				event.affectsConfiguration("editor.tabSize") ||
+				event.affectsConfiguration("editor.insertSpaces")
+			) {
+				ConfigHelper.refresh();
+			}
+		},
 	);
 
-	// Register existing commands
-	vscode.commands.registerCommand(
-		"vscode-vue-files.vueSetupTsScss",
-		async uri =>
-			createNewVueFileCommand(
-				uri,
-				VueApiType.setup,
-				VueScriptLang.typeScript,
-				VueStyleLang.scss,
-			),
-	);
-	vscode.commands.registerCommand("vscode-vue-files.vueSetupTsCss", async uri =>
-		createNewVueFileCommand(
-			uri,
-			VueApiType.setup,
-			VueScriptLang.typeScript,
-			VueStyleLang.css,
-		),
-	);
-	vscode.commands.registerCommand(
-		"vscode-vue-files.vueSetupJsScss",
-		async uri =>
-			createNewVueFileCommand(
-				uri,
-				VueApiType.setup,
-				VueScriptLang.javaScript,
-				VueStyleLang.scss,
-			),
-	);
-	vscode.commands.registerCommand("vscode-vue-files.vueSetupJsCss", async uri =>
-		createNewVueFileCommand(
-			uri,
-			VueApiType.setup,
-			VueScriptLang.javaScript,
-			VueStyleLang.css,
-		),
-	);
-	vscode.commands.registerCommand(
-		"vscode-vue-files.vueOptionsTsScss",
-		async uri =>
-			createNewVueFileCommand(
-				uri,
-				VueApiType.options,
-				VueScriptLang.typeScript,
-				VueStyleLang.scss,
-			),
-	);
-	vscode.commands.registerCommand(
-		"vscode-vue-files.vueOptionsTsCss",
-		async uri =>
-			createNewVueFileCommand(
-				uri,
-				VueApiType.options,
-				VueScriptLang.typeScript,
-				VueStyleLang.css,
-			),
-	);
-	vscode.commands.registerCommand(
-		"vscode-vue-files.vueOptionsJsScss",
-		async uri =>
-			createNewVueFileCommand(
-				uri,
-				VueApiType.options,
-				VueScriptLang.javaScript,
-				VueStyleLang.scss,
-			),
-	);
-	vscode.commands.registerCommand(
-		"vscode-vue-files.vueOptionsJsCss",
-		async uri =>
-			createNewVueFileCommand(
-				uri,
-				VueApiType.options,
-				VueScriptLang.javaScript,
-				VueStyleLang.css,
-			),
-	);
-	vscode.commands.registerCommand("vscode-vue-files.devEnvTest", async uri =>
-		createFilesForTestCommand(uri),
-	);
+	// Register the listener for proper cleanup
+	context.subscriptions.push(configChangeListener);
 }
 
-// This method is called when your extension is deactivated
-export function deactivate() {}
+/**
+ * Called when the extension is deactivated.
+ * Use this to clean up any resources if needed.
+ */
+export function deactivate(): void {
+	// Nothing to clean up
+}

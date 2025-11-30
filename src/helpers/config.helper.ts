@@ -1,23 +1,109 @@
 import * as vscode from "vscode";
 
+/**
+ * Centralized configuration helper for the Vue Files extension.
+ *
+ * This class provides type-safe access to all extension settings,
+ * organized by feature area. All configuration access should go through
+ * this helper to ensure consistency and maintainability.
+ *
+ * Uses the Singleton pattern to ensure a single instance is shared
+ * across the extension, avoiding redundant configuration reads.
+ *
+ * @example
+ * ```typescript
+ * // Get the singleton instance
+ * const config = ConfigHelper.getInstance();
+ *
+ * // Editor settings
+ * const indent = config.ind(2);
+ *
+ * // Feature settings
+ * if (config.pinia.createInStoresFolder()) { ... }
+ * if (config.composables.useTypeScript()) { ... }
+ *
+ * // Refresh configuration (e.g., after settings change)
+ * ConfigHelper.refresh();
+ * ```
+ */
 export class ConfigHelper {
+	// ==========================================================================
+	// SINGLETON PATTERN
+	// ==========================================================================
+
+	private static _instance: ConfigHelper | null = null;
+
+	/**
+	 * Gets the singleton instance of ConfigHelper.
+	 * Creates a new instance if one doesn't exist.
+	 *
+	 * @returns The singleton ConfigHelper instance
+	 */
+	public static getInstance(): ConfigHelper {
+		if (!ConfigHelper._instance) {
+			ConfigHelper._instance = new ConfigHelper();
+		}
+		return ConfigHelper._instance;
+	}
+
+	/**
+	 * Refreshes the configuration by creating a new instance.
+	 * Call this when VS Code settings have changed.
+	 *
+	 * @returns The new ConfigHelper instance
+	 */
+	public static refresh(): ConfigHelper {
+		ConfigHelper._instance = new ConfigHelper();
+		return ConfigHelper._instance;
+	}
+
+	/**
+	 * Resets the singleton instance for testing purposes.
+	 * Allows injecting a mock ConfigHelper or resetting to null.
+	 *
+	 * @param instance - Optional mock instance to use, or undefined to reset
+	 * @internal This method is intended for testing only
+	 */
+	public static _resetForTesting(instance?: ConfigHelper): void {
+		ConfigHelper._instance = instance ?? null;
+	}
+
+	// ==========================================================================
+	// INSTANCE MEMBERS
+	// ==========================================================================
+
 	private _editorConfig: vscode.WorkspaceConfiguration | undefined;
-	private _vueFilesConfig: vscode.WorkspaceConfiguration | undefined;
+	private _extensionConfig: vscode.WorkspaceConfiguration | undefined;
 	private _useTabs = false;
 	private _tabSize = 2;
 
+	/**
+	 * Creates a new ConfigHelper instance.
+	 * Note: Prefer using `ConfigHelper.getInstance()` instead of direct construction.
+	 */
 	constructor() {
-		this.loadVueFilesConfig();
+		this.loadConfigurations();
+	}
+
+	// ==========================================================================
+	// PRIVATE: Configuration Loading
+	// ==========================================================================
+
+	private loadConfigurations(): void {
+		this.loadExtensionConfig();
 		this.loadEditorConfig();
 		this.loadIndentConfig();
 	}
 
-	private loadVueFilesConfig(): void {
+	private loadExtensionConfig(): void {
 		try {
-			this._vueFilesConfig ??=
+			this._extensionConfig ??=
 				vscode.workspace.getConfiguration("vscode-vue-files");
 		} catch (error) {
-			console.error(error);
+			console.error(
+				"[ConfigHelper] Failed to load vscode-vue-files config:",
+				error,
+			);
 		}
 	}
 
@@ -25,248 +111,247 @@ export class ConfigHelper {
 		try {
 			this._editorConfig ??= vscode.workspace.getConfiguration("editor");
 		} catch (error) {
-			console.error(error);
+			console.error("[ConfigHelper] Failed to load editor config:", error);
 		}
 	}
 
 	private loadIndentConfig(): void {
-		this._useTabs ??= !this._editorConfig?.get("insertSpaces");
-		this._tabSize ??= this._editorConfig?.get("tabSize") || 2;
+		this._useTabs = !this._editorConfig?.get("insertSpaces", true);
+		this._tabSize = this._editorConfig?.get("tabSize", 2) ?? 2;
 	}
 
-	public ind = (x: number = 1): string => {
-		return this._useTabs ? "\t".repeat(x) : " ".repeat(this._tabSize * x);
+	/**
+	 * Generic getter with type safety and default value
+	 */
+	private get<T>(key: string, defaultValue: T): T {
+		return this._extensionConfig?.get<T>(key, defaultValue) ?? defaultValue;
+	}
+
+	// ==========================================================================
+	// PUBLIC: Editor / Indentation
+	// ==========================================================================
+
+	/**
+	 * Returns indentation string based on editor settings
+	 * @param level - Number of indentation levels (default: 1)
+	 * @returns Tabs or spaces string
+	 */
+	public ind = (level: number = 1): string => {
+		return this._useTabs
+			? "\t".repeat(level)
+			: " ".repeat(this._tabSize * level);
 	};
 
+	// ==========================================================================
+	// PUBLIC: File Structure
+	// ==========================================================================
+
+	/**
+	 * Whether the script tag should come before the template tag
+	 * @default false
+	 */
 	public isScriptFirst(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"fileStructure.scriptTagComesFirst",
-			) as boolean) ?? false
-		);
+		return this.get("fileStructure.scriptTagComesFirst", false);
 	}
 
+	// ==========================================================================
+	// PUBLIC: Template Options
+	// ==========================================================================
+
+	/**
+	 * Whether to generate a working v-model structure in new files
+	 * @default true
+	 */
 	public showVModelTemplate(): boolean {
-		return (
-			(this._vueFilesConfig?.get("template.showV-ModelTemplate") as boolean) ??
-			true
-		);
+		return this.get("template.showV-ModelTemplate", true);
 	}
 
-	public showNameScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get("option.showNameScriptOption") as boolean) ??
-			true
-		);
-	}
+	// ==========================================================================
+	// PUBLIC: Menu Visibility
+	// ==========================================================================
 
-	public showComponentsScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"option.showComponentsScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showDirectivesScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"option.showDirectivesScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showExtendsScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"option.showExtendsScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showMixinsScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get("option.showMixinsScriptOption") as boolean) ??
-			true
-		);
-	}
-
-	public showProvideInjectScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"option.showProvideInjectScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showInheritAttrsScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"option.showInheritAttributesScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showPropsScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get("option.showPropsScriptOption") as boolean) ??
-			true
-		);
-	}
-
-	public showEmitsScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get("option.showEmitsScriptOption") as boolean) ??
-			true
-		);
-	}
-
-	public showSetupScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get("option.showSetupScriptOption") as boolean) ??
-			true
-		);
-	}
-
-	public showDataScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get("option.showDataScriptOption") as boolean) ??
-			true
-		);
-	}
-
-	public showComputedScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"option.showComputedScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showWatchScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get("option.showWatchScriptOption") as boolean) ??
-			true
-		);
-	}
-
-	public showLifecycleHooksScriptOptions(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"lifecycle.showLifecycleHooksScriptOptions",
-			) as boolean) ?? true
-		);
-	}
-
-	public showBeforeCreateScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"lifecycle.showBeforeCreateScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showCreatedScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"lifecycle.showCreatedScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showBeforeMountScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"lifecycle.showBeforeMountScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showMountedScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"lifecycle.showMountedScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showBeforeUpdateScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"lifecycle.showBeforeUpdateScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showUpdatedScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"lifecycle.showUpdatedScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showActivatedScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"lifecycle.showActivatedScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showDeactivatedScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"lifecycle.showDeactivatedScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showBeforeUnmountScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"lifecycle.showBeforeUnmountScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showUnmountedScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"lifecycle.showUnmountedScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showErrorCapturedScriptOption(): boolean {
-		return (
-			(this._vueFilesConfig?.get(
-				"lifecycle.showErrorCapturedScriptOption",
-			) as boolean) ?? true
-		);
-	}
-
-	public showRenderTrackedScriptOption = (): boolean => {
-		return (
-			(this._vueFilesConfig?.get(
-				"lifecycle.showRenderTrackedScriptOption",
-			) as boolean) ?? true
-		);
+	/** @namespace menu - Menu visibility settings */
+	public readonly menu = {
+		showCompositionApi: (): boolean =>
+			this.get("menu.showCompositionApi", true),
+		showOptionsApi: (): boolean => this.get("menu.showOptionsApi", true),
+		showTypescript: (): boolean => this.get("menu.showTypescript", true),
+		showJavascript: (): boolean => this.get("menu.showJavascript", true),
+		showCss: (): boolean => this.get("menu.showCss", true),
+		showScss: (): boolean => this.get("menu.showScss", true),
 	};
 
-	public showRenderTriggeredScriptOption = (): boolean => {
-		return (
-			(this._vueFilesConfig?.get(
-				"lifecycle.showRenderTriggeredScriptOption",
-			) as boolean) ?? true
-		);
+	// ==========================================================================
+	// PUBLIC: Framework Detection
+	// ==========================================================================
+
+	/** @namespace framework - Framework detection settings */
+	public readonly framework = {
+		/**
+		 * Whether to auto-detect Vue framework from package.json
+		 * @default true
+		 */
+		autoDetect: (): boolean => this.get("framework.autoDetect", true),
+
+		/**
+		 * Manual framework override (none | nuxt | vite | vue-cli)
+		 * @default "none"
+		 */
+		override: (): string => this.get("framework.override", "none"),
 	};
 
-	public showMethodsScriptOption = (): boolean => {
-		return (
-			(this._vueFilesConfig?.get(
-				"option.showMethodsScriptOption",
-			) as boolean) ?? true
-		);
+	// ==========================================================================
+	// PUBLIC: Options API Script Options
+	// ==========================================================================
+
+	/** @namespace options - Options API script section settings */
+	public readonly options = {
+		showName: (): boolean => this.get("option.showNameScriptOption", true),
+		showComponents: (): boolean =>
+			this.get("option.showComponentsScriptOption", true),
+		showDirectives: (): boolean =>
+			this.get("option.showDirectivesScriptOption", false),
+		showExtends: (): boolean =>
+			this.get("option.showExtendsScriptOption", false),
+		showMixins: (): boolean => this.get("option.showMixinsScriptOption", false),
+		showProvideInject: (): boolean =>
+			this.get("option.showProvideInjectScriptOption", false),
+		showInheritAttrs: (): boolean =>
+			this.get("option.showInheritAttributesScriptOption", false),
+		showProps: (): boolean => this.get("option.showPropsScriptOption", true),
+		showEmits: (): boolean => this.get("option.showEmitsScriptOption", true),
+		showSetup: (): boolean => this.get("option.showSetupScriptOption", false),
+		showData: (): boolean => this.get("option.showDataScriptOption", true),
+		showComputed: (): boolean =>
+			this.get("option.showComputedScriptOption", true),
+		showWatch: (): boolean => this.get("option.showWatchScriptOption", true),
+		showMethods: (): boolean =>
+			this.get("option.showMethodsScriptOption", true),
 	};
+
+	// ==========================================================================
+	// PUBLIC: Lifecycle Hooks
+	// ==========================================================================
+
+	/** @namespace lifecycle - Lifecycle hooks visibility settings */
+	public readonly lifecycle = {
+		/** Master toggle for all lifecycle hooks */
+		showHooks: (): boolean =>
+			this.get("lifecycle.showLifecycleHooksScriptOptions", true),
+		showBeforeCreate: (): boolean =>
+			this.get("lifecycle.showBeforeCreateScriptOption", false),
+		showCreated: (): boolean =>
+			this.get("lifecycle.showCreatedScriptOption", false),
+		showBeforeMount: (): boolean =>
+			this.get("lifecycle.showBeforeMountScriptOption", false),
+		showMounted: (): boolean =>
+			this.get("lifecycle.showMountedScriptOption", true),
+		showBeforeUpdate: (): boolean =>
+			this.get("lifecycle.showBeforeUpdateScriptOption", false),
+		showUpdated: (): boolean =>
+			this.get("lifecycle.showUpdatedScriptOption", true),
+		showActivated: (): boolean =>
+			this.get("lifecycle.showActivatedScriptOption", false),
+		showDeactivated: (): boolean =>
+			this.get("lifecycle.showDeactivatedScriptOption", false),
+		showBeforeUnmount: (): boolean =>
+			this.get("lifecycle.showBeforeUnmountScriptOption", true),
+		showUnmounted: (): boolean =>
+			this.get("lifecycle.showUnmountedScriptOption", false),
+		showErrorCaptured: (): boolean =>
+			this.get("lifecycle.showErrorCapturedScriptOption", false),
+		showRenderTracked: (): boolean =>
+			this.get("lifecycle.showRenderTrackedScriptOption", false),
+		showRenderTriggered: (): boolean =>
+			this.get("lifecycle.showRenderTriggeredScriptOption", false),
+	};
+
+	// ==========================================================================
+	// PUBLIC: Script Setup Macros (Vue 3.3+/3.4+)
+	// ==========================================================================
+
+	/** @namespace scriptSetup - Script setup macro settings */
+	public readonly scriptSetup = {
+		/**
+		 * Use defineModel() (Vue 3.4+) instead of defineProps + defineEmits for v-model
+		 * Disable for Vue < 3.4 compatibility
+		 * @default true
+		 */
+		useDefineModel: (): boolean => this.get("scriptSetup.useDefineModel", true),
+
+		/**
+		 * Use withDefaults() with defineProps for TypeScript projects
+		 * @default true
+		 */
+		useWithDefaults: (): boolean =>
+			this.get("scriptSetup.useWithDefaults", true),
+
+		/**
+		 * Include defineOptions() macro (Vue 3.3+) for inheritAttrs, name, etc.
+		 * @default false
+		 */
+		showDefineOptions: (): boolean =>
+			this.get("scriptSetup.showDefineOptions", false),
+
+		/**
+		 * Include defineExpose() macro to expose component internals via template ref
+		 * @default false
+		 */
+		showDefineExpose: (): boolean =>
+			this.get("scriptSetup.showDefineExpose", false),
+
+		/**
+		 * Include defineSlots() macro (Vue 3.3+) for typed slot definitions
+		 * @default false
+		 */
+		showDefineSlots: (): boolean =>
+			this.get("scriptSetup.showDefineSlots", false),
+	};
+
+	// ==========================================================================
+	// PUBLIC: Pinia Stores
+	// ==========================================================================
+
+	/** @namespace pinia - Pinia store generation settings */
+	public readonly pinia = {
+		/**
+		 * Default store type: "setup" (Composition API) or "options" (Options API)
+		 * @default "setup"
+		 */
+		defaultStoreType: (): string => this.get("pinia.defaultStoreType", "setup"),
+
+		/**
+		 * Automatically create stores in a 'stores' subfolder
+		 * @default true
+		 */
+		createInStoresFolder: (): boolean =>
+			this.get("pinia.createInStoresFolder", true),
+
+		/**
+		 * Include example state, getters, and actions in generated stores
+		 * @default true
+		 */
+		includeExamples: (): boolean => this.get("pinia.includeExamples", true),
+	};
+
+	// ==========================================================================
+	// PUBLIC: Composables
+	// ==========================================================================
+
+	/** @namespace composables - Composable generation settings */
+	public readonly composables = {
+		/**
+		 * Automatically create composables in a 'composables' subfolder
+		 * @default true
+		 */
+		createInComposablesFolder: (): boolean =>
+			this.get("composables.createInComposablesFolder", true),
+
+		/**
+		 * Generate composables with TypeScript types and generics
+		 * @default true
+		 */
+		useTypeScript: (): boolean => this.get("composables.useTypeScript", true),
+	};
+
 }

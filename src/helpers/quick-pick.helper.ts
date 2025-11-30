@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { VueApiType } from "../enums/vue-api-type.enum";
 import { VueScriptLang } from "../enums/vue-script-lang.enum";
 import { VueStyleLang } from "../enums/vue-style-lang.enum";
+import { ConfigHelper } from "./config.helper";
 
 export interface TemplateChoice {
 	label: string;
@@ -20,9 +21,11 @@ const MAX_RECENT_TEMPLATES = 5;
 
 export class QuickPickHelper {
 	private context: vscode.ExtensionContext;
+	private config: ConfigHelper;
 
 	constructor(context: vscode.ExtensionContext) {
 		this.context = context;
+		this.config = ConfigHelper.getInstance();
 	}
 
 	/**
@@ -84,7 +87,7 @@ export class QuickPickHelper {
 		});
 
 		const selected = await vscode.window.showQuickPick(items, {
-			placeHolder: "Select a Vue file template",
+			placeHolder: "Select a Vue SFC template",
 			matchOnDescription: true,
 			matchOnDetail: true,
 		});
@@ -118,14 +121,12 @@ export class QuickPickHelper {
 	 * Gets all available template combinations
 	 */
 	private getAllTemplates(): TemplateChoice[] {
-		const config = vscode.workspace.getConfiguration("vscode-vue-files");
-
 		const templates: TemplateChoice[] = [];
 
 		// Composition API templates
-		if (config.get<boolean>("menu.showCompositionApi", true)) {
-			if (config.get<boolean>("menu.showTypescript", true)) {
-				if (config.get<boolean>("menu.showScss", true)) {
+		if (this.config.menu.showCompositionApi()) {
+			if (this.config.menu.showTypescript()) {
+				if (this.config.menu.showScss()) {
 				templates.push({
 					label: "Composition API (Setup) + TypeScript + SCSS",
 					description: "Modern Vue 3 with TypeScript and SCSS",
@@ -134,7 +135,7 @@ export class QuickPickHelper {
 					styleLang: VueStyleLang.scss,
 				});
 				}
-				if (config.get<boolean>("menu.showCss", true)) {
+				if (this.config.menu.showCss()) {
 					templates.push({
 						label: "Composition API (Setup) + TypeScript + CSS",
 						description: "Modern Vue 3 with TypeScript and CSS",
@@ -144,8 +145,8 @@ export class QuickPickHelper {
 					});
 				}
 			}
-			if (config.get<boolean>("menu.showJavascript", true)) {
-				if (config.get<boolean>("menu.showScss", true)) {
+			if (this.config.menu.showJavascript()) {
+				if (this.config.menu.showScss()) {
 					templates.push({
 						label: "Composition API (Setup) + JavaScript + SCSS",
 						description: "Modern Vue 3 with JavaScript and SCSS",
@@ -154,7 +155,7 @@ export class QuickPickHelper {
 						styleLang: VueStyleLang.scss,
 					});
 				}
-				if (config.get<boolean>("menu.showCss", true)) {
+				if (this.config.menu.showCss()) {
 					templates.push({
 						label: "Composition API (Setup) + JavaScript + CSS",
 						description: "Modern Vue 3 with JavaScript and CSS",
@@ -167,9 +168,9 @@ export class QuickPickHelper {
 		}
 
 		// Options API templates
-		if (config.get<boolean>("menu.showOptionsApi", true)) {
-			if (config.get<boolean>("menu.showTypescript", true)) {
-				if (config.get<boolean>("menu.showScss", true)) {
+		if (this.config.menu.showOptionsApi()) {
+			if (this.config.menu.showTypescript()) {
+				if (this.config.menu.showScss()) {
 					templates.push({
 						label: "Options API + TypeScript + SCSS",
 						description: "Classic Vue with TypeScript and SCSS",
@@ -178,7 +179,7 @@ export class QuickPickHelper {
 						styleLang: VueStyleLang.scss,
 					});
 				}
-				if (config.get<boolean>("menu.showCss", true)) {
+				if (this.config.menu.showCss()) {
 					templates.push({
 						label: "Options API + TypeScript + CSS",
 						description: "Classic Vue with TypeScript and CSS",
@@ -188,8 +189,8 @@ export class QuickPickHelper {
 					});
 				}
 			}
-			if (config.get<boolean>("menu.showJavascript", true)) {
-				if (config.get<boolean>("menu.showScss", true)) {
+			if (this.config.menu.showJavascript()) {
+				if (this.config.menu.showScss()) {
 					templates.push({
 						label: "Options API + JavaScript + SCSS",
 						description: "Classic Vue with JavaScript and SCSS",
@@ -198,7 +199,7 @@ export class QuickPickHelper {
 						styleLang: VueStyleLang.scss,
 					});
 				}
-				if (config.get<boolean>("menu.showCss", true)) {
+				if (this.config.menu.showCss()) {
 					templates.push({
 						label: "Options API + JavaScript + CSS",
 						description: "Classic Vue with JavaScript and CSS",
