@@ -5,26 +5,26 @@ import { VueStyleLang } from "../enums/vue-style-lang.enum";
 import { VueScriptLang } from "../enums/vue-script-lang.enum";
 import { ConfigHelper } from "../helpers/config.helper";
 import { handleCreateResult, formatErrorMessage } from "../helpers/command.helper";
-import { VueFileService, vueFileService } from "../services/vue-file.service";
+import { VueComponentService, vueComponentService } from "../services/vue-component.service";
 
 const templateCursorPosition = new vscode.Position(2, 2);
 const scriptCursorPosition = new vscode.Position(2, 0);
 
 /**
- * Creates a new Vue file with specific API type, script language, and style language.
+ * Creates a new Vue SFC with specific API type, script language, and style language.
  * This command is called from the context menu with predefined options.
  * @param uri The uri of the file or folder
  * @param apiType The type of the api (setup or options)
  * @param scriptLang The language of the script (TypeScript or JavaScript)
  * @param styleLang The language of the style (CSS, SCSS)
- * @param service The Vue file service (injectable for testing)
+ * @param service The Vue SFC service (injectable for testing)
  */
-export const createVueFileCommand = async (
+export const createVueComponentCommand = async (
 	uri: vscode.Uri,
 	apiType: VueApiType,
 	scriptLang: VueScriptLang,
 	styleLang: VueStyleLang,
-	service: VueFileService = vueFileService,
+	service: VueComponentService = vueComponentService,
 ) => {
 	const configHelper = ConfigHelper.getInstance();
 

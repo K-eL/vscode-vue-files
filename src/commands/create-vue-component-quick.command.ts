@@ -3,21 +3,21 @@ import { ConfigHelper } from "../helpers/config.helper";
 import { QuickPickHelper } from "../helpers/quick-pick.helper";
 import { getTargetDirectory } from "../helpers/directory.helper";
 import { handleCreateResult, formatErrorMessage } from "../helpers/command.helper";
-import { VueFileService, vueFileService } from "../services/vue-file.service";
+import { VueComponentService, vueComponentService } from "../services/vue-component.service";
 
 const templateCursorPosition = new vscode.Position(2, 2);
 const scriptCursorPosition = new vscode.Position(2, 0);
 
 /**
- * Creates a new Vue file using Quick Pick interface with recently used templates
+ * Creates a new Vue SFC using Quick Pick interface with recently used templates
  * @param uri The uri of the file or folder (can be undefined when called from command palette)
  * @param context The extension context for storing recent templates
- * @param service The Vue file service (injectable for testing)
+ * @param service The Vue SFC service (injectable for testing)
  */
-export const createVueFileQuickCommand = async (
+export const createVueComponentQuickCommand = async (
 	uri: vscode.Uri | undefined,
 	context: vscode.ExtensionContext,
-	service: VueFileService = vueFileService,
+	service: VueComponentService = vueComponentService,
 ) => {
 	const configHelper = ConfigHelper.getInstance();
 

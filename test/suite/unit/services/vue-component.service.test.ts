@@ -1,25 +1,25 @@
 /**
- * @fileoverview Unit tests for VueFileService
+ * @fileoverview Unit tests for VueComponentService
  */
 import { expect } from "chai";
 import * as sinon from "sinon";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
-import { VueFileService } from "../../../../src/services/vue-file.service";
+import { VueComponentService } from "../../../../src/services/vue-component.service";
 import { VueApiType } from "../../../../src/enums/vue-api-type.enum";
 import { VueScriptLang } from "../../../../src/enums/vue-script-lang.enum";
 import { VueStyleLang } from "../../../../src/enums/vue-style-lang.enum";
 import { ConfigHelper } from "../../../../src/helpers/config.helper";
 
-suite("VueFileService", () => {
-	let service: VueFileService;
+suite("VueComponentService", () => {
+	let service: VueComponentService;
 	let mockConfig: sinon.SinonStubbedInstance<ConfigHelper>;
 	let tempDir: string;
 
 	setup(() => {
 		// Create temp directory for real file tests
-		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "vue-file-service-test-"));
+		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "vue-component-service-test-"));
 
 		// Create mock config
 		mockConfig = sinon.createStubInstance(ConfigHelper);
@@ -88,7 +88,7 @@ suite("VueFileService", () => {
 		};
 		(mockConfig as any).lifecycle = lifecycleConfig;
 
-		service = new VueFileService(mockConfig as any);
+		service = new VueComponentService(mockConfig as any);
 	});
 
 	teardown(() => {

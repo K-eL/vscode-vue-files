@@ -6,8 +6,8 @@
  */
 import * as vscode from "vscode";
 import { CommandDefinition } from "../interfaces/command-definition";
-import { createVueFileCommand } from "./create-vue-file.command";
-import { createVueFileQuickCommand } from "./create-vue-file-quick.command";
+import { createVueComponentCommand } from "./create-vue-component.command";
+import { createVueComponentQuickCommand } from "./create-vue-component-quick.command";
 import { createPiniaStoreCommand } from "./create-pinia-store.command";
 import { createComposableCommand } from "./create-composable.command";
 import { createFilesForTestCommand } from "./create-files-for-test.command";
@@ -24,8 +24,8 @@ export const commandDefinitions: CommandDefinition[] = [
 	// Quick Pick Command (recommended way to create files)
 	// =========================================================================
 	{
-		id: "vscode-vue-files.createNewVueFileQuick",
-		handler: (uri, context) => createVueFileQuickCommand(uri, context!),
+		id: "vscode-vue-files.createVueComponentQuick",
+		handler: (uri, context) => createVueComponentQuickCommand(uri, context!),
 		needsContext: true,
 	},
 
@@ -35,7 +35,7 @@ export const commandDefinitions: CommandDefinition[] = [
 	{
 		id: "vscode-vue-files.vueSetupTsScss",
 		handler: (uri) =>
-			createVueFileCommand(
+			createVueComponentCommand(
 				uri!,
 				VueApiType.setup,
 				VueScriptLang.typeScript,
@@ -45,7 +45,7 @@ export const commandDefinitions: CommandDefinition[] = [
 	{
 		id: "vscode-vue-files.vueSetupTsCss",
 		handler: (uri) =>
-			createVueFileCommand(
+			createVueComponentCommand(
 				uri!,
 				VueApiType.setup,
 				VueScriptLang.typeScript,
@@ -55,7 +55,7 @@ export const commandDefinitions: CommandDefinition[] = [
 	{
 		id: "vscode-vue-files.vueSetupJsScss",
 		handler: (uri) =>
-			createVueFileCommand(
+			createVueComponentCommand(
 				uri!,
 				VueApiType.setup,
 				VueScriptLang.javaScript,
@@ -65,7 +65,7 @@ export const commandDefinitions: CommandDefinition[] = [
 	{
 		id: "vscode-vue-files.vueSetupJsCss",
 		handler: (uri) =>
-			createVueFileCommand(
+			createVueComponentCommand(
 				uri!,
 				VueApiType.setup,
 				VueScriptLang.javaScript,
@@ -79,7 +79,7 @@ export const commandDefinitions: CommandDefinition[] = [
 	{
 		id: "vscode-vue-files.vueOptionsTsScss",
 		handler: (uri) =>
-			createVueFileCommand(
+			createVueComponentCommand(
 				uri!,
 				VueApiType.options,
 				VueScriptLang.typeScript,
@@ -89,7 +89,7 @@ export const commandDefinitions: CommandDefinition[] = [
 	{
 		id: "vscode-vue-files.vueOptionsTsCss",
 		handler: (uri) =>
-			createVueFileCommand(
+			createVueComponentCommand(
 				uri!,
 				VueApiType.options,
 				VueScriptLang.typeScript,
@@ -99,7 +99,7 @@ export const commandDefinitions: CommandDefinition[] = [
 	{
 		id: "vscode-vue-files.vueOptionsJsScss",
 		handler: (uri) =>
-			createVueFileCommand(
+			createVueComponentCommand(
 				uri!,
 				VueApiType.options,
 				VueScriptLang.javaScript,
@@ -109,7 +109,7 @@ export const commandDefinitions: CommandDefinition[] = [
 	{
 		id: "vscode-vue-files.vueOptionsJsCss",
 		handler: (uri) =>
-			createVueFileCommand(
+			createVueComponentCommand(
 				uri!,
 				VueApiType.options,
 				VueScriptLang.javaScript,

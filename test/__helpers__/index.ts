@@ -15,7 +15,7 @@
 
 // Mocks
 export {
-	createVueFilesConfigMock,
+	createExtensionConfigMock,
 	createEditorConfigMock,
 	DEFAULT_CONFIG_VALUES,
 	DEFAULT_EDITOR_CONFIG,

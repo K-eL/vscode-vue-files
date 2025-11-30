@@ -1,22 +1,22 @@
 /**
  * @fileoverview Service for creating Vue SFC files.
- * Contains all business logic for Vue file creation, separated from UI concerns.
+ * Contains all business logic for Vue SFC creation, separated from UI concerns.
  *
- * @module services/vue-file
+ * @module services/vue-component
  */
 import { VueApiType } from "../enums/vue-api-type.enum";
 import { VueScriptLang } from "../enums/vue-script-lang.enum";
 import { VueStyleLang } from "../enums/vue-style-lang.enum";
-import { generateVueSfcContent } from "../generators/vue-sfc.generator";
+import { generateVueSfcContent as createVueComponentContent } from "../generators/vue-sfc.generator";
 import { ConfigHelper } from "../helpers/config.helper";
 import { BaseFileService, type TargetDirConfig } from "./base-file.service";
 import { VueComponentSettings } from "../interfaces/vue-component-settings";
-import type { CreateVueFileResult } from "../interfaces/service-result";
+import type { CreateVueComponentResult as CreateVueComponentResult } from "../interfaces/service-result";
 
 /**
  * Options for creating a Vue SFC file
  */
-export interface CreateVueFileOptions {
+export interface CreateVueComponentOptions {
 	/** Raw component name entered by user */
 	componentName: string;
 	/** Target directory for file creation */
@@ -32,9 +32,9 @@ export interface CreateVueFileOptions {
 }
 
 /**
- * Quick pick option for Vue file creation
+ * Quick pick option for Vue SFC creation
  */
-export interface VueFileQuickPickOption {
+export interface VueComponentQuickPickOption {
 	label: string;
 	detail: string;
 	apiType: VueApiType;
@@ -45,7 +45,7 @@ export interface VueFileQuickPickOption {
 /**
  * Service class for Vue SFC file operations
  */
-export class VueFileService extends BaseFileService {
+export class VueComponentService extends BaseFileService {
 	constructor(config?: ConfigHelper) {
 		super(config);
 	}
@@ -53,7 +53,7 @@ export class VueFileService extends BaseFileService {
 	/**
 	 * Creates a new Vue SFC file
 	 */
-	async create(options: CreateVueFileOptions): Promise<CreateVueFileResult> {
+	async create(options: CreateVueComponentOptions): Promise<CreateVueComponentResult> {
 		const {
 			componentName,
 			targetDirectory,
@@ -73,7 +73,7 @@ export class VueFileService extends BaseFileService {
 		return this.createFile(
 			fileName,
 			targetDirectory,
-			() => generateVueSfcContent(settings, this.config),
+			() => createVueComponentContent(settings, this.config),
 			overwriteExisting,
 		);
 	}
@@ -107,8 +107,7 @@ export class VueFileService extends BaseFileService {
 	}
 
 	/**
-	 * Gets the target directory options for Vue file creation
-	 * Vue files don't have a specific subdirectory requirement
+	 * Gets the target directory options for Vue component creation
 	 */
 	getTargetDirectoryOptions(): TargetDirConfig {
 		return {
@@ -138,8 +137,8 @@ export class VueFileService extends BaseFileService {
 	/**
 	 * Generates quick pick options based on menu visibility settings
 	 */
-	getQuickPickOptions(): VueFileQuickPickOption[] {
-		const options: VueFileQuickPickOption[] = [];
+	getQuickPickOptions(): VueComponentQuickPickOption[] {
+		const options: VueComponentQuickPickOption[] = [];
 		const menu = this.config.menu;
 
 		// Composition API + TypeScript
@@ -191,4 +190,4 @@ export class VueFileService extends BaseFileService {
 }
 
 // Export singleton instance for convenience
-export const vueFileService = new VueFileService();
+export const vueComponentService = new VueComponentService();

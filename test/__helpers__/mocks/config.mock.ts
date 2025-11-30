@@ -92,13 +92,13 @@ export const DEFAULT_EDITOR_CONFIG: Record<string, unknown> = {
  *
  * @example
  * ```typescript
- * const mockConfig = createVueFilesConfigMock({
+ * const mockConfig = createExtensionConfigMock({
  *   "fileStructure.scriptTagComesFirst": true,
  *   "scriptSetup.useDefineModel": true,
  * });
  * ```
  */
-export function createVueFilesConfigMock(
+export function createExtensionConfigMock(
 	overrides: Record<string, unknown> = {},
 ): vscode.WorkspaceConfiguration {
 	const values = { ...DEFAULT_CONFIG_VALUES, ...overrides };

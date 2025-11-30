@@ -3,7 +3,7 @@
  */
 import { ConfigHelper } from "../../../src/helpers/config.helper";
 import {
-	createVueFilesConfigMock,
+	createExtensionConfigMock,
 	createEditorConfigMock,
 } from "../mocks/config.mock";
 
@@ -46,7 +46,7 @@ export function createTestConfigHelper(
 
 	// Inject mocked configurations
 	// Using bracket notation to access private members for testing
-	configHelper["_vueFilesConfig"] = createVueFilesConfigMock(configOverrides);
+	configHelper["_extensionConfig"] = createExtensionConfigMock(configOverrides);
 	configHelper["_editorConfig"] = createEditorConfigMock(editorOverrides);
 
 	// Reload indent config with new editor settings

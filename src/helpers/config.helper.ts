@@ -73,7 +73,7 @@ export class ConfigHelper {
 	// ==========================================================================
 
 	private _editorConfig: vscode.WorkspaceConfiguration | undefined;
-	private _vueFilesConfig: vscode.WorkspaceConfiguration | undefined;
+	private _extensionConfig: vscode.WorkspaceConfiguration | undefined;
 	private _useTabs = false;
 	private _tabSize = 2;
 
@@ -90,14 +90,14 @@ export class ConfigHelper {
 	// ==========================================================================
 
 	private loadConfigurations(): void {
-		this.loadVueFilesConfig();
+		this.loadExtensionConfig();
 		this.loadEditorConfig();
 		this.loadIndentConfig();
 	}
 
-	private loadVueFilesConfig(): void {
+	private loadExtensionConfig(): void {
 		try {
-			this._vueFilesConfig ??=
+			this._extensionConfig ??=
 				vscode.workspace.getConfiguration("vscode-vue-files");
 		} catch (error) {
 			console.error(
@@ -124,7 +124,7 @@ export class ConfigHelper {
 	 * Generic getter with type safety and default value
 	 */
 	private get<T>(key: string, defaultValue: T): T {
-		return this._vueFilesConfig?.get<T>(key, defaultValue) ?? defaultValue;
+		return this._extensionConfig?.get<T>(key, defaultValue) ?? defaultValue;
 	}
 
 	// ==========================================================================

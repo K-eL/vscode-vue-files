@@ -27,7 +27,7 @@ suite("Command Registry", () => {
 
 		test("should include quick pick command", () => {
 			const quickPickCmd = commandDefinitions.find(
-				(cmd) => cmd.id === "vscode-vue-files.createNewVueFileQuick",
+				(cmd) => cmd.id === "vscode-vue-files.createVueComponentQuick",
 			);
 			expect(quickPickCmd).to.not.be.undefined;
 			expect(quickPickCmd?.needsContext).to.be.true;
@@ -108,7 +108,7 @@ suite("Command Registry", () => {
 			);
 			expect(commandsWithContext.length).to.equal(1);
 			expect(commandsWithContext[0].id).to.equal(
-				"vscode-vue-files.createNewVueFileQuick",
+				"vscode-vue-files.createVueComponentQuick",
 			);
 		});
 

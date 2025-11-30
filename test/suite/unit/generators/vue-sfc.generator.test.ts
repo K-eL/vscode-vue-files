@@ -61,7 +61,7 @@ suite("Content Generator", () => {
 	setup(() => {
 		configHelper = new ConfigHelper();
 		configHelper["_editorConfig"] = createEditorConfig();
-		configHelper["_vueFilesConfig"] = createMockedConfig();
+		configHelper["_extensionConfig"] = createMockedConfig();
 	});
 
 	suite("File Structure", () => {
@@ -81,7 +81,7 @@ suite("Content Generator", () => {
 		});
 
 		test("should generate script first when configured", () => {
-			configHelper["_vueFilesConfig"] = createMockedConfig({
+			configHelper["_extensionConfig"] = createMockedConfig({
 				"fileStructure.scriptTagComesFirst": true,
 			});
 
@@ -188,7 +188,7 @@ suite("Content Generator", () => {
 		});
 
 		test("should generate v-model template when enabled", () => {
-			configHelper["_vueFilesConfig"] = createMockedConfig({
+			configHelper["_extensionConfig"] = createMockedConfig({
 				"template.showV-ModelTemplate": true,
 				"scriptSetup.useDefineModel": true,
 			});
@@ -222,7 +222,7 @@ suite("Content Generator", () => {
 		});
 
 		test("should include component name when enabled", () => {
-			configHelper["_vueFilesConfig"] = createMockedConfig({
+			configHelper["_extensionConfig"] = createMockedConfig({
 				"option.showNameScriptOption": true,
 			});
 
@@ -241,7 +241,7 @@ suite("Content Generator", () => {
 
 	suite("Composition API Generation", () => {
 		test("should generate vue imports for Composition API", () => {
-			configHelper["_vueFilesConfig"] = createMockedConfig({
+			configHelper["_extensionConfig"] = createMockedConfig({
 				"option.showComputedScriptOption": true,
 				"option.showWatchScriptOption": true,
 			});
@@ -262,7 +262,7 @@ suite("Content Generator", () => {
 		});
 
 		test("should include lifecycle hooks when enabled", () => {
-			configHelper["_vueFilesConfig"] = createMockedConfig({
+			configHelper["_extensionConfig"] = createMockedConfig({
 				"lifecycle.showLifecycleHooksScriptOptions": true,
 				"lifecycle.showMountedScriptOption": true,
 			});
@@ -282,7 +282,7 @@ suite("Content Generator", () => {
 
 	suite("Script Setup Macros", () => {
 		test("should include defineOptions when enabled", () => {
-			configHelper["_vueFilesConfig"] = createMockedConfig({
+			configHelper["_extensionConfig"] = createMockedConfig({
 				"scriptSetup.showDefineOptions": true,
 			});
 
@@ -299,7 +299,7 @@ suite("Content Generator", () => {
 		});
 
 		test("should include defineExpose when enabled", () => {
-			configHelper["_vueFilesConfig"] = createMockedConfig({
+			configHelper["_extensionConfig"] = createMockedConfig({
 				"scriptSetup.showDefineExpose": true,
 			});
 
@@ -316,7 +316,7 @@ suite("Content Generator", () => {
 		});
 
 		test("should include defineSlots when enabled", () => {
-			configHelper["_vueFilesConfig"] = createMockedConfig({
+			configHelper["_extensionConfig"] = createMockedConfig({
 				"scriptSetup.showDefineSlots": true,
 			});
 
@@ -333,7 +333,7 @@ suite("Content Generator", () => {
 		});
 
 		test("should include defineModel when enabled with v-model template", () => {
-			configHelper["_vueFilesConfig"] = createMockedConfig({
+			configHelper["_extensionConfig"] = createMockedConfig({
 				"template.showV-ModelTemplate": true,
 				"scriptSetup.useDefineModel": true,
 			});
@@ -367,7 +367,7 @@ suite("Content Generator", () => {
 		});
 
 		test("should include v-model template when enabled", () => {
-			configHelper["_vueFilesConfig"] = createMockedConfig({
+			configHelper["_extensionConfig"] = createMockedConfig({
 				"template.showV-ModelTemplate": true,
 			});
 
@@ -475,7 +475,7 @@ suite("Content Generator", () => {
 					componentName: name,
 				};
 
-				configHelper["_vueFilesConfig"] = createMockedConfig({
+				configHelper["_extensionConfig"] = createMockedConfig({
 					"option.showNameScriptOption": true,
 				});
 

@@ -1,7 +1,7 @@
 {
 	"name": "vscode-vue-files",
 	"displayName": "Vue Files",
-	"description": "Quickly create Vue files with different templates",
+	"description": "Quickly create Vue files with customized templates",
 	"version": "1.1.9",
 	"type": "commonjs",
 	"engines": {
@@ -156,7 +156,7 @@
 			},
 			{
 				"id": "VueFiles-file-structure",
-				"title": "File Structure",
+				"title": "Vue SFC: File Structure",
 				"order": 3,
 				"properties": {
 					"vscode-vue-files.fileStructure.scriptTagComesFirst": {
@@ -169,7 +169,7 @@
 			},
 			{
 				"id": "VueFiles-templates",
-				"title": "Templates",
+				"title": "Vue SFC: Templates",
 				"order": 4,
 				"properties": {
 					"vscode-vue-files.template.showV-ModelTemplate": {
@@ -182,7 +182,7 @@
 			},
 			{
 				"id": "VueFiles-options",
-				"title": "Options",
+				"title": "Vue SFC: Options API",
 				"order": 5,
 				"properties": {
 					"vscode-vue-files.option.showNameScriptOption": {
@@ -273,7 +273,7 @@
 			},
 			{
 				"id": "VueFiles-lifecycle",
-				"title": "Life Cycle Hooks",
+				"title": "Vue SFC: Life Cycle Hooks",
 				"order": 6,
 				"properties": {
 					"vscode-vue-files.lifecycle.showLifecycleHooksScriptOptions": {
@@ -364,7 +364,7 @@
 			},
 			{
 				"id": "VueFiles-script-setup",
-				"title": "Script Setup Macros",
+				"title": "Vue SFC: Script Setup Macros",
 				"order": 7,
 				"properties": {
 					"vscode-vue-files.scriptSetup.useDefineModel": {
@@ -454,8 +454,8 @@
 		],
 		"commands": [
 			{
-				"command": "vscode-vue-files.createNewVueFileQuick",
-				"title": "Vue Files: Create Vue File (Quick Pick)"
+				"command": "vscode-vue-files.createVueComponentQuick",
+				"title": "Vue Files: Create Vue Component (Quick Pick)"
 			},
 			{
 				"command": "vscode-vue-files.createPiniaStore",
@@ -466,36 +466,36 @@
 				"title": "Vue Files: Create Composable"
 			},
 			{
-				"command": "vscode-vue-files.vueOptionsJsCss",
-				"title": "Vue Files: Create New Options API (JS + CSS)"
-			},
-			{
-				"command": "vscode-vue-files.vueOptionsJsScss",
-				"title": "Vue Files: Create New Options API (JS + SCSS)"
-			},
-			{
-				"command": "vscode-vue-files.vueOptionsTsCss",
-				"title": "Vue Files: Create New Options API (TS + CSS)"
-			},
-			{
-				"command": "vscode-vue-files.vueOptionsTsScss",
-				"title": "Vue Files: Create New Options API (TS + SCSS)"
-			},
-			{
 				"command": "vscode-vue-files.vueSetupTsScss",
-				"title": "Vue Files: Create New Composition API (Setup + TS + SCSS)"
+				"title": "Vue Files: Create Vue Component (Setup/TS/SCSS)"
 			},
 			{
 				"command": "vscode-vue-files.vueSetupTsCss",
-				"title": "Vue Files: Create New Composition API (Setup + TS + CSS)"
+				"title": "Vue Files: Create Vue Component (Setup/TS/CSS)"
 			},
 			{
 				"command": "vscode-vue-files.vueSetupJsScss",
-				"title": "Vue Files: Create New Composition API (Setup + JS + SCSS)"
+				"title": "Vue Files: Create Vue Component (Setup/JS/SCSS)"
 			},
 			{
 				"command": "vscode-vue-files.vueSetupJsCss",
-				"title": "Vue Files: Create New Composition API (Setup + JS + CSS)"
+				"title": "Vue Files: Create Vue Component (Setup/JS/CSS)"
+			},
+			{
+				"command": "vscode-vue-files.vueOptionsTsScss",
+				"title": "Vue Files: Create Vue Component (Options/TS/SCSS)"
+			},
+			{
+				"command": "vscode-vue-files.vueOptionsTsCss",
+				"title": "Vue Files: Create Vue Component (Options/TS/CSS)"
+			},
+			{
+				"command": "vscode-vue-files.vueOptionsJsScss",
+				"title": "Vue Files: Create Vue Component (Options/JS/SCSS)"
+			},
+			{
+				"command": "vscode-vue-files.vueOptionsJsCss",
+				"title": "Vue Files: Create Vue Component (Options/JS/CSS)"
 			},
 			{
 				"command": "vscode-vue-files.devEnvTest",
@@ -518,7 +518,7 @@
 			"vuefiles": [
 				{
 					"group": "0_quick@0",
-					"command": "vscode-vue-files.createNewVueFileQuick"
+					"command": "vscode-vue-files.createVueComponentQuick"
 				},
 				{
 					"group": "0_quick@1",

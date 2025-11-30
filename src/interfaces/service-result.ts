@@ -35,7 +35,7 @@ export type CreateComposableResult = FileCreationResult;
 export type CreatePiniaStoreResult = FileCreationResult;
 
 /**
- * Result type alias for Vue file creation
+ * Result type alias for Vue Component creation
  * @see FileCreationResult
  */
-export type CreateVueFileResult = FileCreationResult;
+export type CreateVueComponentResult = FileCreationResult;

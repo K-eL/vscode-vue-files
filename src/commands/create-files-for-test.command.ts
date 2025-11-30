@@ -17,31 +17,30 @@ import { ConfigHelper } from "../helpers/config.helper";
  * ```
  * test-output/
  * ├── components/
- * │   ├── composition-api/
- * │   │   ├── setup-ts-css.vue
- * │   │   ├── setup-ts-scss.vue
- * │   │   ├── setup-js-css.vue
- * │   │   └── setup-js-scss.vue
- * │   └── options-api/
- * │   │   ├── options-ts-css.vue
- * │   │   ├── options-ts-scss.vue
- * │   │   ├── options-js-css.vue
- * │   │   └── options-js-scss.vue
+ * │   ├── setup-ts-css.vue
+ * │   ├── setup-ts-scss.vue
+ * │   ├── setup-js-css.vue
+ * │   ├── setup-js-scss.vue
+ * │   ├── options-ts-css.vue
+ * │   ├── options-ts-scss.vue
+ * │   ├── options-js-css.vue
+ * │   └── options-js-scss.vue
  * ├── stores/
- * │   ├── setup-store.ts
- * │   ├── options-store.ts
- * │   ├── setup-store-no-examples.ts
- * │   └── options-store-no-examples.ts
+ * │   ├── minimal-setup-store.ts
+ * │   ├── minimal-options-store.ts
+ * │   ├── example-setup-store.ts
+ * │   └── example-options-store.ts
  * └── composables/
- *     ├── useState.ts
- *     ├── useFetch.ts
- *     ├── useEventListener.ts
- *     ├── useCustom.ts
- *     └── js/
- *         ├── useState.js
- *         ├── useFetch.js
- *         ├── useEventListener.js
- *         └── useCustom.js
+ *     ├── js/
+ *     │   ├── useState.js
+ *     │   ├── useFetch.js
+ *     │   ├── useEventListener.js
+ *     │   └── useCustom.js
+ *     └── ts/
+ *         ├── useState.ts
+ *         ├── useFetch.ts
+ *         ├── useEventListener.ts
+ *         └── useCustom.ts
  * ```
  */
 export const createFilesForTestCommand = async (uri: vscode.Uri) => {
@@ -222,7 +221,7 @@ async function showTestSummary(
 	baseUri: vscode.Uri,
 ): Promise<void> {
 	// Count by type
-	const vueFiles = createdFiles.filter((f) => f.fsPath.endsWith(".vue")).length;
+	const vueComponents = createdFiles.filter((f) => f.fsPath.endsWith(".vue")).length;
 	const storeFiles = createdFiles.filter((f) =>
 		f.fsPath.includes("/stores/"),
 	).length;
@@ -233,7 +232,7 @@ async function showTestSummary(
 	const message = `✅ Test files created!\n\n` +
 		`📁 Location: ${baseUri.fsPath}\n\n` +
 		`📊 Summary:\n` +
-		`   • ${vueFiles} Vue components\n` +
+		`   • ${vueComponents} Vue components\n` +
 		`   • ${storeFiles} Pinia stores\n` +
 		`   • ${composableFiles} Composables\n` +
 		`   • ${createdFiles.length} total files`;

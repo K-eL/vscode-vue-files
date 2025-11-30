@@ -11,5 +11,5 @@ export type {
 	FileCreationResult,
 	CreateComposableResult,
 	CreatePiniaStoreResult,
-	CreateVueFileResult,
+	CreateVueComponentResult,
 } from "./service-result";

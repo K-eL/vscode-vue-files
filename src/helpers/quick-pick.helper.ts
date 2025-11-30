@@ -87,7 +87,7 @@ export class QuickPickHelper {
 		});
 
 		const selected = await vscode.window.showQuickPick(items, {
-			placeHolder: "Select a Vue file template",
+			placeHolder: "Select a Vue SFC template",
 			matchOnDescription: true,
 			matchOnDetail: true,
 		});

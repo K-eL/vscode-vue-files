@@ -26,7 +26,7 @@ suite("Config Helper", () => {
 			return null as any;
 		},
 	};
-	const _mockedVueFilesConfig: vscode.WorkspaceConfiguration = {
+	const _mockedExtensionConfig: vscode.WorkspaceConfiguration = {
 		get: (key: string) => {
 			switch (key) {
 				case "fileStructure.scriptTagComesFirst":
@@ -58,7 +58,7 @@ suite("Config Helper", () => {
 
 	beforeEach(() => {
 		_configHelper["_editorConfig"] = _mockedEditorConfig;
-		_configHelper["_vueFilesConfig"] = _mockedVueFilesConfig;
+		_configHelper["_extensionConfig"] = _mockedExtensionConfig;
 	});
 
 	test("should return the correct indentation", () => {
