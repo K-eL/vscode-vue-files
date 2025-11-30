@@ -2,7 +2,7 @@
 	"name": "vscode-vue-files",
 	"displayName": "Vue Files",
 	"description": "Quickly create Vue files with customized templates",
-	"version": "1.1.9",
+	"version": "1.2.0",
 	"type": "commonjs",
 	"engines": {
 		"vscode": "^1.92.0"
