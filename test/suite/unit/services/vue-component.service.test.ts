@@ -109,7 +109,7 @@ suite("VueComponentService", () => {
 		});
 
 		test("should handle already PascalCase", () => {
-			expect(service.normalizeVueComponentName("MyComponent")).to.equal("Mycomponent");
+			expect(service.normalizeVueComponentName("MyComponent")).to.equal("MyComponent");
 		});
 
 		test("should handle underscores", () => {
@@ -121,11 +121,11 @@ suite("VueComponentService", () => {
 		});
 
 		test("should remove .vue extension", () => {
-			expect(service.normalizeVueComponentName("MyComponent.vue")).to.equal("Mycomponent");
+			expect(service.normalizeVueComponentName("MyComponent.vue")).to.equal("MyComponent");
 		});
 
 		test("should trim whitespace", () => {
-			expect(service.normalizeVueComponentName("  MyComponent  ")).to.equal("Mycomponent");
+			expect(service.normalizeVueComponentName("  MyComponent  ")).to.equal("MyComponent");
 		});
 
 		test("should handle multiple hyphens", () => {
