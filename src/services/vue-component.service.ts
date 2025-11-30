@@ -86,7 +86,7 @@ export class VueComponentService extends BaseFileService {
 			.trim()
 			.replace(/\.vue$/i, "")
 			.split(/[-_\s]+/)
-			.map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+			.map((part) => part.charAt(0).toUpperCase() + part.slice(1))
 			.join("");
 	}
 
