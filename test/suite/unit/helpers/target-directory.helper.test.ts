@@ -4,11 +4,11 @@ import * as vscode from "vscode";
 import {
 	checkIfInSubdirectory,
 	ensureDirectoryExists,
-	fileExists,
 	getBaseDirectory,
 	getTargetDirectory,
+	pathContainsFolder,
 	type TargetDirectoryOptions,
-} from "../../../../src/helpers/target-directory.helper";
+} from "../../../../src/helpers/directory.helper";
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
@@ -147,17 +147,17 @@ suite("Target Directory Helper", () => {
 		});
 
 		test("should return true when file exists", () => {
-			const result = fileExists(tempFile);
+			const result = fs.existsSync(tempFile);
 			expect(result).to.be.true;
 		});
 
 		test("should return false when file does not exist", () => {
-			const result = fileExists(path.join(tempDir, "non-existent.txt"));
+			const result = fs.existsSync(path.join(tempDir, "non-existent.txt"));
 			expect(result).to.be.false;
 		});
 
 		test("should return true when directory exists", () => {
-			const result = fileExists(tempDir);
+			const result = fs.existsSync(tempDir);
 			expect(result).to.be.true;
 		});
 	});
@@ -288,6 +288,63 @@ suite("Target Directory Helper", () => {
 			expect(result).to.be.undefined;
 			expect(showErrorMessageStub.calledOnce).to.be.true;
 			expect(showErrorMessageStub.firstCall.args[0]).to.equal("No workspace folder open");
+		});
+	});
+
+	suite("pathContainsFolder", () => {
+		test("should return true when path contains the folder name", () => {
+			const result = pathContainsFolder("/src/composables/user", ["composables"]);
+			expect(result).to.be.true;
+		});
+
+		test("should return true when path contains one of the folder names", () => {
+			const result = pathContainsFolder("/src/composable/user", ["composables", "composable"]);
+			expect(result).to.be.true;
+		});
+
+		test("should return false when path does not contain any folder names", () => {
+			const result = pathContainsFolder("/src/modules/auth", ["composables", "composable"]);
+			expect(result).to.be.false;
+		});
+
+		test("should return true when folder is at the beginning of the path", () => {
+			const result = pathContainsFolder("/composables/user/hooks", ["composables"]);
+			expect(result).to.be.true;
+		});
+
+		test("should return true when folder is at the end of the path", () => {
+			const result = pathContainsFolder("/src/features/composables", ["composables"]);
+			expect(result).to.be.true;
+		});
+
+		test("should be case-insensitive", () => {
+			const result = pathContainsFolder("/src/COMPOSABLES/user", ["composables"]);
+			expect(result).to.be.true;
+		});
+
+		test("should handle Windows-style paths with backslashes", () => {
+			const result = pathContainsFolder("C:\\project\\src\\composables\\user", ["composables"]);
+			expect(result).to.be.true;
+		});
+
+		test("should not match partial folder names", () => {
+			const result = pathContainsFolder("/src/mycomposables/user", ["composables"]);
+			expect(result).to.be.false;
+		});
+
+		test("should return false for empty folder names array", () => {
+			const result = pathContainsFolder("/src/composables/user", []);
+			expect(result).to.be.false;
+		});
+
+		test("should handle deeply nested paths", () => {
+			const result = pathContainsFolder("/project/src/modules/auth/composables/useAuth", ["composables"]);
+			expect(result).to.be.true;
+		});
+
+		test("should handle root level folder", () => {
+			const result = pathContainsFolder("/composables", ["composables"]);
+			expect(result).to.be.true;
 		});
 	});
 });

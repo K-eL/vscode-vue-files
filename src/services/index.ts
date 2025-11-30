@@ -4,6 +4,7 @@
  *
  * @module services
  */
+export * from "./base-file.service";
 export * from "./composable.service";
 export * from "./pinia-store.service";
 export * from "./vue-file.service";

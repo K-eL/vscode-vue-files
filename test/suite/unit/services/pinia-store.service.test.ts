@@ -42,60 +42,46 @@ suite("PiniaStoreService", () => {
 	});
 
 	// ==========================================================================
-	// normalizeFileName
+	// normalizePiniaStoreFileName
 	// ==========================================================================
 
-	suite("normalizeFileName", () => {
+	suite("normalizePiniaStoreFileName", () => {
 		test("should add .store suffix to simple name", () => {
-			expect(service.normalizeFileName("user")).to.equal("user.store");
+			expect(service.normalizePiniaStoreFileName("user")).to.equal("user.store");
 		});
 
 		test("should normalize name to lowercase", () => {
-			expect(service.normalizeFileName("User")).to.equal("user.store");
+			expect(service.normalizePiniaStoreFileName("User")).to.equal("user.store");
 		});
 
 		test("should not duplicate .store suffix", () => {
-			expect(service.normalizeFileName("user.store")).to.equal("user.store");
+			expect(service.normalizePiniaStoreFileName("user.store")).to.equal("user.store");
 		});
 
 		test("should trim whitespace", () => {
-			expect(service.normalizeFileName("  user  ")).to.equal("user.store");
+			expect(service.normalizePiniaStoreFileName("  user  ")).to.equal("user.store");
 		});
 
 		test("should handle mixed case .store suffix", () => {
-			expect(service.normalizeFileName("user.STORE")).to.equal("user.store");
+			expect(service.normalizePiniaStoreFileName("user.STORE")).to.equal("user.store");
 		});
 	});
 
 	// ==========================================================================
-	// normalizeStoreName
+	// normalizePiniaStoreName
 	// ==========================================================================
 
-	suite("normalizeStoreName", () => {
+	suite("normalizePiniaStoreName", () => {
 		test("should return lowercase name", () => {
-			expect(service.normalizeStoreName("User")).to.equal("user");
+			expect(service.normalizePiniaStoreName("User")).to.equal("user");
 		});
 
 		test("should remove .store suffix", () => {
-			expect(service.normalizeStoreName("user.store")).to.equal("user");
+			expect(service.normalizePiniaStoreName("user.store")).to.equal("user");
 		});
 
 		test("should trim whitespace", () => {
-			expect(service.normalizeStoreName("  user  ")).to.equal("user");
-		});
-	});
-
-	// ==========================================================================
-	// getStoreId
-	// ==========================================================================
-
-	suite("getStoreId", () => {
-		test("should return normalized store name", () => {
-			expect(service.getStoreId("User")).to.equal("user");
-		});
-
-		test("should strip .store suffix", () => {
-			expect(service.getStoreId("user.store")).to.equal("user");
+			expect(service.normalizePiniaStoreName("  user  ")).to.equal("user");
 		});
 	});
 
@@ -268,34 +254,6 @@ suite("PiniaStoreService", () => {
 			const options = service.getTargetDirectoryOptions();
 
 			expect(options.createSubdirectory).to.be.false;
-		});
-	});
-
-	// ==========================================================================
-	// getStoreTypeOptions
-	// ==========================================================================
-
-	suite("getStoreTypeOptions", () => {
-		test("should return both store type options", () => {
-			const options = service.getStoreTypeOptions();
-
-			expect(options).to.have.length(2);
-		});
-
-		test("should have setup store option", () => {
-			const options = service.getStoreTypeOptions();
-			const setupOption = options.find((o) => o.value === PiniaStoreType.setup);
-
-			expect(setupOption).to.exist;
-			expect(setupOption!.label).to.include("Setup");
-		});
-
-		test("should have options store option", () => {
-			const options = service.getStoreTypeOptions();
-			const optionsOption = options.find((o) => o.value === PiniaStoreType.options);
-
-			expect(optionsOption).to.exist;
-			expect(optionsOption!.label).to.include("Options");
 		});
 	});
 });

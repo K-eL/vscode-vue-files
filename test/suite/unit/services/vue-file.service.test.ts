@@ -100,79 +100,79 @@ suite("VueFileService", () => {
 	});
 
 	// ==========================================================================
-	// normalizeComponentName
+	// normalizeVueComponentName
 	// ==========================================================================
 
-	suite("normalizeComponentName", () => {
+	suite("normalizeVueComponentName", () => {
 		test("should convert to PascalCase", () => {
-			expect(service.normalizeComponentName("my-component")).to.equal("MyComponent");
+			expect(service.normalizeVueComponentName("my-component")).to.equal("MyComponent");
 		});
 
 		test("should handle already PascalCase", () => {
-			expect(service.normalizeComponentName("MyComponent")).to.equal("Mycomponent");
+			expect(service.normalizeVueComponentName("MyComponent")).to.equal("Mycomponent");
 		});
 
 		test("should handle underscores", () => {
-			expect(service.normalizeComponentName("my_component")).to.equal("MyComponent");
+			expect(service.normalizeVueComponentName("my_component")).to.equal("MyComponent");
 		});
 
 		test("should handle spaces", () => {
-			expect(service.normalizeComponentName("my component")).to.equal("MyComponent");
+			expect(service.normalizeVueComponentName("my component")).to.equal("MyComponent");
 		});
 
 		test("should remove .vue extension", () => {
-			expect(service.normalizeComponentName("MyComponent.vue")).to.equal("Mycomponent");
+			expect(service.normalizeVueComponentName("MyComponent.vue")).to.equal("Mycomponent");
 		});
 
 		test("should trim whitespace", () => {
-			expect(service.normalizeComponentName("  MyComponent  ")).to.equal("Mycomponent");
+			expect(service.normalizeVueComponentName("  MyComponent  ")).to.equal("Mycomponent");
 		});
 
 		test("should handle multiple hyphens", () => {
-			expect(service.normalizeComponentName("my-awesome-component")).to.equal("MyAwesomeComponent");
+			expect(service.normalizeVueComponentName("my-awesome-component")).to.equal("MyAwesomeComponent");
 		});
 
 		test("should handle single word", () => {
-			expect(service.normalizeComponentName("button")).to.equal("Button");
+			expect(service.normalizeVueComponentName("button")).to.equal("Button");
 		});
 	});
 
 	// ==========================================================================
-	// validateComponentName
+	// validateName
 	// ==========================================================================
 
-	suite("validateComponentName", () => {
+	suite("validateName", () => {
 		test("should return error for empty name", () => {
-			expect(service.validateComponentName("")).to.equal("Component name is required");
+			expect(service.validateName("")).to.equal("Component name is required");
 		});
 
 		test("should return error for whitespace-only name", () => {
-			expect(service.validateComponentName("   ")).to.equal("Component name is required");
+			expect(service.validateName("   ")).to.equal("Component name is required");
 		});
 
 		test("should return error for name starting with number", () => {
-			const result = service.validateComponentName("123Component");
+			const result = service.validateName("123Component");
 			expect(result).to.include("must start with a letter");
 		});
 
 		test("should return undefined for valid name", () => {
-			expect(service.validateComponentName("MyComponent")).to.be.undefined;
+			expect(service.validateName("MyComponent")).to.be.undefined;
 		});
 
 		test("should return undefined for name with .vue extension", () => {
-			expect(service.validateComponentName("MyComponent.vue")).to.be.undefined;
+			expect(service.validateName("MyComponent.vue")).to.be.undefined;
 		});
 
 		test("should accept hyphens", () => {
-			expect(service.validateComponentName("my-component")).to.be.undefined;
+			expect(service.validateName("my-component")).to.be.undefined;
 		});
 
 		test("should accept underscores", () => {
-			expect(service.validateComponentName("my_component")).to.be.undefined;
+			expect(service.validateName("my_component")).to.be.undefined;
 		});
 
 		test("should reject special characters", () => {
-			const result = service.validateComponentName("my@component");
+			const result = service.validateName("my@component");
 			expect(result).to.include("alphanumeric");
 		});
 	});
@@ -415,70 +415,6 @@ suite("VueFileService", () => {
 
 			const options = service.getQuickPickOptions();
 			expect(options).to.have.length(0);
-		});
-	});
-
-	// ==========================================================================
-	// getDefaultStyleLang
-	// ==========================================================================
-
-	suite("getDefaultStyleLang", () => {
-		test("should return SCSS when showScss is true", () => {
-			(mockConfig as any).menu.showScss.returns(true);
-
-			const styleLang = service.getDefaultStyleLang();
-			expect(styleLang).to.equal(VueStyleLang.scss);
-		});
-
-		test("should return CSS when showScss is false", () => {
-			(mockConfig as any).menu.showScss.returns(false);
-
-			const styleLang = service.getDefaultStyleLang();
-			expect(styleLang).to.equal(VueStyleLang.css);
-		});
-	});
-
-	// ==========================================================================
-	// isMenuOptionVisible
-	// ==========================================================================
-
-	suite("isMenuOptionVisible", () => {
-		test("should return true for visible Composition API + TypeScript", () => {
-			const visible = service.isMenuOptionVisible(VueApiType.setup, VueScriptLang.typeScript);
-			expect(visible).to.be.true;
-		});
-
-		test("should return true for visible Options API + JavaScript", () => {
-			const visible = service.isMenuOptionVisible(VueApiType.options, VueScriptLang.javaScript);
-			expect(visible).to.be.true;
-		});
-
-		test("should return false when Composition API is hidden", () => {
-			(mockConfig as any).menu.showCompositionApi.returns(false);
-
-			const visible = service.isMenuOptionVisible(VueApiType.setup, VueScriptLang.typeScript);
-			expect(visible).to.be.false;
-		});
-
-		test("should return false when TypeScript is hidden", () => {
-			(mockConfig as any).menu.showTypescript.returns(false);
-
-			const visible = service.isMenuOptionVisible(VueApiType.setup, VueScriptLang.typeScript);
-			expect(visible).to.be.false;
-		});
-
-		test("should return false when Options API is hidden", () => {
-			(mockConfig as any).menu.showOptionsApi.returns(false);
-
-			const visible = service.isMenuOptionVisible(VueApiType.options, VueScriptLang.javaScript);
-			expect(visible).to.be.false;
-		});
-
-		test("should return false when JavaScript is hidden", () => {
-			(mockConfig as any).menu.showJavascript.returns(false);
-
-			const visible = service.isMenuOptionVisible(VueApiType.options, VueScriptLang.javaScript);
-			expect(visible).to.be.false;
 		});
 	});
 });

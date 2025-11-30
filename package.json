@@ -517,15 +517,15 @@
 			],
 			"vuefiles": [
 				{
-					"group": "0_quick",
+					"group": "0_quick@0",
 					"command": "vscode-vue-files.createNewVueFileQuick"
 				},
 				{
-					"group": "0_quick",
+					"group": "0_quick@1",
 					"command": "vscode-vue-files.createPiniaStore"
 				},
 				{
-					"group": "0_quick",
+					"group": "0_quick@2",
 					"command": "vscode-vue-files.createComposable"
 				},
 				{

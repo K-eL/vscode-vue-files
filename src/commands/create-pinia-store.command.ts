@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { PiniaStoreType } from '../enums/pinia-store-type.enum';
 import { ConfigHelper } from '../helpers/config.helper';
-import { getTargetDirectory } from '../helpers/target-directory.helper';
+import { getTargetDirectory } from '../helpers/directory.helper';
+import { handleCreateResult, formatErrorMessage } from '../helpers/command.helper';
 import { PiniaStoreService, piniaStoreService } from '../services/pinia-store.service';
 
 interface StoreTypeChoice extends vscode.QuickPickItem {
@@ -22,7 +23,7 @@ export async function createPiniaStoreCommand(
     // Get target directory options from service
     const targetDirOptions = service.getTargetDirectoryOptions();
     
-    // Determine target directory using shared helper
+    // Determine target directory
     const targetDir = await getTargetDirectory(uri, targetDirOptions);
     if (!targetDir) {
       return;
@@ -34,7 +35,6 @@ export async function createPiniaStoreCommand(
       placeHolder: 'storeName',
       validateInput: (value) => service.validateName(value)
     });
-
     if (!storeName) {
       return; // User cancelled
     }
@@ -52,50 +52,20 @@ export async function createPiniaStoreCommand(
       targetDirectory: targetDir,
     });
 
-    // Handle file already exists
-    if (!result.success && result.fileExisted) {
-      const overwrite = await vscode.window.showWarningMessage(
-        `File "${result.fileName}" already exists. Overwrite?`,
-        'Yes',
-        'No'
-      );
-      if (overwrite === 'Yes') {
-        const retryResult = await service.create({
-          name: storeName,
-          storeType,
-          targetDirectory: targetDir,
-          overwriteExisting: true,
-        });
-        if (retryResult.success && retryResult.filePath) {
-          await openCreatedFile(retryResult.filePath, retryResult.fileName!);
-        } else {
-          vscode.window.showErrorMessage(`Failed to create Pinia store: ${retryResult.error}`);
-        }
-      }
-      return;
-    }
-
-    // Handle other errors
-    if (!result.success) {
-      vscode.window.showErrorMessage(`Failed to create Pinia store: ${result.error}`);
-      return;
-    }
-
-    // Open the created file
-    await openCreatedFile(result.filePath!, result.fileName!);
+    // Handle result (file exists, errors, success) using shared helper
+    await handleCreateResult(
+      result,
+      () => service.create({
+        name: storeName,
+        storeType,
+        targetDirectory: targetDir,
+        overwriteExisting: true,
+      }),
+      'Pinia store'
+    );
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error occurred';
-    vscode.window.showErrorMessage(`Failed to create Pinia store: ${message}`);
+    vscode.window.showErrorMessage(formatErrorMessage(error, 'create Pinia store'));
   }
-}
-
-/**
- * Opens the created file in the editor
- */
-async function openCreatedFile(filePath: string, fileName: string): Promise<void> {
-  const document = await vscode.workspace.openTextDocument(filePath);
-  await vscode.window.showTextDocument(document);
-  vscode.window.showInformationMessage(`Pinia store "${fileName}" created successfully!`);
 }
 
 /**

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { ComposablePattern } from '../enums/composable-pattern.enum';
-import { getTargetDirectory } from '../helpers/target-directory.helper';
+import { getTargetDirectory } from '../helpers/directory.helper';
+import { handleCreateResult, formatErrorMessage } from '../helpers/command.helper';
 import { ComposableService, composableService } from '../services/composable.service';
 
 interface ComposablePatternChoice extends vscode.QuickPickItem {
@@ -31,7 +32,6 @@ export async function createComposableCommand(
       placeHolder: 'composableName',
       validateInput: (value) => service.validateName(value)
     });
-
     if (!composableName) {
       return; // User cancelled
     }
@@ -49,50 +49,20 @@ export async function createComposableCommand(
       targetDirectory: targetDir,
     });
 
-    // Handle file already exists
-    if (!result.success && result.fileExisted) {
-      const overwrite = await vscode.window.showWarningMessage(
-        `File "${result.fileName}" already exists. Overwrite?`,
-        'Yes',
-        'No'
-      );
-      if (overwrite === 'Yes') {
-        const retryResult = await service.create({
-          name: composableName,
-          pattern,
-          targetDirectory: targetDir,
-          overwriteExisting: true,
-        });
-        if (retryResult.success && retryResult.filePath) {
-          await openCreatedFile(retryResult.filePath, retryResult.fileName!);
-        } else {
-          vscode.window.showErrorMessage(`Failed to create composable: ${retryResult.error}`);
-        }
-      }
-      return;
-    }
-
-    // Handle other errors
-    if (!result.success) {
-      vscode.window.showErrorMessage(`Failed to create composable: ${result.error}`);
-      return;
-    }
-
-    // Open the created file
-    await openCreatedFile(result.filePath!, result.fileName!);
+    // Handle result (file exists, errors, success) using shared helper
+    await handleCreateResult(
+      result,
+      () => service.create({
+        name: composableName,
+        pattern,
+        targetDirectory: targetDir,
+        overwriteExisting: true,
+      }),
+      'composable'
+    );
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error occurred';
-    vscode.window.showErrorMessage(`Failed to create composable: ${message}`);
+    vscode.window.showErrorMessage(formatErrorMessage(error, 'create composable'));
   }
-}
-
-/**
- * Opens the created file in the editor
- */
-async function openCreatedFile(filePath: string, fileName: string): Promise<void> {
-  const document = await vscode.workspace.openTextDocument(filePath);
-  await vscode.window.showTextDocument(document);
-  vscode.window.showInformationMessage(`Composable "${fileName}" created successfully!`);
 }
 
 /**

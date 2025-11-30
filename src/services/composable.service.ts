@@ -4,15 +4,10 @@
  *
  * @module services/composable
  */
-import * as path from "path";
-import * as fs from "fs";
 import { ComposablePattern } from "../enums/composable-pattern.enum";
 import { generateComposable } from "../generators/composable.generator";
 import { ConfigHelper } from "../helpers/config.helper";
-import {
-	ensureDirectoryExists,
-	fileExists,
-} from "../helpers/target-directory.helper";
+import { BaseFileService, type TargetDirConfig } from "./base-file.service";
 import type { CreateComposableResult } from "../interfaces/service-result";
 
 /**
@@ -32,75 +27,39 @@ export interface CreateComposableOptions {
 /**
  * Service class for composable file operations
  */
-export class ComposableService {
-	private config: ConfigHelper;
-
+export class ComposableService extends BaseFileService {
 	constructor(config?: ConfigHelper) {
-		this.config = config ?? ConfigHelper.getInstance();
+		super(config);
 	}
 
 	/**
 	 * Creates a new composable file
 	 */
 	async create(options: CreateComposableOptions): Promise<CreateComposableResult> {
-		try {
-			const { name, pattern, targetDirectory, overwriteExisting = false } = options;
+		const { name, pattern, targetDirectory, overwriteExisting = false } = options;
 
-			// Normalize name and determine file details
-			const normalizedName = this.normalizeName(name);
-			const useTypeScript = this.config.composables.useTypeScript();
-			const extension = useTypeScript ? "ts" : "js";
-			const fileName = `${normalizedName}.${extension}`;
-			const filePath = path.join(targetDirectory, fileName);
+		// Normalize name and determine file details
+		const normalizedName = this.normalizeComposableName(name);
+		const useTypeScript = this.config.composables.useTypeScript();
+		const extension = useTypeScript ? "ts" : "js";
+		const fileName = `${normalizedName}.${extension}`;
 
-			// Check if file exists
-			const fileExisted = fileExists(filePath);
-			if (fileExisted && !overwriteExisting) {
-				return {
-					success: false,
-					fileName,
-					filePath,
-					fileExisted: true,
-					error: `File "${fileName}" already exists`,
-				};
-			}
-
-			// Ensure directory exists
-			if (!ensureDirectoryExists(targetDirectory)) {
-				return {
-					success: false,
-					error: "Failed to create directory",
-				};
-			}
-
-			// Generate content
-			const content = generateComposable({
+		return this.createFile(
+			fileName,
+			targetDirectory,
+			() => generateComposable({
 				name: name.trim(),
 				pattern,
 				useGenerics: useTypeScript,
-			});
-
-			// Write file
-			fs.writeFileSync(filePath, content, "utf8");
-
-			return {
-				success: true,
-				filePath,
-				fileName,
-				fileExisted,
-			};
-		} catch (error) {
-			return {
-				success: false,
-				error: error instanceof Error ? error.message : "Unknown error occurred",
-			};
-		}
+			}),
+			overwriteExisting,
+		);
 	}
 
 	/**
 	 * Normalizes composable name to standard format (useXxx)
 	 */
-	normalizeName(name: string): string {
+	normalizeComposableName(name: string): string {
 		const trimmed = name.trim();
 		// If already starts with 'use', normalize casing
 		if (trimmed.toLowerCase().startsWith("use")) {
@@ -115,35 +74,29 @@ export class ComposableService {
 	 * @returns Error message if invalid, undefined if valid
 	 */
 	validateName(name: string): string | undefined {
-		if (!name || name.trim().length === 0) {
-			return "Composable name is required";
-		}
+		const emptyError = this.validateNotEmpty(name, "Composable");
+		if (emptyError) return emptyError;
+
 		// Remove 'use' prefix for validation
 		const nameWithoutPrefix = name.trim().replace(/^use/i, "");
-		if (!/^[a-zA-Z][a-zA-Z0-9]*$/.test(nameWithoutPrefix)) {
-			return "Composable name must start with a letter and contain only alphanumeric characters";
-		}
-		return undefined;
+		return this.validatePattern(
+			nameWithoutPrefix,
+			/^[a-zA-Z][a-zA-Z0-9]*$/,
+			"Composable name must start with a letter and contain only alphanumeric characters",
+		);
 	}
 
 	/**
-	 * Gets the target directory for composable creation
+	 * Gets the target directory options for composable creation
 	 */
-	getTargetDirectoryOptions() {
+	getTargetDirectoryOptions(): TargetDirConfig {
 		return {
 			createSubdirectory: this.config.composables.createInComposablesFolder(),
 			subdirectoryName: "composables",
 			subdirectoryAliases: ["composable"],
 		};
 	}
-
-	/**
-	 * Gets whether TypeScript should be used
-	 */
-	useTypeScript(): boolean {
-		return this.config.composables.useTypeScript();
-	}
 }
 
 // Export singleton instance for convenience
-export const composableService = new ComposableService();
+export const composableService = new ComposableService()

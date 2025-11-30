@@ -41,32 +41,32 @@ suite("ComposableService", () => {
 	});
 
 	// ==========================================================================
-	// normalizeName
+	// normalizeComposableName
 	// ==========================================================================
 
-	suite("normalizeName", () => {
+	suite("normalizeComposableName", () => {
 		test("should add 'use' prefix to simple name", () => {
-			expect(service.normalizeName("counter")).to.equal("useCounter");
+			expect(service.normalizeComposableName("counter")).to.equal("useCounter");
 		});
 
 		test("should preserve existing 'use' prefix with proper casing", () => {
-			expect(service.normalizeName("useCounter")).to.equal("useCounter");
+			expect(service.normalizeComposableName("useCounter")).to.equal("useCounter");
 		});
 
 		test("should fix lowercase 'use' prefix", () => {
-			expect(service.normalizeName("usecounter")).to.equal("useCounter");
+			expect(service.normalizeComposableName("usecounter")).to.equal("useCounter");
 		});
 
 		test("should handle UPPERCASE input", () => {
-			expect(service.normalizeName("USECOUNTER")).to.equal("useCOUNTER");
+			expect(service.normalizeComposableName("USECOUNTER")).to.equal("useCOUNTER");
 		});
 
 		test("should trim whitespace", () => {
-			expect(service.normalizeName("  counter  ")).to.equal("useCounter");
+			expect(service.normalizeComposableName("  counter  ")).to.equal("useCounter");
 		});
 
 		test("should capitalize first letter after 'use'", () => {
-			expect(service.normalizeName("UseMyHook")).to.equal("useMyHook");
+			expect(service.normalizeComposableName("UseMyHook")).to.equal("useMyHook");
 		});
 	});
 
@@ -233,22 +233,6 @@ suite("ComposableService", () => {
 			const options = service.getTargetDirectoryOptions();
 
 			expect(options.createSubdirectory).to.be.false;
-		});
-	});
-
-	// ==========================================================================
-	// useTypeScript
-	// ==========================================================================
-
-	suite("useTypeScript", () => {
-		test("should return true when config says TypeScript", () => {
-			(mockConfig as any).composables.useTypeScript.returns(true);
-			expect(service.useTypeScript()).to.be.true;
-		});
-
-		test("should return false when config says JavaScript", () => {
-			(mockConfig as any).composables.useTypeScript.returns(false);
-			expect(service.useTypeScript()).to.be.false;
 		});
 	});
 });

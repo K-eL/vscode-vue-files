@@ -7,7 +7,6 @@ import { ComposablePattern } from "../enums/composable-pattern.enum";
 import { generateVueSfcContent } from "../generators/vue-sfc.generator";
 import { generatePiniaStore } from "../generators/pinia-store.generator";
 import { generateComposable } from "../generators/composable.generator";
-import { createFile } from "../helpers/file.helper";
 import { VueComponentSettings } from "../interfaces/vue-component-settings";
 import { ConfigHelper } from "../helpers/config.helper";
 
@@ -88,17 +87,12 @@ async function createVueComponents(
 	configHelper: ConfigHelper,
 	createdFiles: vscode.Uri[],
 ): Promise<void> {
-	const componentsUri = baseUri.with({ path: `${baseUri.path}/components` });
+	const testUri = baseUri.with({ path: `${baseUri.path}/components` });
 
 	for (const apiType of Object.values(VueApiType)) {
 		const isSetup = VueApiType[apiType] === VueApiType.setup;
-		const apiFolder = isSetup ? "composition-api" : "options-api";
-		const apiUri = componentsUri.with({
-			path: `${componentsUri.path}/${apiFolder}`,
-		});
 
 		for (const scriptLang of Object.values(VueScriptLang)) {
-			const langUri = apiUri.with({ path: `${apiUri.path}` });
 
 			for (const styleLang of Object.values(VueStyleLang)) {
 				const fileName = `${isSetup ? "setup" : "options"}-${scriptLang}-${styleLang}.vue`;
@@ -111,7 +105,7 @@ async function createVueComponents(
 				};
 
 				const fileContent = generateVueSfcContent(newFileSettings, configHelper);
-				const newFileUri = langUri.with({ path: `${langUri.path}/${fileName}` });
+				const newFileUri = testUri.with({ path: `${testUri.path}/${fileName}` });
 
 				await createFile(newFileUri, fileContent);
 				createdFiles.push(newFileUri);
@@ -265,3 +259,25 @@ async function showTestSummary(
 	createdFiles.forEach((f) => outputChannel.appendLine(`   ${f.fsPath}`));
 	outputChannel.show(true);
 }
+
+/**
+ * Creates a file in the workspace with the specified content.
+ *
+ * @param uri - The URI where the file should be created
+ * @param fileContent - The content to write to the file
+ * @returns Promise that resolves when file is written
+ *
+ * @example
+ * ```typescript
+ * const uri = vscode.Uri.file("/path/to/Component.vue");
+ * await createFile(uri, "<template>...</template>");
+ * ```
+ */
+const createFile = async (
+	uri: vscode.Uri,
+	fileContent: string,
+): Promise<void> => {
+	const encoder = new TextEncoder();
+	const encodedContent = encoder.encode(fileContent);
+	await vscode.workspace.fs.writeFile(uri, encodedContent);
+};

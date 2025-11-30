@@ -2,7 +2,7 @@
  * @fileoverview Target directory resolution utilities.
  * Provides shared logic for determining target directories for file creation.
  *
- * @module helpers/target-directory
+ * @module helpers/directory
  */
 import * as vscode from "vscode";
 import * as path from "path";
@@ -50,6 +50,8 @@ export function getBaseDirectory(
 			return { path: undefined, error: "Failed to access the provided path" };
 		}
 	}
+
+	// TODO: Handle the cases of multiple workspaces or no workspaces when no URI is provided by prompting the user to select one workspace or folder.
 
 	// No URI provided, try to use workspace folder
 	const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -108,7 +110,7 @@ export async function getTargetDirectory(
 }
 
 /**
- * Checks if the base directory is already a target subdirectory
+ * Checks if the base directory is already a target subdirectory or already exists in the path
  * @internal Exported for testing
  */
 export function checkIfInSubdirectory(
@@ -119,7 +121,7 @@ export function checkIfInSubdirectory(
 	const targetName = options.subdirectoryName.toLowerCase();
 	const aliases = options.subdirectoryAliases?.map((a) => a.toLowerCase()) || [];
 
-	return baseName === targetName || aliases.includes(baseName);
+	return baseName === targetName || aliases.includes(baseName) || pathContainsFolder(baseDir, [targetName, ...aliases]);
 }
 
 /**
@@ -140,11 +142,20 @@ export function ensureDirectoryExists(dirPath: string): boolean {
 }
 
 /**
- * Checks if a file exists at the given path
+ * Checks if the path already contains a folder.
+ * This prevents creating nested folders with same name.
  *
- * @param filePath - The file path to check
- * @returns true if file exists
+ * @param targetPath - The full path to check
+ * @param folderNames - The folder names to check for
+ * @returns true if the path contains a composables folder
+ *
+ * @example
+ * pathContainsFolder('/src/composables/user', ['composables', 'composable']) // returns true
+ * pathContainsFolder('/src/modules/auth', ['composables', 'composable']) // returns false
  */
-export function fileExists(filePath: string): boolean {
-	return fs.existsSync(filePath);
+export function pathContainsFolder(targetPath: string, folderNames: string[]): boolean {
+	const normalizedPath = targetPath.toLowerCase().replace(/\\/g, "/");
+	const pathSegments = normalizedPath.split("/").filter(Boolean);
+
+	return pathSegments.some((segment) => folderNames.includes(segment));
 }

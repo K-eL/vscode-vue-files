@@ -4,14 +4,12 @@
  *
  * @module services/vue-file
  */
-import * as path from "path";
-import * as fs from "fs";
 import { VueApiType } from "../enums/vue-api-type.enum";
 import { VueScriptLang } from "../enums/vue-script-lang.enum";
 import { VueStyleLang } from "../enums/vue-style-lang.enum";
 import { generateVueSfcContent } from "../generators/vue-sfc.generator";
 import { ConfigHelper } from "../helpers/config.helper";
-import { ensureDirectoryExists, fileExists } from "../helpers/target-directory.helper";
+import { BaseFileService, type TargetDirConfig } from "./base-file.service";
 import { VueComponentSettings } from "../interfaces/vue-component-settings";
 import type { CreateVueFileResult } from "../interfaces/service-result";
 
@@ -47,79 +45,43 @@ export interface VueFileQuickPickOption {
 /**
  * Service class for Vue SFC file operations
  */
-export class VueFileService {
-	private config: ConfigHelper;
-
+export class VueFileService extends BaseFileService {
 	constructor(config?: ConfigHelper) {
-		this.config = config ?? ConfigHelper.getInstance();
+		super(config);
 	}
 
 	/**
 	 * Creates a new Vue SFC file
 	 */
 	async create(options: CreateVueFileOptions): Promise<CreateVueFileResult> {
-		try {
-			const {
-				componentName,
-				targetDirectory,
-				apiType,
-				scriptLang,
-				styleLang,
-				overwriteExisting = false,
-			} = options;
+		const {
+			componentName,
+			targetDirectory,
+			apiType,
+			scriptLang,
+			styleLang,
+			overwriteExisting = false,
+		} = options;
 
-			// Normalize name and determine file details
-			const normalizedName = this.normalizeComponentName(componentName);
-			const fileName = `${normalizedName}.vue`;
-			const filePath = path.join(targetDirectory, fileName);
+		// Normalize name and determine file details
+		const normalizedName = this.normalizeVueComponentName(componentName);
+		const fileName = `${normalizedName}.vue`;
 
-			// Check if file exists
-			const fileExisted = fileExists(filePath);
-			if (fileExisted && !overwriteExisting) {
-				return {
-					success: false,
-					fileName,
-					filePath,
-					fileExisted: true,
-					error: `File "${fileName}" already exists`,
-				};
-			}
+		// Build settings for content generation
+		const settings = this.buildComponentSettings(normalizedName, apiType, scriptLang, styleLang);
 
-			// Ensure directory exists
-			if (!ensureDirectoryExists(targetDirectory)) {
-				return {
-					success: false,
-					error: "Failed to create directory",
-				};
-			}
-
-			// Build settings
-			const settings = this.buildComponentSettings(normalizedName, apiType, scriptLang, styleLang);
-
-			// Generate content
-			const content = generateVueSfcContent(settings, this.config);
-
-			// Write file
-			fs.writeFileSync(filePath, content, "utf8");
-
-			return {
-				success: true,
-				filePath,
-				fileName,
-				fileExisted,
-			};
-		} catch (error) {
-			return {
-				success: false,
-				error: error instanceof Error ? error.message : "Unknown error occurred",
-			};
-		}
+		return this.createFile(
+			fileName,
+			targetDirectory,
+			() => generateVueSfcContent(settings, this.config),
+			overwriteExisting,
+		);
 	}
 
 	/**
 	 * Normalizes component name to PascalCase
 	 */
-	normalizeComponentName(name: string): string {
+	normalizeVueComponentName(name: string): string {
 		return name
 			.trim()
 			.replace(/\.vue$/i, "")
@@ -129,18 +91,31 @@ export class VueFileService {
 	}
 
 	/**
-	 * Validates a component name
+	 * Validates a component name (implements abstract method)
 	 * @returns Error message if invalid, undefined if valid
 	 */
-	validateComponentName(name: string): string | undefined {
-		if (!name || name.trim().length === 0) {
-			return "Component name is required";
-		}
+	validateName(name: string): string | undefined {
+		const emptyError = this.validateNotEmpty(name, "Component");
+		if (emptyError) return emptyError;
+
 		const cleanName = name.trim().replace(/\.vue$/i, "");
-		if (!/^[a-zA-Z][a-zA-Z0-9_-]*$/.test(cleanName)) {
-			return "Component name must start with a letter and contain only alphanumeric characters, hyphens, or underscores";
-		}
-		return undefined;
+		return this.validatePattern(
+			cleanName,
+			/^[a-zA-Z][a-zA-Z0-9_-]*$/,
+			"Component name must start with a letter and contain only alphanumeric characters, hyphens, or underscores",
+		);
+	}
+
+	/**
+	 * Gets the target directory options for Vue file creation
+	 * Vue files don't have a specific subdirectory requirement
+	 */
+	getTargetDirectoryOptions(): TargetDirConfig {
+		return {
+			createSubdirectory: true, // TODO: Make configurable
+			subdirectoryName: "components",
+			subdirectoryAliases: ["component"],
+		};
 	}
 
 	/**
@@ -212,30 +187,6 @@ export class VueFileService {
 		}
 
 		return options;
-	}
-
-	/**
-	 * Gets the default style language from config
-	 */
-	getDefaultStyleLang(): VueStyleLang {
-		if (this.config.menu.showScss()) {
-			return VueStyleLang.scss;
-		}
-		return VueStyleLang.css;
-	}
-
-	/**
-	 * Checks if a combination is visible in menu
-	 */
-	isMenuOptionVisible(apiType: VueApiType, scriptLang: VueScriptLang): boolean {
-		const menu = this.config.menu;
-		const apiVisible =
-			(apiType === VueApiType.setup && menu.showCompositionApi()) ||
-			(apiType === VueApiType.options && menu.showOptionsApi());
-		const langVisible =
-			(scriptLang === VueScriptLang.typeScript && menu.showTypescript()) ||
-			(scriptLang === VueScriptLang.javaScript && menu.showJavascript());
-		return apiVisible && langVisible;
 	}
 }
 

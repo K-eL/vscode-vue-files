@@ -6,15 +6,20 @@
 export { ConfigHelper } from "./config.helper";
 export { FrameworkHelper } from "./framework.helper";
 export { QuickPickHelper, type TemplateChoice } from "./quick-pick.helper";
-export { createFile, isFileNameValid, openFile } from "./file.helper";
-export { handleVueFileName } from "./vue-file.helper";
-export { requestStringDialog } from "./input-dialog.helper";
+export {
+	openCreatedFile,
+	handleFileExistsConflict,
+	handleCreateResult,
+	formatErrorMessage,
+	showServiceError,
+	type OpenFileOptions,
+	type ServiceResult,
+} from "./command.helper";
 export {
 	getTargetDirectory,
 	getBaseDirectory,
 	checkIfInSubdirectory,
 	ensureDirectoryExists,
-	fileExists,
 	type TargetDirectoryOptions,
 	type TargetDirectoryResult,
-} from "./target-directory.helper";
+} from "./directory.helper";
