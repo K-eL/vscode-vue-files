@@ -4,6 +4,32 @@ All notable changes to this project will be documented in this file. See [commit
 
 ## [1.2.0](https://github.com/K-eL/vscode-vue-files/compare/v1.1.9...v1.2.0) (2025-11-30)
 
+### Features
+
+- add Pinia store generator with Setup and Options API styles
+- add Composable generator with useState, useFetch, useEventListener, and custom patterns
+- add configuration change listener to refresh settings dynamically
+- enhance README with detailed documentation for all features
+
+### Refactor
+
+- extract logic from commands to dedicated services
+- simplify and decouple components communication
+- standardize file handling with base service abstraction
+- rename "Vue File" to "Vue Component" for better clarity
+- improve files and functions naming consistency
+
+### Tests
+
+- add comprehensive tests for Pinia store and Composable generators
+- refactor and improve existing tests
+- add compile steps for source code and tests in CI workflow
+- update coverage configuration
+
+### Bug Fixes
+
+- correct normalization of component names in VueComponentService
+
 ## [1.1.9](https://github.com/K-eL/vscode-vue-files/compare/v1.1.8...v1.1.9) (2025-11-25)
 
 ### Features
